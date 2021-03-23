@@ -43,7 +43,7 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "specialist")
     private List<ParticipantAssignment> assignments;
 
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany
     private List<UserRole> roles;
 
     public User() {
