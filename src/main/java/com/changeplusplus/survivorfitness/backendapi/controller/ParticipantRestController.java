@@ -1,6 +1,5 @@
 package com.changeplusplus.survivorfitness.backendapi.controller;
 
-import com.changeplusplus.survivorfitness.backendapi.controller.payload.EntityNotFoundException;
 import com.changeplusplus.survivorfitness.backendapi.entity.Participant;
 import com.changeplusplus.survivorfitness.backendapi.service.ParticipantManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +27,6 @@ public class ParticipantRestController {
     @GetMapping("/{participantId}")
     public InfoAboutParticularParticipantResponse getInfoAboutSpecificParticipant(@PathVariable("participantId") Integer participantId) {
         Participant participant = participantManagementService.getParticipantInfoById(participantId);
-
-        if(participant == null) {
-            throw new EntityNotFoundException();
-        }
         return new InfoAboutParticularParticipantResponse(participant);
     }
 
