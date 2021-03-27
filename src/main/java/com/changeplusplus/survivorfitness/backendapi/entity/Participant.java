@@ -44,6 +44,21 @@ public class Participant {
         super();
     }
 
+    public Participant(String firstName, String lastName, Integer age, String email, String phoneNumber, Date startDate, String goals, String typeOfCancer, String formsOfTreatment, String surgeries, String physicianNotes) {
+        super();
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.startDate = startDate;
+        this.goals = goals;
+        this.typeOfCancer = typeOfCancer;
+        this.formsOfTreatment = formsOfTreatment;
+        this.surgeries = surgeries;
+        this.physicianNotes = physicianNotes;
+    }
+
     public Integer getId() {
         return id;
     }

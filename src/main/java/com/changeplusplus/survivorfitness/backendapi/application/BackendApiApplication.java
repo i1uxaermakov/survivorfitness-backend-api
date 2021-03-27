@@ -9,7 +9,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @ComponentScans({ @ComponentScan("com.changeplusplus.survivorfitness.backendapi.controller"),
-		@ComponentScan("com.changeplusplus.survivorfitness.backendapi.config")})
+		@ComponentScan("com.changeplusplus.survivorfitness.backendapi.config"),
+		@ComponentScan("com.changeplusplus.survivorfitness.backendapi.service")})
 @EnableJpaRepositories("com.changeplusplus.survivorfitness.backendapi.repository")
 @EntityScan("com.changeplusplus.survivorfitness.backendapi.entity")
 public class BackendApiApplication {
