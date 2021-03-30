@@ -1,64 +1,59 @@
-package com.changeplusplus.survivorfitness.backendapi.entity;
+package com.changeplusplus.survivorfitness.backendapi.dto;
 
-import javax.persistence.*;
-import java.util.ArrayList;
+import com.changeplusplus.survivorfitness.backendapi.entity.Participant;
+import com.changeplusplus.survivorfitness.backendapi.entity.ParticipantAssignment;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.util.Date;
-import java.util.List;
 
-@Entity
-@Table(name = "participants")
-public class Participant {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "pid")
+
+public class ParticipantDTO {
     private Integer id;
-
-    @Column(name = "first_name")
     private String firstName;
-
-    @Column(name = "last_name")
     private String lastName;
+
+    public ParticipantDTO() {
+        super();
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer age;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String email;
 
-    @Column(name = "phone_number")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String phoneNumber;
 
-    @Column(name = "start_date")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Date startDate;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String goals;
 
-    @Column(name = "type_of_cancer")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String typeOfCancer;
 
-    @Column(name = "treatment_facility")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String formsOfTreatment;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String surgeries;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String physicianNotes;
 
-    @OneToMany(mappedBy = "participant", fetch = FetchType.EAGER)
-    private List<ParticipantAssignment> assignments = new ArrayList();
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private UserDTO dietician;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private LocationDTO dieticianLocation;
 
-    public Participant() {
-        super();
-    }
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private UserDTO trainer;
 
-    public Participant(String firstName, String lastName, Integer age, String email, String phoneNumber, Date startDate, String goals, String typeOfCancer, String formsOfTreatment, String surgeries, String physicianNotes) {
-        super();
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.age = age;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.startDate = startDate;
-        this.goals = goals;
-        this.typeOfCancer = typeOfCancer;
-        this.formsOfTreatment = formsOfTreatment;
-        this.surgeries = surgeries;
-        this.physicianNotes = physicianNotes;
-    }
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private LocationDTO trainerLocation;
 
     public Integer getId() {
         return id;
@@ -156,11 +151,35 @@ public class Participant {
         this.physicianNotes = physicianNotes;
     }
 
-    public List<ParticipantAssignment> getAssignments() {
-        return assignments;
+    public UserDTO getDietician() {
+        return dietician;
     }
 
-    public void setAssignments(List<ParticipantAssignment> assignments) {
-        this.assignments = assignments;
+    public void setDietician(UserDTO dietician) {
+        this.dietician = dietician;
+    }
+
+    public LocationDTO getDieticianLocation() {
+        return dieticianLocation;
+    }
+
+    public void setDieticianLocation(LocationDTO dieticianLocation) {
+        this.dieticianLocation = dieticianLocation;
+    }
+
+    public UserDTO getTrainer() {
+        return trainer;
+    }
+
+    public void setTrainer(UserDTO trainer) {
+        this.trainer = trainer;
+    }
+
+    public LocationDTO getTrainerLocation() {
+        return trainerLocation;
+    }
+
+    public void setTrainerLocation(LocationDTO trainerLocation) {
+        this.trainerLocation = trainerLocation;
     }
 }

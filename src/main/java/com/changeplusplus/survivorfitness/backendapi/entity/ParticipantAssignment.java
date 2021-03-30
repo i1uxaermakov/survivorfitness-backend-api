@@ -10,13 +10,17 @@ public class ParticipantAssignment {
     @Column(name = "pa_id")
     private Integer id;
 
-    @ManyToOne
+    @Column(name = "specialist_type")
+    @Enumerated(EnumType.STRING)
+    private SpecialistType specialistType;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     private User specialist;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Participant participant;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Location location;
 
     public ParticipantAssignment() {
@@ -53,5 +57,13 @@ public class ParticipantAssignment {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public SpecialistType getSpecialistType() {
+        return specialistType;
+    }
+
+    public void setSpecialistType(SpecialistType specialistType) {
+        this.specialistType = specialistType;
     }
 }

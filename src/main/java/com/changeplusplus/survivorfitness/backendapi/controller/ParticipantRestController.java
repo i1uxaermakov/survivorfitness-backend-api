@@ -1,11 +1,15 @@
 package com.changeplusplus.survivorfitness.backendapi.controller;
 
+import com.changeplusplus.survivorfitness.backendapi.controller.payload.InfoAboutAllParticipantsResponse;
+import com.changeplusplus.survivorfitness.backendapi.dto.ParticipantDTO;
 import com.changeplusplus.survivorfitness.backendapi.entity.Participant;
 import com.changeplusplus.survivorfitness.backendapi.service.ParticipantManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.changeplusplus.survivorfitness.backendapi.controller.payload.InfoAboutParticularParticipantResponse;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/participants")
@@ -14,9 +18,10 @@ public class ParticipantRestController {
     @Autowired
     private ParticipantManagementService participantManagementService;
 
-    @GetMapping("/")
-    public String getGeneralInfoAboutAllParticipants() {
-        return "general info about all participants";
+    @GetMapping("")
+    public InfoAboutAllParticipantsResponse getGeneralInfoAboutAllParticipants() {
+        List<ParticipantDTO> participantsInfo = participantManagementService.getGeneralInfoAboutAllParticipants();
+        return new InfoAboutAllParticipantsResponse(participantsInfo);
     }
 
     @PostMapping("/")
@@ -26,8 +31,8 @@ public class ParticipantRestController {
 
     @GetMapping("/{participantId}")
     public InfoAboutParticularParticipantResponse getInfoAboutSpecificParticipant(@PathVariable("participantId") Integer participantId) {
-        Participant participant = participantManagementService.getParticipantInfoById(participantId);
-        return new InfoAboutParticularParticipantResponse(participant);
+        ParticipantDTO participantDTO = participantManagementService.getParticipantInfoById(participantId);
+        return new InfoAboutParticularParticipantResponse(participantDTO);
     }
 
     @PutMapping("/{participantId}")
