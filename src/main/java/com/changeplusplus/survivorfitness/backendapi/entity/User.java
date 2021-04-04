@@ -1,15 +1,12 @@
 package com.changeplusplus.survivorfitness.backendapi.entity;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import javax.persistence.*;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name="users")
-public class User implements UserDetails {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -31,53 +28,24 @@ public class User implements UserDetails {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @OneToMany(mappedBy = "specialist")
-    private List<ParticipantAssignment> assignments;
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @JoinTable(
+            name="user_roles",
+            joinColumns=@JoinColumn(name="user_id"),
+            inverseJoinColumns=@JoinColumn(name="role_id"))
+    private List<UserRole> roles = new ArrayList<>();
 
-    @ManyToMany
-    private List<UserRole> roles;
+
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinTable(
+            name="user_locations",
+            joinColumns=@JoinColumn(name="user_id"),
+            inverseJoinColumns=@JoinColumn(name="location_id"))
+    private List<Location> locationsAssignedTo = new ArrayList<>();
 
     public User() {
         super();
     }
-
-    // UserDetails Overridden Methods
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-    // UserDetails Overridden Methods END
-
 
     // GETTERS & SETTERS
     public Integer getId() {
@@ -128,14 +96,6 @@ public class User implements UserDetails {
         this.phoneNumber = phoneNumber;
     }
 
-    public List<ParticipantAssignment> getAssignments() {
-        return assignments;
-    }
-
-    public void setAssignments(List<ParticipantAssignment> assignments) {
-        this.assignments = assignments;
-    }
-
     public List<UserRole> getRoles() {
         return roles;
     }
@@ -143,5 +103,25 @@ public class User implements UserDetails {
     public void setRoles(List<UserRole> roles) {
         this.roles = roles;
     }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public List<Location> getLocationsAssignedTo() {
+        return locationsAssignedTo;
+    }
+
+    public void setLocationsAssignedTo(List<Location> locationsAssignedTo) {
+        this.locationsAssignedTo = locationsAssignedTo;
+    }
+
     // GETTERS & SETTERS END
+
+
+
 }

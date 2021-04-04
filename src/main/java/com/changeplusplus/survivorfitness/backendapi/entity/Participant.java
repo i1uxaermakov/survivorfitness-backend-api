@@ -1,9 +1,7 @@
 package com.changeplusplus.survivorfitness.backendapi.entity;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "participants")
@@ -32,13 +30,26 @@ public class Participant {
     @Column(name = "type_of_cancer")
     private String typeOfCancer;
 
-    @Column(name = "treatment_facility")
+
     private String formsOfTreatment;
     private String surgeries;
     private String physicianNotes;
 
-    @OneToMany(mappedBy = "participant", fetch = FetchType.EAGER)
-    private List<ParticipantAssignment> assignments = new ArrayList();
+    @ManyToOne
+    @JoinColumn(name="dietitian_location_id")
+    private Location dietitianOffice;
+
+    @ManyToOne
+    @JoinColumn(name="gym_location_id")
+    private Location trainerGym;
+
+    @ManyToOne
+    @JoinColumn(name="dietitian_user_id")
+    private User dietitian;
+
+    @ManyToOne
+    @JoinColumn(name="trainer_user_id")
+    private User trainer;
 
 
     public Participant() {
@@ -156,11 +167,35 @@ public class Participant {
         this.physicianNotes = physicianNotes;
     }
 
-    public List<ParticipantAssignment> getAssignments() {
-        return assignments;
+    public Location getDietitianOffice() {
+        return dietitianOffice;
     }
 
-    public void setAssignments(List<ParticipantAssignment> assignments) {
-        this.assignments = assignments;
+    public void setDietitianOffice(Location dietitianOfficeAssigned) {
+        this.dietitianOffice = dietitianOfficeAssigned;
+    }
+
+    public Location getTrainerGym() {
+        return trainerGym;
+    }
+
+    public void setTrainerGym(Location trainerGymAssigned) {
+        this.trainerGym = trainerGymAssigned;
+    }
+
+    public User getDietitian() {
+        return dietitian;
+    }
+
+    public void setDietitian(User dietitianAssigned) {
+        this.dietitian = dietitianAssigned;
+    }
+
+    public User getTrainer() {
+        return trainer;
+    }
+
+    public void setTrainer(User trainerAssigned) {
+        this.trainer = trainerAssigned;
     }
 }

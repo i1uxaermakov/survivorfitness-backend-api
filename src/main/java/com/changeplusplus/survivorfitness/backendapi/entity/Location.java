@@ -1,9 +1,11 @@
 package com.changeplusplus.survivorfitness.backendapi.entity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "locations")
 public class Location {
 
     @Id
@@ -20,8 +22,9 @@ public class Location {
     @OneToOne(fetch = FetchType.EAGER)
     private User administrator;
 
-    @OneToMany(mappedBy = "location", fetch = FetchType.EAGER)
-    private List<ParticipantAssignment> assignments;
+
+    @ManyToMany(mappedBy = "locationsAssignedTo", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    private List<User> specialists;
 
     public Location() {
         super();
@@ -67,11 +70,11 @@ public class Location {
         this.administrator = administrator;
     }
 
-    public List<ParticipantAssignment> getAssignments() {
-        return assignments;
+    public List<User> getSpecialists() {
+        return specialists;
     }
 
-    public void setAssignments(List<ParticipantAssignment> assignments) {
-        this.assignments = assignments;
+    public void setSpecialists(List<User> specialists) {
+        this.specialists = specialists;
     }
 }

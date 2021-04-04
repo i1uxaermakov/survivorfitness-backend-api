@@ -42,7 +42,10 @@ public class ParticipantManagementService {
         participantDTO.setSurgeries(participantEntity.getSurgeries());
         participantDTO.setPhysicianNotes(participantEntity.getPhysicianNotes());
 
-        setInformationAboutAssignedSpecialistsInParticipantDTO(participantDTO, participantEntity.getAssignments());
+        assignLocationsAndSpecialistsOfUserToDTO(
+                participantEntity.getDietitian(), participantEntity.getTrainer(),
+                participantEntity.getDietitianOffice(), participantEntity.getTrainerGym(),
+                participantDTO);
 
         return participantDTO;
     }
@@ -59,7 +62,10 @@ public class ParticipantManagementService {
             participantDTO.setFirstName(projection.getFirstName());
             participantDTO.setLastName(projection.getLastName());
 
-            setInformationAboutAssignedSpecialistsInParticipantDTO(participantDTO, projection.getAssignments());
+            assignLocationsAndSpecialistsOfUserToDTO(
+                    projection.getDietitian(), projection.getTrainer(),
+                    projection.getDietitianOffice(), projection.getTrainerGym(),
+                    participantDTO);
 
             participantsPreparedInfo.add(participantDTO);
         }
@@ -68,30 +74,41 @@ public class ParticipantManagementService {
     }
 
 
-    private void setInformationAboutAssignedSpecialistsInParticipantDTO(ParticipantDTO participantDTO, List<ParticipantAssignment> assignments) {
-        //Go over Assignments to find info about the trainer and the dietitian of the participant
-        for(ParticipantAssignment assignment: assignments) {
-            User specialistEntity = assignment.getSpecialist();
-            Location location = assignment.getLocation();
+    private void assignLocationsAndSpecialistsOfUserToDTO(User dietitian, User trainer,
+                                                          Location dietitianOffice, Location trainerGym,
+                                                          ParticipantDTO participantDTO) {
+        participantDTO.setDietitianLocation(getConciseLocationDTOBasedOnLocationEntity(dietitianOffice));
+        participantDTO.setTrainerLocation(getConciseLocationDTOBasedOnLocationEntity(trainerGym));
 
-            UserDTO specialistDTO = new UserDTO();
-            specialistDTO.setFirstName(specialistEntity.getFirstName());
-            specialistDTO.setLastName(specialistEntity.getLastName());
-            specialistDTO.setId(specialistEntity.getId());
-            participantDTO.setDietitian(specialistDTO);
+        participantDTO.setTrainer(getConciseUserDTOBasedOnUserEntity(trainer));
+        participantDTO.setDietitian(getConciseUserDTOBasedOnUserEntity(dietitian));
+    }
 
-            LocationDTO locationDTO = new LocationDTO();
-            locationDTO.setId(location.getId());
-            locationDTO.setName(location.getName());
 
-            if(assignment.getSpecialistType() == SpecialistType.DIETITIAN) {
-                participantDTO.setDietitian(specialistDTO);
-                participantDTO.setDietitianLocation(locationDTO);
-            }
-            else if(assignment.getSpecialistType() == SpecialistType.TRAINER){
-                participantDTO.setTrainer(specialistDTO);
-                participantDTO.setTrainerLocation(locationDTO);
-            }
+    private LocationDTO getConciseLocationDTOBasedOnLocationEntity(Location locationEntity) {
+        if(locationEntity == null) {
+            return null;
         }
+
+        LocationDTO locationDTO = new LocationDTO();
+        locationDTO.setId(locationEntity.getId());
+        locationDTO.setName(locationEntity.getName());
+        locationDTO.setType(locationEntity.getType().toString());
+
+        return locationDTO;
+    }
+
+
+    private UserDTO getConciseUserDTOBasedOnUserEntity(User specialistEntity) {
+        if(specialistEntity == null) {
+            return null;
+        }
+
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(specialistEntity.getId());
+        userDTO.setFirstName(specialistEntity.getFirstName());
+        userDTO.setLastName(specialistEntity.getLastName());
+
+        return userDTO;
     }
 }

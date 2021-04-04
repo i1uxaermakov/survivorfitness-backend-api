@@ -1,26 +1,31 @@
 package com.changeplusplus.survivorfitness.backendapi.entity;
 
-import org.springframework.security.core.GrantedAuthority;
-
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "roles")
-public class UserRole implements GrantedAuthority {
+public class UserRole {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "role_id")
     private Integer id;
-    private String name;
 
-    @Override
-    public String getAuthority() {
-        return name;
-    }
+    @Enumerated(EnumType.STRING)
+    private UserRoleName name;
+
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private List<User> usersWithRole = new ArrayList<>();
 
     public UserRole() {
         super();
+    }
+
+    public UserRole(UserRoleName name) {
+        this.name = name;
     }
 
     public Integer getId() {
@@ -31,11 +36,32 @@ public class UserRole implements GrantedAuthority {
         this.id = id;
     }
 
-    public String getName() {
+    public UserRoleName getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(UserRoleName name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserRole userRole = (UserRole) o;
+        return name == userRole.name;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
+    }
+
+    public List<User> getUsersWithRole() {
+        return usersWithRole;
+    }
+
+    public void setUsersWithRole(List<User> usersWithRole) {
+        this.usersWithRole = usersWithRole;
     }
 }

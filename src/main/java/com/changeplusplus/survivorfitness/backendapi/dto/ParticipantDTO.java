@@ -1,7 +1,5 @@
 package com.changeplusplus.survivorfitness.backendapi.dto;
 
-import com.changeplusplus.survivorfitness.backendapi.entity.Participant;
-import com.changeplusplus.survivorfitness.backendapi.entity.ParticipantAssignment;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.Date;
