@@ -1,14 +1,24 @@
 package com.changeplusplus.survivorfitness.backendapi.controller;
 
+import com.changeplusplus.survivorfitness.backendapi.controller.payload.InfoAboutAllLocationsResponse;
+import com.changeplusplus.survivorfitness.backendapi.dto.LocationDTO;
+import com.changeplusplus.survivorfitness.backendapi.service.LocationManagementService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/locations")
 public class LocationRestController {
 
+    @Autowired
+    private LocationManagementService locationManagementService;
+
     @GetMapping("/")
-    public String getGeneralInfoAboutAllLocations() {
-        return "all locations";
+    public InfoAboutAllLocationsResponse getGeneralInfoAboutAllLocations() {
+        List<LocationDTO> locationDTOs = locationManagementService.getGeneralInfoAboutAllLocations();
+        return new InfoAboutAllLocationsResponse(locationDTOs);
     }
 
     @PostMapping("/")

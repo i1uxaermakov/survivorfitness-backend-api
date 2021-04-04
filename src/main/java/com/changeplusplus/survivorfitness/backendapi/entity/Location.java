@@ -17,10 +17,10 @@ public class Location {
     @Enumerated(EnumType.STRING)
     private LocationType type;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     private User administrator;
 
-    @OneToMany(mappedBy = "location")
+    @OneToMany(mappedBy = "location", fetch = FetchType.EAGER)
     private List<ParticipantAssignment> assignments;
 
     public Location() {
