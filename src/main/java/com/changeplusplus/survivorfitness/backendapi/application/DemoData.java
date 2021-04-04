@@ -58,19 +58,6 @@ public class DemoData {
 
         participantRepository.saveAll(Arrays.asList(participant1, participant2));
 
-        Location trainerOffice = new Location();
-        trainerOffice.setName("Effects Fitness");
-        trainerOffice.setType(LocationType.TRAINER_GYM);
-        trainerOffice.setAddress("4793 Rio Vista Ave Nashville, TN 37203");
-
-        Location dieticianOffice = new Location();
-        dieticianOffice.setName("Balance Nutrition");
-        dieticianOffice.setType(LocationType.DIETICIAN_OFFICE);
-        dieticianOffice.setAddress("101 Fairmont Place Nashville, TN 37203");
-
-        locationRepository.saveAll(Arrays.asList(trainerOffice, dieticianOffice));
-
-
         //Data for the Assignment of the first Client
         User dietician1 = new User();
         dietician1.setFirstName("DieticianName1");
@@ -91,6 +78,22 @@ public class DemoData {
         trainer2.setLastName("TrainerLastName2");
 
         userRepository.saveAll(Arrays.asList(dietician1, dietician2, trainer1, trainer2));
+
+
+        Location trainerOffice = new Location();
+        trainerOffice.setName("Effects Fitness");
+        trainerOffice.setType(LocationType.TRAINER_GYM);
+        trainerOffice.setAddress("4793 Rio Vista Ave Nashville, TN 37203");
+        trainerOffice.setAdministrator(trainer2);
+
+
+        Location dieticianOffice = new Location();
+        dieticianOffice.setName("Balance Nutrition");
+        dieticianOffice.setType(LocationType.DIETICIAN_OFFICE);
+        dieticianOffice.setAddress("101 Fairmont Place Nashville, TN 37203");
+        dieticianOffice.setAdministrator(dietician1);
+
+        locationRepository.saveAll(Arrays.asList(trainerOffice, dieticianOffice));
 
         //creating assignments
         ParticipantAssignment assignmentParticipant1dietician = new ParticipantAssignment();

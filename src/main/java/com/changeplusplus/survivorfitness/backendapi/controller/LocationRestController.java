@@ -1,6 +1,7 @@
 package com.changeplusplus.survivorfitness.backendapi.controller;
 
 import com.changeplusplus.survivorfitness.backendapi.controller.payload.InfoAboutAllLocationsResponse;
+import com.changeplusplus.survivorfitness.backendapi.controller.payload.InfoAboutParticularLocationResponse;
 import com.changeplusplus.survivorfitness.backendapi.dto.LocationDTO;
 import com.changeplusplus.survivorfitness.backendapi.service.LocationManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +29,9 @@ public class LocationRestController {
 
 
     @GetMapping("/{locationId}")
-    public String getInfoAboutSpecificLocation(@PathVariable("locationId") Long locationId) {
-        return "Info About specific location";
+    public InfoAboutParticularLocationResponse getInfoAboutSpecificLocation(@PathVariable("locationId") Integer locationId) {
+        LocationDTO locationDTO = locationManagementService.getInfoAboutParticularLocation(locationId);
+        return new InfoAboutParticularLocationResponse(locationDTO);
     }
 
     @PutMapping("/{locationId}")
