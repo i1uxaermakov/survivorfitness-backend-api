@@ -44,10 +44,10 @@ public class ParticipantDTO {
     private String physicianNotes;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private UserDTO dietician;
+    private UserDTO dietitian;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private LocationDTO dieticianLocation;
+    private LocationDTO dietitianLocation;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private UserDTO trainer;
@@ -151,20 +151,20 @@ public class ParticipantDTO {
         this.physicianNotes = physicianNotes;
     }
 
-    public UserDTO getDietician() {
-        return dietician;
+    public UserDTO getDietitian() {
+        return dietitian;
     }
 
-    public void setDietician(UserDTO dietician) {
-        this.dietician = dietician;
+    public void setDietitian(UserDTO dietitian) {
+        this.dietitian = dietitian;
     }
 
-    public LocationDTO getDieticianLocation() {
-        return dieticianLocation;
+    public LocationDTO getDietitianLocation() {
+        return dietitianLocation;
     }
 
-    public void setDieticianLocation(LocationDTO dieticianLocation) {
-        this.dieticianLocation = dieticianLocation;
+    public void setDietitianLocation(LocationDTO dietitianLocation) {
+        this.dietitianLocation = dietitianLocation;
     }
 
     public UserDTO getTrainer() {

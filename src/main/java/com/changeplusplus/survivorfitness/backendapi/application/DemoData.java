@@ -59,9 +59,9 @@ public class DemoData {
         participantRepository.saveAll(Arrays.asList(participant1, participant2));
 
         //Data for the Assignment of the first Client
-        User dietician1 = new User();
-        dietician1.setFirstName("DieticianName1");
-        dietician1.setLastName("DieticianLastName1");
+        User dietitian1 = new User();
+        dietitian1.setFirstName("DietitianName1");
+        dietitian1.setLastName("DietitianLastName1");
 
         User trainer1 = new User();
         trainer1.setFirstName("TrainerName1");
@@ -69,15 +69,15 @@ public class DemoData {
 
 
         //Data for the Assignment of the second Client
-        User dietician2 = new User();
-        dietician2.setFirstName("DieticianName2");
-        dietician2.setLastName("DieticianLastName2");
+        User dietitian2 = new User();
+        dietitian2.setFirstName("DietitianName2");
+        dietitian2.setLastName("DietitianLastName2");
 
         User trainer2 = new User();
         trainer2.setFirstName("TrainerName2");
         trainer2.setLastName("TrainerLastName2");
 
-        userRepository.saveAll(Arrays.asList(dietician1, dietician2, trainer1, trainer2));
+        userRepository.saveAll(Arrays.asList(dietitian1, dietitian2, trainer1, trainer2));
 
 
         Location trainerOffice = new Location();
@@ -87,26 +87,26 @@ public class DemoData {
         trainerOffice.setAdministrator(trainer2);
 
 
-        Location dieticianOffice = new Location();
-        dieticianOffice.setName("Balance Nutrition");
-        dieticianOffice.setType(LocationType.DIETICIAN_OFFICE);
-        dieticianOffice.setAddress("101 Fairmont Place Nashville, TN 37203");
-        dieticianOffice.setAdministrator(dietician1);
+        Location dietitianOffice = new Location();
+        dietitianOffice.setName("Balance Nutrition");
+        dietitianOffice.setType(LocationType.DIETICIAN_OFFICE);
+        dietitianOffice.setAddress("101 Fairmont Place Nashville, TN 37203");
+        dietitianOffice.setAdministrator(dietitian1);
 
-        locationRepository.saveAll(Arrays.asList(trainerOffice, dieticianOffice));
+        locationRepository.saveAll(Arrays.asList(trainerOffice, dietitianOffice));
 
         //creating assignments
-        ParticipantAssignment assignmentParticipant1dietician = new ParticipantAssignment();
-        assignmentParticipant1dietician.setSpecialistType(SpecialistType.DIETICIAN);
-        assignmentParticipant1dietician.setSpecialist(dietician1);
-        assignmentParticipant1dietician.setParticipant(participant1);
-        assignmentParticipant1dietician.setLocation(dieticianOffice);
+        ParticipantAssignment assignmentParticipant1dietitian = new ParticipantAssignment();
+        assignmentParticipant1dietitian.setSpecialistType(SpecialistType.DIETITIAN);
+        assignmentParticipant1dietitian.setSpecialist(dietitian1);
+        assignmentParticipant1dietitian.setParticipant(participant1);
+        assignmentParticipant1dietitian.setLocation(dietitianOffice);
 
-        ParticipantAssignment assignmentParticipant2dietician = new ParticipantAssignment();
-        assignmentParticipant2dietician.setSpecialistType(SpecialistType.DIETICIAN);
-        assignmentParticipant2dietician.setSpecialist(dietician2);
-        assignmentParticipant2dietician.setParticipant(participant2);
-        assignmentParticipant2dietician.setLocation(dieticianOffice);
+        ParticipantAssignment assignmentParticipant2dietitian = new ParticipantAssignment();
+        assignmentParticipant2dietitian.setSpecialistType(SpecialistType.DIETITIAN);
+        assignmentParticipant2dietitian.setSpecialist(dietitian2);
+        assignmentParticipant2dietitian.setParticipant(participant2);
+        assignmentParticipant2dietitian.setLocation(dietitianOffice);
 
 
         ParticipantAssignment assignmentParticipant1trainer= new ParticipantAssignment();
@@ -123,6 +123,6 @@ public class DemoData {
 
         participantAssignmentRepository.saveAll(Arrays.asList(
                 assignmentParticipant2trainer, assignmentParticipant1trainer,
-                assignmentParticipant2dietician, assignmentParticipant1dietician));
+                assignmentParticipant2dietitian, assignmentParticipant1dietitian));
     }
 }

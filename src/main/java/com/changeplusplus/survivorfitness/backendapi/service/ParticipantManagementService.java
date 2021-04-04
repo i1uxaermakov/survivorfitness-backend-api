@@ -69,7 +69,7 @@ public class ParticipantManagementService {
 
 
     private void setInformationAboutAssignedSpecialistsInParticipantDTO(ParticipantDTO participantDTO, List<ParticipantAssignment> assignments) {
-        //Go over Assignments to find info about the trainer and the dietician of the participant
+        //Go over Assignments to find info about the trainer and the dietitian of the participant
         for(ParticipantAssignment assignment: assignments) {
             User specialistEntity = assignment.getSpecialist();
             Location location = assignment.getLocation();
@@ -78,15 +78,15 @@ public class ParticipantManagementService {
             specialistDTO.setFirstName(specialistEntity.getFirstName());
             specialistDTO.setLastName(specialistEntity.getLastName());
             specialistDTO.setId(specialistEntity.getId());
-            participantDTO.setDietician(specialistDTO);
+            participantDTO.setDietitian(specialistDTO);
 
             LocationDTO locationDTO = new LocationDTO();
             locationDTO.setId(location.getId());
             locationDTO.setName(location.getName());
 
-            if(assignment.getSpecialistType() == SpecialistType.DIETICIAN) {
-                participantDTO.setDietician(specialistDTO);
-                participantDTO.setDieticianLocation(locationDTO);
+            if(assignment.getSpecialistType() == SpecialistType.DIETITIAN) {
+                participantDTO.setDietitian(specialistDTO);
+                participantDTO.setDietitianLocation(locationDTO);
             }
             else if(assignment.getSpecialistType() == SpecialistType.TRAINER){
                 participantDTO.setTrainer(specialistDTO);
