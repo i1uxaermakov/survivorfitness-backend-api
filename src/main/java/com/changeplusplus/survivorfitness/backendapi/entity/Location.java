@@ -12,7 +12,10 @@ public class Location {
     private Integer id;
     private String name;
     private String address;
-    private String type;
+
+    @Column(name = "location_type")
+    @Enumerated(EnumType.STRING)
+    private LocationType type;
 
     @OneToOne
     private User administrator;
@@ -48,11 +51,11 @@ public class Location {
         this.address = address;
     }
 
-    public String getType() {
+    public LocationType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(LocationType type) {
         this.type = type;
     }
 

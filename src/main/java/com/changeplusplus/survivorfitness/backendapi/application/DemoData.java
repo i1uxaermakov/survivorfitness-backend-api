@@ -60,8 +60,13 @@ public class DemoData {
 
         Location trainerOffice = new Location();
         trainerOffice.setName("Effects Fitness");
+        trainerOffice.setType(LocationType.TRAINER_GYM);
+        trainerOffice.setAddress("4793 Rio Vista Ave Nashville, TN 37203");
+
         Location dieticianOffice = new Location();
         dieticianOffice.setName("Balance Nutrition");
+        dieticianOffice.setType(LocationType.DIETICIAN_OFFICE);
+        dieticianOffice.setAddress("101 Fairmont Place Nashville, TN 37203");
 
         locationRepository.saveAll(Arrays.asList(trainerOffice, dieticianOffice));
 
