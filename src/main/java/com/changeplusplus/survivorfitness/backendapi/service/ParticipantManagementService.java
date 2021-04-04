@@ -77,38 +77,16 @@ public class ParticipantManagementService {
     private void assignLocationsAndSpecialistsOfUserToDTO(User dietitian, User trainer,
                                                           Location dietitianOffice, Location trainerGym,
                                                           ParticipantDTO participantDTO) {
-        participantDTO.setDietitianLocation(getConciseLocationDTOBasedOnLocationEntity(dietitianOffice));
-        participantDTO.setTrainerLocation(getConciseLocationDTOBasedOnLocationEntity(trainerGym));
+        participantDTO.setDietitianLocation(LocationManagementService.getConciseLocationDTOBasedOnLocationEntity(dietitianOffice));
+        participantDTO.setTrainerLocation(LocationManagementService.getConciseLocationDTOBasedOnLocationEntity(trainerGym));
 
-        participantDTO.setTrainer(getConciseUserDTOBasedOnUserEntity(trainer));
-        participantDTO.setDietitian(getConciseUserDTOBasedOnUserEntity(dietitian));
+        participantDTO.setTrainer(UserManagementService.getConciseUserDTOBasedOnUserEntity(trainer));
+        participantDTO.setDietitian(UserManagementService.getConciseUserDTOBasedOnUserEntity(dietitian));
     }
 
 
-    private LocationDTO getConciseLocationDTOBasedOnLocationEntity(Location locationEntity) {
-        if(locationEntity == null) {
-            return null;
-        }
-
-        LocationDTO locationDTO = new LocationDTO();
-        locationDTO.setId(locationEntity.getId());
-        locationDTO.setName(locationEntity.getName());
-        locationDTO.setType(locationEntity.getType().toString());
-
-        return locationDTO;
-    }
 
 
-    private UserDTO getConciseUserDTOBasedOnUserEntity(User specialistEntity) {
-        if(specialistEntity == null) {
-            return null;
-        }
 
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(specialistEntity.getId());
-        userDTO.setFirstName(specialistEntity.getFirstName());
-        userDTO.setLastName(specialistEntity.getLastName());
 
-        return userDTO;
-    }
 }

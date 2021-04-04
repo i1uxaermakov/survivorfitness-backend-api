@@ -1,5 +1,6 @@
 package com.changeplusplus.survivorfitness.backendapi.service;
 
+import com.changeplusplus.survivorfitness.backendapi.dto.LocationDTO;
 import com.changeplusplus.survivorfitness.backendapi.dto.UserDTO;
 import com.changeplusplus.survivorfitness.backendapi.entity.Location;
 import com.changeplusplus.survivorfitness.backendapi.entity.User;
@@ -24,22 +25,47 @@ public class UserManagementService {
 
     public List<UserDTO> getGeneralInfoABoutAllDietitians() {
         UserRole userRoleEntity = userRoleRepository.findUserRoleByName(UserRoleName.DIETITIAN);
+        return getListOfUserDTOsWithUserInfoAndLocationInfo(userRoleEntity.getUsersWithRole());
+    }
 
-        return new ArrayList<>();
+    public List<UserDTO> getGeneralInfoABoutAllTrainers() {
+        UserRole userRoleEntity = userRoleRepository.findUserRoleByName(UserRoleName.TRAINER);
+        return getListOfUserDTOsWithUserInfoAndLocationInfo(userRoleEntity.getUsersWithRole());
     }
 
 
-    private List<UserDTO> getListOfUserDTOsWithUserInfoAndLocationInfo(List<User> userEntityList) {
-        List<UserDTO> userDTOs = new ArrayList<>();
+    private List<UserDTO> getListOfUserDTOsWithUserInfoAndLocationInfo(List<User> usersWithRole) {
+        List<UserDTO> userDTOList = new ArrayList<>();
 
-        for(User userEntity: userEntityList) {
-            UserDTO userDTO = new UserDTO();
-            userDTO.setId(userEntity.getId());
-            userDTO.setFirstName(userEntity.getFirstName());
-            userDTO.setLastName(userEntity.getLastName());
+        for(User userEntity: usersWithRole) {
+            UserDTO userDTO = getConciseUserDTOBasedOnUserEntity(userEntity);
 
+            List<Location> locationEntities = userEntity.getLocationsAssignedTo();
+            for(Location locationEntity: locationEntities) {
+                LocationDTO locationDTO = new LocationDTO();
+                locationDTO.setId(locationEntity.getId());
+                locationDTO.setName(locationEntity.getName());
 
+                userDTO.getLocations().add(locationDTO);
+            }
+
+            userDTOList.add(userDTO);
         }
-        return userDTOs;
+
+        return userDTOList;
+    }
+
+
+    public static UserDTO getConciseUserDTOBasedOnUserEntity(User specialistEntity) {
+        if(specialistEntity == null) {
+            return null;
+        }
+
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(specialistEntity.getId());
+        userDTO.setFirstName(specialistEntity.getFirstName());
+        userDTO.setLastName(specialistEntity.getLastName());
+
+        return userDTO;
     }
 }

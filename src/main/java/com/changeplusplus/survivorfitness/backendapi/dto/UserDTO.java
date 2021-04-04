@@ -2,6 +2,7 @@ package com.changeplusplus.survivorfitness.backendapi.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserDTO {
@@ -16,7 +17,7 @@ public class UserDTO {
     private String phoneNumber;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private List<LocationDTO> locations;
+    private List<LocationDTO> locations = new ArrayList<>();
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<String> roles;

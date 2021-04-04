@@ -57,4 +57,18 @@ public class LocationManagementService {
 
         return locationDTO;
     }
+
+
+    public static LocationDTO getConciseLocationDTOBasedOnLocationEntity(Location locationEntity) {
+        if(locationEntity == null) {
+            return null;
+        }
+
+        LocationDTO locationDTO = new LocationDTO();
+        locationDTO.setId(locationEntity.getId());
+        locationDTO.setName(locationEntity.getName());
+        locationDTO.setType(locationEntity.getType().toString());
+
+        return locationDTO;
+    }
 }

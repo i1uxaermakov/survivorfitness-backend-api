@@ -69,6 +69,8 @@ public class DemoData {
         trainerOffice.setAddress("4793 Rio Vista Ave Nashville, TN 37203");
         trainerOffice.setAdministrator(trainer2);
         trainer2.getRoles().add(locationAdministratorRole);
+        trainer2.getLocationsAssignedTo().add(trainerOffice);
+        trainer1.getLocationsAssignedTo().add(trainerOffice);
 
 
 
@@ -78,6 +80,8 @@ public class DemoData {
         dietitianOffice.setAddress("101 Fairmont Place Nashville, TN 37203");
         dietitianOffice.setAdministrator(dietitian1);
         dietitian1.getRoles().add(locationAdministratorRole);
+        dietitian1.getLocationsAssignedTo().add(dietitianOffice);
+        dietitian2.getLocationsAssignedTo().add(dietitianOffice);
 
 
         //userRepository.saveAll(Arrays.asList(dietitian1, trainer2));
