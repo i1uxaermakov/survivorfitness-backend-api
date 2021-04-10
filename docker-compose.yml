@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  mysql-database:
+    image: mysql:8
+    networks:
+      - surfvivor-fitness-backend
+    container_name: mysql-database-survivorfitness
+    environment:
+      - MYSQL_ROOT_PASSWORD=Password2020!
+      - MYSQL_DATABASE=survivorfitnessdb
+    expose:
+      - "3306"
+
+  backend-api:
+    image: ilyaermakov/survivor-fitness-backend:initial
+    networks:
+      - surfvivor-fitness-backend
+    container_name: backend-api-survivorfitness
+    ports:
+      - "8080:8080"
+    environment:
+      CHANGEPLUSPLUS_SURVIVORFITNESS_DB_HOST: mysql-database # same as the database service name
+      CHANGEPLUSPLUS_SURVIVORFITNESS_DB_DATABASENAME: survivorfitnessdb
+      CHANGEPLUSPLUS_SURVIVORFITNESS_DB_USERNAME: root
+      CHANGEPLUSPLUS_SURVIVORFITNESS_DB_PASSWORD: Password2020!
+    depends_on:
+      - mysql-database
+
+networks:
+  surfvivor-fitness-backend:
