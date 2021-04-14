@@ -2,10 +2,10 @@ package com.changeplusplus.survivorfitness.backendapi.controller.payload;
 
 import com.changeplusplus.survivorfitness.backendapi.dto.ParticipantDTO;
 
-public class InfoAboutParticularParticipantResponse {
+public class ParticipantResponse {
     private ParticipantDTO participant;
 
-    public InfoAboutParticularParticipantResponse(ParticipantDTO participant) {
+    public ParticipantResponse(ParticipantDTO participant) {
         this.participant = participant;
     }
 

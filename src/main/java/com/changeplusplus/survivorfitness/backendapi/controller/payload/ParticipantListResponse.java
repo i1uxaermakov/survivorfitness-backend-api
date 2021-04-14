@@ -4,10 +4,10 @@ import com.changeplusplus.survivorfitness.backendapi.dto.ParticipantDTO;
 
 import java.util.List;
 
-public class InfoAboutAllParticipantsResponse {
+public class ParticipantListResponse {
     List<ParticipantDTO> participants;
 
-    public InfoAboutAllParticipantsResponse(List<ParticipantDTO> participants) {
+    public ParticipantListResponse(List<ParticipantDTO> participants) {
         this.participants = participants;
     }
 

@@ -1,6 +1,6 @@
 package com.changeplusplus.survivorfitness.backendapi.controller;
 
-import com.changeplusplus.survivorfitness.backendapi.controller.payload.InfoAboutAllDietitiansResponse;
+import com.changeplusplus.survivorfitness.backendapi.controller.payload.SpecialistListResponse;
 import com.changeplusplus.survivorfitness.backendapi.dto.UserDTO;
 import com.changeplusplus.survivorfitness.backendapi.service.UserManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +18,8 @@ public class DietitianRestController {
     UserManagementService userManagementService;
 
     @GetMapping("")
-    public InfoAboutAllDietitiansResponse getGeneralInfoAboutAllDieticians() {
+    public SpecialistListResponse getGeneralInfoAboutAllDieticians() {
         List<UserDTO> dietitiansList = userManagementService.getGeneralInfoABoutAllDietitians();
-        return new InfoAboutAllDietitiansResponse(dietitiansList);
+        return new SpecialistListResponse(dietitiansList);
     }
 }

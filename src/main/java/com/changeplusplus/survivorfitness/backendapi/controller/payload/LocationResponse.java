@@ -2,10 +2,10 @@ package com.changeplusplus.survivorfitness.backendapi.controller.payload;
 
 import com.changeplusplus.survivorfitness.backendapi.dto.LocationDTO;
 
-public class InfoAboutParticularLocationResponse {
+public class LocationResponse {
     private LocationDTO location;
 
-    public InfoAboutParticularLocationResponse(LocationDTO location) {
+    public LocationResponse(LocationDTO location) {
         this.location = location;
     }
 

@@ -4,15 +4,15 @@ import com.changeplusplus.survivorfitness.backendapi.dto.LocationDTO;
 
 import java.util.List;
 
-public class InfoAboutAllLocationsResponse {
+public class LocationListResponse {
     private List<LocationDTO> locations;
 
-    public InfoAboutAllLocationsResponse(List<LocationDTO> locations) {
+    public LocationListResponse(List<LocationDTO> locations) {
         super();
         this.locations = locations;
     }
 
-    public InfoAboutAllLocationsResponse() {
+    public LocationListResponse() {
         super();
     }
 

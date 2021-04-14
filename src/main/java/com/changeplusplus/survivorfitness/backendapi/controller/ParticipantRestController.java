@@ -1,13 +1,12 @@
 package com.changeplusplus.survivorfitness.backendapi.controller;
 
-import com.changeplusplus.survivorfitness.backendapi.controller.payload.InfoAboutAllParticipantsResponse;
+import com.changeplusplus.survivorfitness.backendapi.controller.payload.ParticipantListResponse;
 import com.changeplusplus.survivorfitness.backendapi.dto.ParticipantDTO;
-import com.changeplusplus.survivorfitness.backendapi.entity.Participant;
 import com.changeplusplus.survivorfitness.backendapi.service.ParticipantManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.changeplusplus.survivorfitness.backendapi.controller.payload.InfoAboutParticularParticipantResponse;
+import com.changeplusplus.survivorfitness.backendapi.controller.payload.ParticipantResponse;
 
 import java.util.List;
 
@@ -19,9 +18,9 @@ public class ParticipantRestController {
     private ParticipantManagementService participantManagementService;
 
     @GetMapping("")
-    public InfoAboutAllParticipantsResponse getGeneralInfoAboutAllParticipants() {
+    public ParticipantListResponse getGeneralInfoAboutAllParticipants() {
         List<ParticipantDTO> participantsInfo = participantManagementService.getGeneralInfoAboutAllParticipants();
-        return new InfoAboutAllParticipantsResponse(participantsInfo);
+        return new ParticipantListResponse(participantsInfo);
     }
 
     @PostMapping("/")
@@ -30,9 +29,9 @@ public class ParticipantRestController {
     }
 
     @GetMapping("/{participantId}")
-    public InfoAboutParticularParticipantResponse getInfoAboutSpecificParticipant(@PathVariable("participantId") Integer participantId) {
+    public ParticipantResponse getInfoAboutSpecificParticipant(@PathVariable("participantId") Integer participantId) {
         ParticipantDTO participantDTO = participantManagementService.getParticipantInfoById(participantId);
-        return new InfoAboutParticularParticipantResponse(participantDTO);
+        return new ParticipantResponse(participantDTO);
     }
 
     @PutMapping("/{participantId}")
