@@ -1,6 +1,6 @@
 package com.changeplusplus.survivorfitness.backendapi.controller;
 
-import com.changeplusplus.survivorfitness.backendapi.controller.payload.SpecialistListResponse;
+import com.changeplusplus.survivorfitness.backendapi.dto.SpecialistListResponse;
 import com.changeplusplus.survivorfitness.backendapi.dto.UserDTO;
 import com.changeplusplus.survivorfitness.backendapi.service.UserManagementService;
 import io.swagger.annotations.ApiOperation;

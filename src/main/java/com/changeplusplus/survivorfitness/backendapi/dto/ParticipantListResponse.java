@@ -1,4 +1,4 @@
-package com.changeplusplus.survivorfitness.backendapi.controller.payload;
+package com.changeplusplus.survivorfitness.backendapi.dto;
 
 import com.changeplusplus.survivorfitness.backendapi.dto.ParticipantDTO;
 

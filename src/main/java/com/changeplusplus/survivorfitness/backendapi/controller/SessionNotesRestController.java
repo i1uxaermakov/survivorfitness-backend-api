@@ -6,15 +6,15 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/session-notes")
 public class SessionNotesRestController {
 
-    @GetMapping("/{notesId}")
-    public String getInfoAboutSpecificSessionNotes(@PathVariable("notesId") Long notesId) {
-        return "info about specific session notes";
-    }
-
-    @GetMapping("/")
-    public String getNotesCreatedForSpecificClient(@RequestParam("clientId") Long clientId) { //or QueryParam????
-        return "all notes created for a specific client";
-    }
+//    @GetMapping("/{notesId}")
+//    public String getInfoAboutSpecificSessionNotes(@PathVariable("notesId") Long notesId) {
+//        return "info about specific session notes";
+//    }
+//
+//    @GetMapping("/")
+//    public String getNotesCreatedForSpecificClient(@RequestParam("clientId") Long clientId) { //or QueryParam????
+//        return "all notes created for a specific client";
+//    }
 
 
 }
