@@ -11,7 +11,7 @@ import com.changeplusplus.survivorfitness.backendapi.controller.payload.Particip
 import java.util.List;
 
 @RestController
-@RequestMapping("/participants")
+@RequestMapping("/api/v1/participants")
 public class ParticipantRestController {
 
     @Autowired

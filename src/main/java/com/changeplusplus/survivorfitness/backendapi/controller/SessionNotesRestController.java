@@ -3,7 +3,7 @@ package com.changeplusplus.survivorfitness.backendapi.controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/session-notes")
+@RequestMapping("/api/v1/session-notes")
 public class SessionNotesRestController {
 
     @GetMapping("/{notesId}")
