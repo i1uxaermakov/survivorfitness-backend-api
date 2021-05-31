@@ -15,7 +15,7 @@ public class UserRole {
     private Integer id;
 
     @Enumerated(EnumType.STRING)
-    private UserRoleName name;
+    private UserRoleType name;
 
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<User> usersWithRole = new ArrayList<>();
@@ -24,7 +24,7 @@ public class UserRole {
         super();
     }
 
-    public UserRole(UserRoleName name) {
+    public UserRole(UserRoleType name) {
         this.name = name;
     }
 
@@ -36,11 +36,11 @@ public class UserRole {
         this.id = id;
     }
 
-    public UserRoleName getName() {
+    public UserRoleType getName() {
         return name;
     }
 
-    public void setName(UserRoleName name) {
+    public void setName(UserRoleType name) {
         this.name = name;
     }
 

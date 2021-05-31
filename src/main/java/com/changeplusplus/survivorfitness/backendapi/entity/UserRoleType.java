@@ -1,5 +1,5 @@
 package com.changeplusplus.survivorfitness.backendapi.entity;
 
-public enum UserRoleName {
+public enum UserRoleType {
     DIETITIAN, TRAINER, LOCATION_ADMINISTRATOR, SUPER_ADMIN
 }

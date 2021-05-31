@@ -1,6 +1,6 @@
 package com.changeplusplus.survivorfitness.backendapi.controller;
 
-import com.changeplusplus.survivorfitness.backendapi.dto.SpecialistListResponse;
+import com.changeplusplus.survivorfitness.backendapi.dto.UserListResponse;
 import com.changeplusplus.survivorfitness.backendapi.dto.UserDTO;
 import com.changeplusplus.survivorfitness.backendapi.service.UserManagementService;
 import io.swagger.annotations.ApiOperation;
@@ -19,9 +19,9 @@ public class DietitianRestController {
     UserManagementService userManagementService;
 
     @GetMapping("")
-    @ApiOperation(value = "Finds general info about all dietitians", response = SpecialistListResponse.class)
-    public SpecialistListResponse getGeneralInfoAboutAllDietitians() {
+    @ApiOperation(value = "Finds general info about all dietitians", response = UserListResponse.class)
+    public UserListResponse getGeneralInfoAboutAllDietitians() {
         List<UserDTO> dietitiansList = userManagementService.getGeneralInfoABoutAllDietitians();
-        return new SpecialistListResponse(dietitiansList);
+        return new UserListResponse(dietitiansList);
     }
 }

@@ -4,10 +4,10 @@ import com.changeplusplus.survivorfitness.backendapi.dto.UserDTO;
 
 import java.util.List;
 
-public class SpecialistListResponse {
+public class UserListResponse {
     private List<UserDTO> specialists;
 
-    public SpecialistListResponse(List<UserDTO> specialists) {
+    public UserListResponse(List<UserDTO> specialists) {
         this.specialists = specialists;
     }
 

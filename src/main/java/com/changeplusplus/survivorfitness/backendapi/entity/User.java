@@ -36,7 +36,7 @@ public class User {
     private List<UserRole> roles = new ArrayList<>();
 
 
-    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(
             name="user_locations",
             joinColumns=@JoinColumn(name="user_id"),

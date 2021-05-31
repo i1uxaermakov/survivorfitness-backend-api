@@ -1,6 +1,6 @@
 package com.changeplusplus.survivorfitness.backendapi.controller;
 
-import com.changeplusplus.survivorfitness.backendapi.dto.SpecialistListResponse;
+import com.changeplusplus.survivorfitness.backendapi.dto.UserListResponse;
 import com.changeplusplus.survivorfitness.backendapi.dto.UserDTO;
 import com.changeplusplus.survivorfitness.backendapi.service.UserManagementService;
 import io.swagger.annotations.ApiOperation;
@@ -18,10 +18,10 @@ public class TrainerRestController {
     UserManagementService userManagementService;
 
     @GetMapping("")
-    @ApiOperation(value = "Finds general info about all trainers", response = SpecialistListResponse.class)
-    public SpecialistListResponse getGeneralInfoAboutAllTrainers() {
+    @ApiOperation(value = "Finds general info about all trainers", response = UserListResponse.class)
+    public UserListResponse getGeneralInfoAboutAllTrainers() {
         List<UserDTO> trainersList = userManagementService.getGeneralInfoABoutAllTrainers();
-        return new SpecialistListResponse(trainersList);
+        return new UserListResponse(trainersList);
     }
 
 

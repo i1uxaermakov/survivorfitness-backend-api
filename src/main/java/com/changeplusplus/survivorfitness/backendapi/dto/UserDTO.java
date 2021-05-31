@@ -1,5 +1,6 @@
 package com.changeplusplus.survivorfitness.backendapi.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.ArrayList;
@@ -13,6 +14,9 @@ public class UserDTO {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String email;
 
+    @JsonIgnore
+    private String password;
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String phoneNumber;
 
@@ -20,7 +24,7 @@ public class UserDTO {
     private List<LocationDTO> locations = new ArrayList<>();
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private List<String> roles;
+    private List<String> roles = new ArrayList<>();
 
     public Integer getId() {
         return id;
@@ -76,5 +80,13 @@ public class UserDTO {
 
     public void setRoles(List<String> roles) {
         this.roles = roles;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

@@ -19,12 +19,13 @@ public class Location {
     @Enumerated(EnumType.STRING)
     private LocationType type;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(optional = false)
+    @JoinColumn(name="admin_user_id")
     private User administrator;
 
 
     @ManyToMany(mappedBy = "locationsAssignedTo", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-    private List<User> specialists;
+    private List<User> specialists = new ArrayList<>();
 
     public Location() {
         super();
