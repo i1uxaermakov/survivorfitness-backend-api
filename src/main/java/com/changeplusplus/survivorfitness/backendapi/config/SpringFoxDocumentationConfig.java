@@ -33,9 +33,9 @@ public class SpringFoxDocumentationConfig {
                         "\nThis is an API for the internal tracking participants' progress.",
                 "Version 1",
                 "Free to use",
-                new Contact("Ilya Ermakov", "https://github.com/i1uxaermakov", "email"),
+                new Contact("Ilya Ermakov", "https://github.com/i1uxaermakov", "ilya.ermakov@vanderbilt.edu"),
                 "API License",
-                "",
+                "google.com",
                 Collections.emptyList());
     }
 }
