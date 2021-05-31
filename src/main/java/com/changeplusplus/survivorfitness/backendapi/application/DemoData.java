@@ -35,7 +35,8 @@ public class DemoData {
         UserRole dietitianRole =  new UserRole(UserRoleType.DIETITIAN);
         UserRole trainerRole =  new UserRole(UserRoleType.TRAINER);
         UserRole locationAdministratorRole =  new UserRole(UserRoleType.LOCATION_ADMINISTRATOR);
-        userRoleRepository.saveAll(Arrays.asList(dietitianRole,trainerRole,locationAdministratorRole));
+        UserRole superAdminRole = new UserRole(UserRoleType.SUPER_ADMIN);
+        userRoleRepository.saveAll(Arrays.asList(dietitianRole,trainerRole,locationAdministratorRole,superAdminRole));
 
 
         // --------------------- BEGIN USER CREATION ---------------------
@@ -156,6 +157,18 @@ public class DemoData {
         trainer6.setEnabled(true);
         trainer6.getRoles().add(trainerRole);
         userList.add(trainer6);
+
+        //Creating a super admin
+        User super_admin1 = new User();
+        super_admin1.setFirstName("Theo");
+        super_admin1.setLastName("Justin");
+        super_admin1.setEmail("theo.justin@gmail.olala");
+        super_admin1.setPassword("$2y$10$V3MWloOYB/Gu3.a9dltBquAqLTq/VshYXesr8p4UiYdTtMiPTXxtq"); //passwordTheo
+        super_admin1.setPhoneNumber("123 456 7890");
+        super_admin1.setEnabled(true);
+        super_admin1.getRoles().add(superAdminRole);
+        userList.add(super_admin1);
+
 
         userRepository.saveAll(userList);
 

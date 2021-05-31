@@ -7,6 +7,7 @@ import com.changeplusplus.survivorfitness.backendapi.service.LocationManagementS
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class LocationRestController {
 
     @GetMapping("/")
     @ApiOperation(value = "Finds general info about all locations", response = LocationListResponse.class)
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
     public LocationListResponse getGeneralInfoAboutAllLocations() {
         List<LocationDTO> locationDTOs = locationManagementService.getGeneralInfoAboutAllLocations();
         return new LocationListResponse(locationDTOs);
@@ -35,6 +37,7 @@ public class LocationRestController {
     @ApiOperation(value = "Finds detailed info about specific location",
             notes = "Provide an ID to look up a specific location. If a location with a specified ID doesn't exist, the endpoint returns location = null",
             response = LocationResponse.class)
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'LOCATION_ADMINISTRATOR')")
     public LocationResponse getInfoAboutSpecificLocation(@ApiParam(value = "ID value for the location you need to retrieve", required = true)
                                                              @PathVariable("locationId") Integer locationId) {
         LocationDTO locationDTO = locationManagementService.getInfoAboutParticularLocation(locationId);

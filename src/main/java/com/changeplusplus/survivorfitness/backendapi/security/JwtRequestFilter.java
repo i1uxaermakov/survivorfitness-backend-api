@@ -56,9 +56,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
                 String username = String.valueOf(claims.get("username"));
                 String authorities = (String) claims.get("authorities");
+                System.out.println(authorities);
 
                 Authentication auth = new UsernamePasswordAuthenticationToken(username,null,
                         AuthorityUtils.commaSeparatedStringToAuthorityList(authorities));
+
+                System.out.println(auth);
+
                 SecurityContextHolder.getContext().setAuthentication(auth);
             } catch (Exception e) {
                 e.printStackTrace();

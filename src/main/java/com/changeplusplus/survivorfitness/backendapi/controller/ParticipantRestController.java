@@ -6,6 +6,7 @@ import com.changeplusplus.survivorfitness.backendapi.service.ParticipantManageme
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.changeplusplus.survivorfitness.backendapi.dto.ParticipantResponse;
@@ -21,6 +22,7 @@ public class ParticipantRestController {
 
     @GetMapping("")
     @ApiOperation(value = "Finds general info about all participants", response = ParticipantListResponse.class)
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
     public ParticipantListResponse getGeneralInfoAboutAllParticipants() {
         List<ParticipantDTO> participantsInfo = participantManagementService.getGeneralInfoAboutAllParticipants();
         return new ParticipantListResponse(participantsInfo);
@@ -35,6 +37,7 @@ public class ParticipantRestController {
     @ApiOperation(value = "Finds detailed info about a specific participant",
             notes = "Provide an ID to look up a specific participant. If a participant with a specified ID doesn't exist, the endpoint returns paticipant = null",
             response = ParticipantResponse.class)
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'LOCATION_ADMINISTRATOR', 'TRAINER', 'DIETITIAN')")
     public ParticipantResponse getInfoAboutSpecificParticipant(
             @ApiParam(value = "ID value for the participant you need to retrieve", required = true)
             @PathVariable("participantId") Integer participantId) {
