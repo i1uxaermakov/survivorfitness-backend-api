@@ -4,6 +4,7 @@ import com.changeplusplus.survivorfitness.backendapi.dto.LocationListResponse;
 import com.changeplusplus.survivorfitness.backendapi.dto.LocationResponse;
 import com.changeplusplus.survivorfitness.backendapi.dto.LocationDTO;
 import com.changeplusplus.survivorfitness.backendapi.service.LocationManagementService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/locations")
+@Api(tags = "Location Controller", description = "Endpoints for retrieval and management of information about locations like Gyms and Dietitian Offices.")
 public class LocationRestController {
 
     @Autowired

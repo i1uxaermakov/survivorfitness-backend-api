@@ -16,21 +16,17 @@ import java.util.List;
 
 @Service
 public class UserManagementService {
-
-    @Autowired
-    private UserRoleRepository userRoleRepository;
-
     @Autowired
     private UserRepository userRepository;
 
-    public List<UserDTO> getGeneralInfoABoutAllDietitians() {
-        UserRole userRoleEntity = userRoleRepository.findUserRoleByName(UserRoleType.DIETITIAN);
-        return getListOfUserDTOsWithUserInfoAndLocationInfo(userRoleEntity.getUsersWithRole());
+    public List<UserDTO> getGeneralInfoAboutAllSpecialistsOfSpecificType(UserRoleType type) {
+        List<User> dietitiansList = userRepository.findUsersByRolesName(type);
+        return getListOfUserDTOsWithUserInfoAndLocationInfo(dietitiansList);
     }
 
-    public List<UserDTO> getGeneralInfoABoutAllTrainers() {
-        UserRole userRoleEntity = userRoleRepository.findUserRoleByName(UserRoleType.TRAINER);
-        return getListOfUserDTOsWithUserInfoAndLocationInfo(userRoleEntity.getUsersWithRole());
+    public List<UserDTO> getGeneralInfoAboutSpecialistsOfSpecificTypeInSpecificLocation(UserRoleType type, Integer locationId) {
+        List<User> userList = userRepository.findUsersByRolesNameAndLocationsAssignedToId(type, locationId);
+        return getListOfUserDTOsWithUserInfoAndLocationInfo(userList);
     }
 
     public UserDTO getUserInfoByEmail(String email) {

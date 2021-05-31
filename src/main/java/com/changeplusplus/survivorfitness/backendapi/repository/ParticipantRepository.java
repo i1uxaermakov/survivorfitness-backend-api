@@ -11,4 +11,8 @@ import java.util.List;
 public interface ParticipantRepository extends CrudRepository<Participant, Integer> {
     Participant findParticipantById(Integer id);
     List<ParticipantGeneralInfoProjection> findAllProjectedBy();
+    List<ParticipantGeneralInfoProjection> findParticipantsByTrainerGymId(Integer gymId);
+    List<ParticipantGeneralInfoProjection> findParticipantsByDietitianOfficeId(Integer dietitianOfficeId);
+    List<ParticipantGeneralInfoProjection> findParticipantsByDietitianId(Integer dietitianUserId);
+    List<ParticipantGeneralInfoProjection> findParticipantsByTrainerId(Integer trainerUserId);
 }

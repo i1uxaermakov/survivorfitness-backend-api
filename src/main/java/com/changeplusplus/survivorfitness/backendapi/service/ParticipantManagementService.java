@@ -1,12 +1,9 @@
 package com.changeplusplus.survivorfitness.backendapi.service;
 
-import com.changeplusplus.survivorfitness.backendapi.dto.LocationDTO;
 import com.changeplusplus.survivorfitness.backendapi.dto.ParticipantDTO;
-import com.changeplusplus.survivorfitness.backendapi.dto.UserDTO;
 import com.changeplusplus.survivorfitness.backendapi.entity.*;
 import com.changeplusplus.survivorfitness.backendapi.entity.projection.ParticipantGeneralInfoProjection;
 import com.changeplusplus.survivorfitness.backendapi.repository.ParticipantRepository;
-import com.changeplusplus.survivorfitness.backendapi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,58 +16,18 @@ public class ParticipantManagementService {
     @Autowired
     private ParticipantRepository participantRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
     public ParticipantDTO getParticipantInfoById(Integer participantId) {
         Participant participantEntity = participantRepository.findParticipantById(participantId);
         if(participantEntity == null) {
             return null;
         }
-
-        ParticipantDTO participantDTO = new ParticipantDTO();
-        participantDTO.setId(participantEntity.getId());
-        participantDTO.setFirstName(participantEntity.getFirstName());
-        participantDTO.setLastName(participantEntity.getLastName());
-        participantDTO.setAge(participantEntity.getAge());
-        participantDTO.setEmail(participantEntity.getEmail());
-        participantDTO.setPhoneNumber(participantEntity.getPhoneNumber());
-        participantDTO.setStartDate(participantEntity.getStartDate());
-        participantDTO.setGoals(participantEntity.getGoals());
-        participantDTO.setTypeOfCancer(participantEntity.getTypeOfCancer());
-        participantDTO.setFormsOfTreatment(participantEntity.getFormsOfTreatment());
-        participantDTO.setSurgeries(participantEntity.getSurgeries());
-        participantDTO.setPhysicianNotes(participantEntity.getPhysicianNotes());
-
-        assignLocationsAndSpecialistsOfUserToDTO(
-                participantEntity.getDietitian(), participantEntity.getTrainer(),
-                participantEntity.getDietitianOffice(), participantEntity.getTrainerGym(),
-                participantDTO);
-
-        return participantDTO;
+        return getParticipantDtoFromParticipantEntity(participantEntity);
     }
 
     public List<ParticipantDTO> getGeneralInfoAboutAllParticipants() {
         //Get general info (name, id, specialists they are assigned to) about all participants
-        List<ParticipantGeneralInfoProjection> participantsRawInfo = participantRepository.findAllProjectedBy();
-
-        //Convert data received from the database into the format expected by the client (list of ParticpantDTOs)
-        List<ParticipantDTO> participantsPreparedInfo = new ArrayList<>();
-        for(ParticipantGeneralInfoProjection projection: participantsRawInfo) {
-            ParticipantDTO participantDTO = new ParticipantDTO();
-            participantDTO.setId(projection.getId());
-            participantDTO.setFirstName(projection.getFirstName());
-            participantDTO.setLastName(projection.getLastName());
-
-            assignLocationsAndSpecialistsOfUserToDTO(
-                    projection.getDietitian(), projection.getTrainer(),
-                    projection.getDietitianOffice(), projection.getTrainerGym(),
-                    participantDTO);
-
-            participantsPreparedInfo.add(participantDTO);
-        }
-
-        return participantsPreparedInfo;
+        List<ParticipantGeneralInfoProjection> participantsProjections = participantRepository.findAllProjectedBy();
+        return getListOfParticipantDtosFromListOfParticipantProjections(participantsProjections);
     }
 
 
@@ -85,8 +42,65 @@ public class ParticipantManagementService {
     }
 
 
+    public List<ParticipantDTO> getParticipantsAtSpecificDietitianOffice(Integer dietitianOfficeId) {
+        List<ParticipantGeneralInfoProjection> participantProjectionsList = participantRepository.findParticipantsByDietitianOfficeId(dietitianOfficeId);
+        return getListOfParticipantDtosFromListOfParticipantProjections(participantProjectionsList);
+    }
 
 
+    public List<ParticipantDTO> getParticipantsAtSpecificTrainerGym(Integer gymId) {
+        List<ParticipantGeneralInfoProjection> participantProjectionsList = participantRepository.findParticipantsByTrainerGymId(gymId);
+        return getListOfParticipantDtosFromListOfParticipantProjections(participantProjectionsList);
+    }
+
+    public List<ParticipantDTO> getParticipantsAssignedToSpecificTrainer(Integer trainerUserId) {
+        List<ParticipantGeneralInfoProjection> participantProjectionsList = participantRepository.findParticipantsByTrainerId(trainerUserId);
+        return getListOfParticipantDtosFromListOfParticipantProjections(participantProjectionsList);
+    }
+
+    public List<ParticipantDTO> getParticipantsAssignedToSpecificDietitian(Integer dietitianUserId) {
+        List<ParticipantGeneralInfoProjection> participantProjectionsList = participantRepository.findParticipantsByDietitianId(dietitianUserId);
+        return getListOfParticipantDtosFromListOfParticipantProjections(participantProjectionsList);
+    }
 
 
+    private List<ParticipantDTO> getListOfParticipantDtosFromListOfParticipantEntities(List<Participant> participantEntitiesList) {
+        List<ParticipantDTO> participantDtoList = new ArrayList<>();
+        for(Participant participantEntity: participantEntitiesList) {
+            participantDtoList.add(getParticipantDtoFromParticipantEntity(participantEntity));
+        }
+        return participantDtoList;
+    }
+
+    private ParticipantDTO getParticipantDtoFromParticipantEntity(Participant participantEntity) {
+        ParticipantDTO participantDTO = new ParticipantDTO(participantEntity);
+        assignLocationsAndSpecialistsOfUserToDTO(
+                participantEntity.getDietitian(), participantEntity.getTrainer(),
+                participantEntity.getDietitianOffice(), participantEntity.getTrainerGym(),
+                participantDTO);
+        return participantDTO;
+    }
+
+    private ParticipantDTO getParticipantDtoFromParticipantProjection(ParticipantGeneralInfoProjection projection) {
+        ParticipantDTO participantDTO = new ParticipantDTO();
+        participantDTO.setId(projection.getId());
+        participantDTO.setFirstName(projection.getFirstName());
+        participantDTO.setLastName(projection.getLastName());
+
+        assignLocationsAndSpecialistsOfUserToDTO(
+                projection.getDietitian(), projection.getTrainer(),
+                projection.getDietitianOffice(), projection.getTrainerGym(),
+                participantDTO);
+
+        return participantDTO;
+    }
+
+    private List<ParticipantDTO> getListOfParticipantDtosFromListOfParticipantProjections(List<ParticipantGeneralInfoProjection> participantsProjections) {
+        //Convert data received from the database into the format expected by the client (list of ParticipantDTOs)
+        List<ParticipantDTO> participantsPreparedInfo = new ArrayList<>();
+        for(ParticipantGeneralInfoProjection projection: participantsProjections) {
+            participantsPreparedInfo.add(getParticipantDtoFromParticipantProjection(projection));
+        }
+        return participantsPreparedInfo;
+    }
 }

@@ -10,6 +10,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/")
+@Api(tags = "Authentication Controller", description = "Endpoints for obtaining a JWT token required for authentication.")
 public class AuthenticationRestController {
 
     @Value("${survivorfitness-backend.security.jwt.secret-key}")

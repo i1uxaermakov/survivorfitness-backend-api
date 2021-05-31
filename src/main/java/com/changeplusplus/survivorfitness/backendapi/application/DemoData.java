@@ -25,9 +25,6 @@ public class DemoData {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private UserRoleRepository userRoleRepository;
-
     @EventListener
     @Transactional
     public void appReady(ApplicationReadyEvent event) {
@@ -36,7 +33,7 @@ public class DemoData {
         UserRole trainerRole =  new UserRole(UserRoleType.TRAINER);
         UserRole locationAdministratorRole =  new UserRole(UserRoleType.LOCATION_ADMINISTRATOR);
         UserRole superAdminRole = new UserRole(UserRoleType.SUPER_ADMIN);
-        userRoleRepository.saveAll(Arrays.asList(dietitianRole,trainerRole,locationAdministratorRole,superAdminRole));
+        //userRoleRepository.saveAll(Arrays.asList(dietitianRole,trainerRole,locationAdministratorRole,superAdminRole));
 
 
         // --------------------- BEGIN USER CREATION ---------------------

@@ -1,57 +1,49 @@
 package com.changeplusplus.survivorfitness.backendapi.dto;
 
+import com.changeplusplus.survivorfitness.backendapi.entity.Participant;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.Date;
 
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ParticipantDTO {
     private Integer id;
     private String firstName;
     private String lastName;
+    private Integer age;
+    private String email;
+    private String phoneNumber;
+    private Date startDate;
+    private String goals;
+    private String typeOfCancer;
+    private String formsOfTreatment;
+    private String surgeries;
+    private String physicianNotes;
+    private UserDTO dietitian;
+    private LocationDTO dietitianLocation;
+    private UserDTO trainer;
+    private LocationDTO trainerLocation;
 
     public ParticipantDTO() {
         super();
     }
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Integer age;
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String email;
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String phoneNumber;
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Date startDate;
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String goals;
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String typeOfCancer;
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String formsOfTreatment;
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String surgeries;
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String physicianNotes;
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private UserDTO dietitian;
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private LocationDTO dietitianLocation;
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private UserDTO trainer;
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private LocationDTO trainerLocation;
+    // doesn't set the fields related to trainers and dietitians
+    public ParticipantDTO(Participant participant) {
+        super();
+        this.id = participant.getId();
+        this.firstName = participant.getFirstName();
+        this.lastName = participant.getLastName();
+        this.age = participant.getAge();
+        this.email = participant.getEmail();
+        this.phoneNumber = participant.getPhoneNumber();
+        this.startDate = participant.getStartDate();
+        this.goals = participant.getGoals();
+        this.typeOfCancer = participant.getTypeOfCancer();
+        this.formsOfTreatment = participant.getFormsOfTreatment();
+        this.surgeries = participant.getSurgeries();
+        this.physicianNotes = participant.getPhysicianNotes();
+    }
 
     public Integer getId() {
         return id;
