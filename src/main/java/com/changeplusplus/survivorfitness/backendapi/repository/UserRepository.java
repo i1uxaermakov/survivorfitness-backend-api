@@ -12,4 +12,5 @@ public interface UserRepository extends CrudRepository<User, Integer> {
     User findUserByEmail(String email);
     List<User> findUsersByRolesNameAndLocationsAssignedToId(UserRoleType roleName, Integer locationId);
     List<User> findUsersByRolesName(UserRoleType roleName);
+    User findUserById(Integer userId);
 }

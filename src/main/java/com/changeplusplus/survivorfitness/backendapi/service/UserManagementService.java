@@ -86,4 +86,10 @@ public class UserManagementService {
 
         return userDTO;
     }
+
+    public UserDTO getUserInfoById(Integer userId) {
+        User userEntity = userRepository.findUserById(userId);
+        UserDTO userDTO = getUserDtoBasedOnUserEntity(userEntity);
+        return userDTO;
+    }
 }
