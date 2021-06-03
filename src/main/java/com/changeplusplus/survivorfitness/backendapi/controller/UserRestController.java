@@ -23,7 +23,7 @@ public class UserRestController {
 
     @GetMapping("/{userId}")
     @ApiOperation(value = "Finds detailed info about a specific user.",
-            notes = "The endpoint is available to users with roles SUPER_ADMIN and LOCATION_ADMINISTRATOR, and to users requesting information about themselves.",
+            notes = "The endpoint is available to all authenticated users.",
             response = UserResponse.class)
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'LOCATION_ADMINISTRATOR')")
     public UserResponse getDetailedInfoAboutSpecificUser(@PathVariable Integer userId) {
