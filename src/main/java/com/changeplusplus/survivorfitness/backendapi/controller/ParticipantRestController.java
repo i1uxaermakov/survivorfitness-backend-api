@@ -67,7 +67,8 @@ public class ParticipantRestController {
 
     @GetMapping("/{participantId}")
     @ApiOperation(value = "Finds detailed info about a specific participant",
-            notes = "Provide an ID to look up a specific participant. If a participant with a specified ID doesn't exist, the endpoint returns paticipant = null",
+            notes = "Provide an ID to look up a specific participant. If a participant with a specified ID doesn't exist, the endpoint returns paticipant = null.\n" +
+                    "The endpoint is available to all authenticated users.",
             response = ParticipantResponse.class)
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'LOCATION_ADMINISTRATOR', 'TRAINER', 'DIETITIAN')")
     public ParticipantResponse getInfoAboutSpecificParticipant(

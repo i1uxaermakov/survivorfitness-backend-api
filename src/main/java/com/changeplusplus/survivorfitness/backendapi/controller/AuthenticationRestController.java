@@ -49,7 +49,9 @@ public class AuthenticationRestController {
 
     @PostMapping("/authenticate")
     @ApiOperation(value = "Finds a user with the provided username and responds with " +
-            "JWT-token and info about the user if authentication is successful.", response = AuthenticationResponse.class)
+            "JWT-token and info about the user if authentication is successful.",
+            notes = "The endpoint is open to authenticated and not authenticated users.",
+            response = AuthenticationResponse.class)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
         UsernamePwdUserInfoAuthenticationToken authentication = new UsernamePwdUserInfoAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 

@@ -23,7 +23,8 @@ public class DietitianRestController {
     @GetMapping("")
     @ApiOperation(value = "Finds general info about dietitians.",
             notes = "If locationId is specified, the endpoint returns information about dietitians in that location. " +
-                    "Otherwise, the endpoint returns information about all dietitians.",
+                    "Otherwise, the endpoint returns information about all dietitians.\n" +
+                    "The endpoint is available to users with roles SUPER_ADMIN and LOCATION_ADMINISTRATOR.",
             response = UserListResponse.class)
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'LOCATION_ADMINISTRATOR')")
     public UserListResponse getInfoAboutDietitians(@RequestParam(name="locationId", required = false) Integer locationId) {

@@ -22,7 +22,9 @@ public class LocationRestController {
     private LocationManagementService locationManagementService;
 
     @GetMapping("/")
-    @ApiOperation(value = "Finds general info about all locations", response = LocationListResponse.class)
+    @ApiOperation(value = "Finds general info about all locations",
+            notes="The endpoint is available to users with the role SUPER_ADMIN.",
+            response = LocationListResponse.class)
     @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
     public LocationListResponse getGeneralInfoAboutAllLocations() {
         List<LocationDTO> locationDTOs = locationManagementService.getGeneralInfoAboutAllLocations();
@@ -37,7 +39,8 @@ public class LocationRestController {
 
     @GetMapping("/{locationId}")
     @ApiOperation(value = "Finds detailed info about specific location",
-            notes = "Provide an ID to look up a specific location. If a location with a specified ID doesn't exist, the endpoint returns location = null",
+            notes = "Provide an ID to look up a specific location. If a location with a specified ID doesn't exist, the endpoint returns location = null.\n" +
+                    "The endpoint is available to users with roles SUPER_ADMIN and LOCATION_ADMINISTRATOR.",
             response = LocationResponse.class)
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'LOCATION_ADMINISTRATOR')")
     public LocationResponse getInfoAboutSpecificLocation(@ApiParam(value = "ID value for the location you need to retrieve", required = true)

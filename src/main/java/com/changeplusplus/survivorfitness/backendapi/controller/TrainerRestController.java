@@ -24,7 +24,8 @@ public class TrainerRestController {
 
     @GetMapping("")
     @ApiOperation(value = "Finds general info about trainers.",
-            notes = "If locationId is specified, the endpoint returns information about trainers in that location. Otherwise, the endpoint returns information about all trainers.",
+            notes = "If locationId is specified, the endpoint returns information about trainers in that location. Otherwise, the endpoint returns information about all trainers.\n" +
+                    "The endpoint is available to users with roles SUPER_ADMIN and LOCATION_ADMINISTRATOR.",
             response = UserListResponse.class)
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'LOCATION_ADMINISTRATOR')")
     public UserListResponse getInfoAboutTrainers(@RequestParam(name="locationId", required = false) Integer locationId) {
