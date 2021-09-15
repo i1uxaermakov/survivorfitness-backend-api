@@ -23,6 +23,7 @@ public class ParticipantDTO {
     private LocationDTO dietitianLocation;
     private UserDTO trainer;
     private LocationDTO trainerLocation;
+    private String treatmentProgramStatus;
 
     public ParticipantDTO() {
         super();
@@ -171,5 +172,13 @@ public class ParticipantDTO {
 
     public void setTrainerLocation(LocationDTO trainerLocation) {
         this.trainerLocation = trainerLocation;
+    }
+
+    public String getTreatmentProgramStatus() {
+        return treatmentProgramStatus;
+    }
+
+    public void setTreatmentProgramStatus(String treatmentProgramStatus) {
+        this.treatmentProgramStatus = treatmentProgramStatus;
     }
 }

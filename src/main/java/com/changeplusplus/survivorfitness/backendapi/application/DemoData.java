@@ -275,11 +275,31 @@ public class DemoData {
                 "forms of treatment",
                 "surgeries",
                 "loremipsu");
-        participant.setDietitianOffice(dietitianOffice);
-        participant.setDietitian(dietitian);
-        participant.setTrainerGym(gym);
-        participant.setTrainer(trainer);
+//        participant.setDietitianOffice(dietitianOffice);
+//        participant.setDietitian(dietitian);
+//        participant.setTrainerGym(gym);
+//        participant.setTrainer(trainer);
 
+
+/*
+    private ProgramProgressStatus programProgressStatus;
+    private List<Session> sessions = new ArrayList<>();
+    private Participant participant;
+    private User trainer;
+    private Location trainerGym;
+    private User dietitian;
+    private Location dietitianOffice;
+ */
+
+        Program treatmentProgram = new Program();
+        treatmentProgram.setProgramProgressStatus(ProgramProgressStatus.IN_PROGRESS);
+        treatmentProgram.setTrainer(trainer);
+        treatmentProgram.setDietitian(dietitian);
+        treatmentProgram.setDietitianOffice(dietitianOffice);
+        treatmentProgram.setTrainerGym(gym);
+        treatmentProgram.setParticipant(participant);
+
+        participant.setTreatmentProgram(treatmentProgram);
         return participant;
     }
 }

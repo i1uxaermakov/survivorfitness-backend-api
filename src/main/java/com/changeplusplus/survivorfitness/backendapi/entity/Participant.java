@@ -30,26 +30,29 @@ public class Participant {
     @Column(name = "type_of_cancer")
     private String typeOfCancer;
 
+    @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinColumn(name = "program_id", referencedColumnName = "program_id")
+    private Program treatmentProgram;
 
     private String formsOfTreatment;
     private String surgeries;
     private String physicianNotes;
 
-    @ManyToOne
-    @JoinColumn(name="dietitian_location_id")
-    private Location dietitianOffice;
-
-    @ManyToOne
-    @JoinColumn(name="gym_location_id")
-    private Location trainerGym;
-
-    @ManyToOne
-    @JoinColumn(name="dietitian_user_id")
-    private User dietitian;
-
-    @ManyToOne
-    @JoinColumn(name="trainer_user_id")
-    private User trainer;
+//    @ManyToOne
+//    @JoinColumn(name="dietitian_location_id")
+//    private Location dietitianOffice;
+//
+//    @ManyToOne
+//    @JoinColumn(name="gym_location_id")
+//    private Location trainerGym;
+//
+//    @ManyToOne
+//    @JoinColumn(name="dietitian_user_id")
+//    private User dietitian;
+//
+//    @ManyToOne
+//    @JoinColumn(name="trainer_user_id")
+//    private User trainer;
 
 
     public Participant() {
@@ -167,35 +170,44 @@ public class Participant {
         this.physicianNotes = physicianNotes;
     }
 
-    public Location getDietitianOffice() {
-        return dietitianOffice;
+//    public Location getDietitianOffice() {
+//        return dietitianOffice;
+//    }
+//
+//    public void setDietitianOffice(Location dietitianOfficeAssigned) {
+//        this.dietitianOffice = dietitianOfficeAssigned;
+//    }
+//
+//    public Location getTrainerGym() {
+//        return trainerGym;
+//    }
+//
+//    public void setTrainerGym(Location trainerGymAssigned) {
+//        this.trainerGym = trainerGymAssigned;
+//    }
+//
+//    public User getDietitian() {
+//        return dietitian;
+//    }
+//
+//    public void setDietitian(User dietitianAssigned) {
+//        this.dietitian = dietitianAssigned;
+//    }
+//
+//    public User getTrainer() {
+//        return trainer;
+//    }
+//
+//    public void setTrainer(User trainerAssigned) {
+//        this.trainer = trainerAssigned;
+//    }
+
+
+    public Program getTreatmentProgram() {
+        return treatmentProgram;
     }
 
-    public void setDietitianOffice(Location dietitianOfficeAssigned) {
-        this.dietitianOffice = dietitianOfficeAssigned;
-    }
-
-    public Location getTrainerGym() {
-        return trainerGym;
-    }
-
-    public void setTrainerGym(Location trainerGymAssigned) {
-        this.trainerGym = trainerGymAssigned;
-    }
-
-    public User getDietitian() {
-        return dietitian;
-    }
-
-    public void setDietitian(User dietitianAssigned) {
-        this.dietitian = dietitianAssigned;
-    }
-
-    public User getTrainer() {
-        return trainer;
-    }
-
-    public void setTrainer(User trainerAssigned) {
-        this.trainer = trainerAssigned;
+    public void setTreatmentProgram(Program treatmentProgram) {
+        this.treatmentProgram = treatmentProgram;
     }
 }
