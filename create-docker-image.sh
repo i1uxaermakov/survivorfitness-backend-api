@@ -5,14 +5,16 @@ bold=$(tput bold)
 boldBlue=${bold}${blue}
 reset=$(tput sgr0)
 
+imageTag="v5-remodel"
+
 echo "\n\n${boldBlue}STARTING THE SCRIPT"
 echo "${boldBlue}Building a jar of the project"
 mvn package -Dmaven.test.skip=true
 
 echo -e "\n\n${boldBlue}Building a Docker image based on the local DockerFile and the jar"
-docker image build --tag ilyaermakov/survivor-fitness-backend:latest .
+docker image build --tag ilyaermakov/survivor-fitness-backend:${imageTag} .
 
 echo -e "\n\n${boldBlue}Pushing the image to the repository${reset}"
-docker push ilyaermakov/survivor-fitness-backend:latest
+docker push ilyaermakov/survivor-fitness-backend:${imageTag}
 
 
