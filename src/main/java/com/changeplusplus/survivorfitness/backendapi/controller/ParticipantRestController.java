@@ -83,19 +83,34 @@ public class ParticipantRestController {
 
 
     @GetMapping("/{participantId}/trainer-notes")
-    public SessionListResponse getTrainerSessionNotesOfParticipant(@PathVariable("participantId") Integer participantId) {
+    @ApiOperation(value = "Find trainer session notes for the participant",
+            response = SessionListResponse.class)
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'LOCATION_ADMINISTRATOR', 'TRAINER', 'DIETITIAN')")
+    public SessionListResponse getTrainerSessionNotesOfParticipant(
+            @ApiParam(value = "ID value for the participant you need to retrieve", required = true)
+            @PathVariable("participantId") Integer participantId) {
         List<SessionDTO> trainerSessions = sessionManagementService.getTrainerSessionsOfParticipant(participantId);
         return new SessionListResponse(trainerSessions, null);
     }
 
     @GetMapping("/{participantId}/dietitian-notes")
-    public SessionListResponse getDietitianSessionNotesOfParticipant(@PathVariable("participantId") Integer participantId) {
+    @ApiOperation(value = "Find dietitian session notes for the participant",
+            response = SessionListResponse.class)
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'LOCATION_ADMINISTRATOR', 'TRAINER', 'DIETITIAN')")
+    public SessionListResponse getDietitianSessionNotesOfParticipant(
+            @ApiParam(value = "ID value for the participant you need to retrieve", required = true)
+            @PathVariable("participantId") Integer participantId) {
         List<SessionDTO> dietitianSessions = sessionManagementService.getDietitianSessionsOfParticipant(participantId);
         return new SessionListResponse(null, dietitianSessions);
     }
 
     @GetMapping("/{participantId}/all-notes")
-    public SessionListResponse getAllSessionNotesOfParticipant(@PathVariable("participantId") Integer participantId) {
+    @ApiOperation(value = "Find all session notes for the participant",
+            response = SessionListResponse.class)
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'LOCATION_ADMINISTRATOR', 'TRAINER', 'DIETITIAN')")
+    public SessionListResponse getAllSessionNotesOfParticipant(
+            @ApiParam(value = "ID value for the participant you need to retrieve", required = true)
+            @PathVariable("participantId") Integer participantId) {
         Pair<List<SessionDTO>,List<SessionDTO>> listPair = sessionManagementService.getAllSessionNotesOfParticipant(participantId);
         return new SessionListResponse(listPair.getFirst(), listPair.getSecond());
     }
