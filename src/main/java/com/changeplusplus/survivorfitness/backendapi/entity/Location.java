@@ -1,5 +1,7 @@
 package com.changeplusplus.survivorfitness.backendapi.entity;
 
+import com.changeplusplus.survivorfitness.backendapi.dto.LocationDTO;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,12 +25,17 @@ public class Location {
     @JoinColumn(name="admin_user_id")
     private User administrator;
 
-
     @ManyToMany(mappedBy = "locationsAssignedTo", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<User> specialists = new ArrayList<>();
 
     public Location() {
         super();
+    }
+
+    public Location(LocationDTO locationDTO) {
+        this.address = locationDTO.getAddress();
+        this.name = locationDTO.getName();
+        this.type = LocationType.valueOf(locationDTO.getType());
     }
 
     public Integer getId() {
@@ -77,5 +84,17 @@ public class Location {
 
     public void setSpecialists(List<User> specialists) {
         this.specialists = specialists;
+    }
+
+    @Override
+    public String toString() {
+        return "Location{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", type=" + type +
+                ", administrator=" + administrator +
+                ", specialists=" + specialists +
+                '}';
     }
 }

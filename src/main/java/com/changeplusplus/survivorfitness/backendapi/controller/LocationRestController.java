@@ -3,11 +3,13 @@ package com.changeplusplus.survivorfitness.backendapi.controller;
 import com.changeplusplus.survivorfitness.backendapi.dto.LocationListResponse;
 import com.changeplusplus.survivorfitness.backendapi.dto.LocationResponse;
 import com.changeplusplus.survivorfitness.backendapi.dto.LocationDTO;
+import com.changeplusplus.survivorfitness.backendapi.entity.Location;
 import com.changeplusplus.survivorfitness.backendapi.service.LocationManagementService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +23,7 @@ public class LocationRestController {
     @Autowired
     private LocationManagementService locationManagementService;
 
-    @GetMapping("/")
+    @GetMapping("")
     @ApiOperation(value = "Finds general info about all locations",
             notes="The endpoint is available to users with the role SUPER_ADMIN.",
             response = LocationListResponse.class)
@@ -29,6 +31,17 @@ public class LocationRestController {
     public LocationListResponse getGeneralInfoAboutAllLocations() {
         List<LocationDTO> locationDTOs = locationManagementService.getGeneralInfoAboutAllLocations();
         return new LocationListResponse(locationDTOs);
+    }
+
+    @PostMapping("")
+    @ApiOperation(value = "Creates a new Location and assigns an administrator to it.",
+            notes="Creates a new Location entity and adds the LOCATION_ADMINISTRATOR role to the user specified as administrator.\n" +
+                    "The endpoint is available to users with the role SUPER_ADMIN.",
+            response = LocationListResponse.class)
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
+    public LocationResponse createNewLocation(@RequestBody LocationDTO locationDTO) {
+        LocationDTO savedLocationDTO = locationManagementService.saveNewLocation(locationDTO);
+        return new LocationResponse(savedLocationDTO);
     }
 
 //    @PostMapping("/")

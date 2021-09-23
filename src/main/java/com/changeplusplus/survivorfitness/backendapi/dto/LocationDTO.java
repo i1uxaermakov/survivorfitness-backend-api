@@ -54,4 +54,15 @@ public class LocationDTO {
     public void setAdministrator(UserDTO administrator) {
         this.administrator = administrator;
     }
+
+    @Override
+    public String toString() {
+        return "LocationDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", type='" + type + '\'' +
+                ", administrator=" + administrator +
+                '}';
+    }
 }

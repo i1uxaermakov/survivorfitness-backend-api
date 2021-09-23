@@ -19,6 +19,9 @@ public class UserManagementService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UserRoleRepository userRoleRepository;
+
     public List<UserDTO> getGeneralInfoAboutAllSpecialistsOfSpecificType(UserRoleType type) {
         List<User> dietitiansList = userRepository.findUsersByRolesName(type);
         return getListOfUserDTOsWithUserInfoAndLocationInfo(dietitiansList);
@@ -91,5 +94,13 @@ public class UserManagementService {
         User userEntity = userRepository.findUserById(userId);
         UserDTO userDTO = getUserDtoBasedOnUserEntity(userEntity);
         return userDTO;
+    }
+
+    public void addRoleToUser(User user, UserRoleType userRoleType) {
+        if(!user.hasRole(userRoleType)) {
+            UserRole role = userRoleRepository.findUserRoleByName(userRoleType);
+            user.getRoles().add(role);
+            userRepository.save(user);
+        }
     }
 }

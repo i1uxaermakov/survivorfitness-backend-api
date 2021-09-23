@@ -120,6 +120,14 @@ public class User {
         this.locationsAssignedTo = locationsAssignedTo;
     }
 
+    public boolean hasRole(UserRoleType roleType) {
+        for(UserRole role: roles) {
+            if(role.getName().equals(roleType)) {
+                return true;
+            }
+        }
+        return false;
+    }
     // GETTERS & SETTERS END
 
 

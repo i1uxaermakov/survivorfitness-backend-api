@@ -4,19 +4,47 @@ import com.changeplusplus.survivorfitness.backendapi.dto.LocationDTO;
 import com.changeplusplus.survivorfitness.backendapi.dto.UserDTO;
 import com.changeplusplus.survivorfitness.backendapi.entity.Location;
 import com.changeplusplus.survivorfitness.backendapi.entity.User;
+import com.changeplusplus.survivorfitness.backendapi.entity.UserRoleType;
 import com.changeplusplus.survivorfitness.backendapi.entity.projection.LocationOnlyIdNameTypeProjection;
 import com.changeplusplus.survivorfitness.backendapi.repository.LocationRepository;
+import com.changeplusplus.survivorfitness.backendapi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class LocationManagementService {
 
     @Autowired
-    public LocationRepository locationRepository;
+    private UserManagementService userManagementService;
+
+    @Autowired
+    private LocationRepository locationRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    public LocationDTO saveNewLocation(LocationDTO locationDTO) {
+        User administrator = userRepository.findUserById(locationDTO.getAdministrator().getId());
+        if(Objects.isNull(administrator)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Administrator with specified ID not found.");
+        }
+
+        Location locationEntity = new Location(locationDTO);
+        locationEntity.setAdministrator(administrator);
+        locationEntity = locationRepository.save(locationEntity);
+
+        // also need to add the new role to the administrator (LOCATION_ADMINISTRATOR)
+        userManagementService.addRoleToUser(administrator, UserRoleType.LOCATION_ADMINISTRATOR);
+
+        return getLocationDtoFromLocationEntity(locationEntity);
+    }
+
 
     public List<LocationDTO> getGeneralInfoAboutAllLocations() {
         List<LocationOnlyIdNameTypeProjection> locationsRawInfo = locationRepository.findAllProjectedBy();
@@ -40,7 +68,11 @@ public class LocationManagementService {
         if(locationEntity == null) {
             return null;
         }
+        return getLocationDtoFromLocationEntity(locationEntity);
+    }
 
+
+    private LocationDTO getLocationDtoFromLocationEntity(Location locationEntity) {
         LocationDTO locationDTO = new LocationDTO();
         locationDTO.setId(locationEntity.getId());
         locationDTO.setName(locationEntity.getName());
@@ -54,7 +86,6 @@ public class LocationManagementService {
         userDTO.setLastName(userEntity.getLastName());
 
         locationDTO.setAdministrator(userDTO);
-
         return locationDTO;
     }
 
