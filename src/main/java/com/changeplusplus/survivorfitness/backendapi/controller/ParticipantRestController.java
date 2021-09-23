@@ -1,18 +1,18 @@
 package com.changeplusplus.survivorfitness.backendapi.controller;
 
-import com.changeplusplus.survivorfitness.backendapi.dto.ParticipantListResponse;
-import com.changeplusplus.survivorfitness.backendapi.dto.ParticipantDTO;
+import com.changeplusplus.survivorfitness.backendapi.dto.*;
+import com.changeplusplus.survivorfitness.backendapi.entity.Session;
 import com.changeplusplus.survivorfitness.backendapi.service.ParticipantManagementService;
+import com.changeplusplus.survivorfitness.backendapi.service.SessionManagementService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import com.changeplusplus.survivorfitness.backendapi.dto.ParticipantResponse;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,6 +25,9 @@ public class ParticipantRestController {
 
     @Autowired
     private ParticipantManagementService participantManagementService;
+
+    @Autowired
+    private SessionManagementService sessionManagementService;
 
     @GetMapping("")
     @ApiOperation(value = "Finds general info about participants",
@@ -76,6 +79,25 @@ public class ParticipantRestController {
             @PathVariable("participantId") Integer participantId) {
         ParticipantDTO participantDTO = participantManagementService.getParticipantInfoById(participantId);
         return new ParticipantResponse(participantDTO);
+    }
+
+
+    @GetMapping("/{participantId}/trainer-notes")
+    public SessionListResponse getTrainerSessionNotesOfParticipant(@PathVariable("participantId") Integer participantId) {
+        List<SessionDTO> trainerSessions = sessionManagementService.getTrainerSessionsOfParticipant(participantId);
+        return new SessionListResponse(trainerSessions, null);
+    }
+
+    @GetMapping("/{participantId}/dietitian-notes")
+    public SessionListResponse getDietitianSessionNotesOfParticipant(@PathVariable("participantId") Integer participantId) {
+        List<SessionDTO> dietitianSessions = sessionManagementService.getDietitianSessionsOfParticipant(participantId);
+        return new SessionListResponse(null, dietitianSessions);
+    }
+
+    @GetMapping("/{participantId}/all-notes")
+    public SessionListResponse getAllSessionNotesOfParticipant(@PathVariable("participantId") Integer participantId) {
+        Pair<List<SessionDTO>,List<SessionDTO>> listPair = sessionManagementService.getAllSessionNotesOfParticipant(participantId);
+        return new SessionListResponse(listPair.getFirst(), listPair.getSecond());
     }
 
 //    @PutMapping("/{participantId}")

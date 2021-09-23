@@ -1,5 +1,7 @@
 package com.changeplusplus.survivorfitness.backendapi.entity;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +16,13 @@ public class Program {
     @Enumerated(EnumType.STRING)
     private ProgramProgressStatus programProgressStatus;
 
-    @OneToMany(fetch = FetchType.LAZY)//todo mapping
-    private List<Session> sessions = new ArrayList<>();
+    @OneToMany(mappedBy="program", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)//todo mapping
+    @Where(clause = "whoseNotes='TRAINER'")
+    private List<Session> trainerSessions = new ArrayList<>();
+
+    @OneToMany(mappedBy="program", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)//todo mapping
+    @Where(clause = "whoseNotes='DIETITIAN'")
+    private List<Session> dietitianSessions = new ArrayList<>();
 
     @OneToOne(mappedBy = "treatmentProgram", fetch = FetchType.LAZY)
     private Participant participant;
@@ -55,12 +62,20 @@ public class Program {
         this.programProgressStatus = programProgressStatus;
     }
 
-    public List<Session> getSessions() {
-        return sessions;
+    public List<Session> getTrainerSessions() {
+        return trainerSessions;
     }
 
-    public void setSessions(List<Session> sessions) {
-        this.sessions = sessions;
+    public void setTrainerSessions(List<Session> trainerSessions) {
+        this.trainerSessions = trainerSessions;
+    }
+
+    public List<Session> getDietitianSessions() {
+        return dietitianSessions;
+    }
+
+    public void setDietitianSessions(List<Session> dietitianSessions) {
+        this.dietitianSessions = dietitianSessions;
     }
 
     public Participant getParticipant() {

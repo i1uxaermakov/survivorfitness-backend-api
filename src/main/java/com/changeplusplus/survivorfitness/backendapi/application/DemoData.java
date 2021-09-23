@@ -8,10 +8,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class DemoData {
@@ -298,8 +295,57 @@ public class DemoData {
         treatmentProgram.setDietitianOffice(dietitianOffice);
         treatmentProgram.setTrainerGym(gym);
         treatmentProgram.setParticipant(participant);
+        treatmentProgram.setDietitianSessions(getDummySessionsForParticipantBySpecialist(participant, SpecialistType.DIETITIAN, treatmentProgram));
+        treatmentProgram.setTrainerSessions(getDummySessionsForParticipantBySpecialist(participant, SpecialistType.TRAINER, treatmentProgram));
 
         participant.setTreatmentProgram(treatmentProgram);
         return participant;
+    }
+
+
+    private List<Session> getDummySessionsForParticipantBySpecialist(Participant participant, SpecialistType type, Program program) {
+        Calendar c = Calendar.getInstance();
+
+        int numberOfSessions;
+        if(type == SpecialistType.DIETITIAN) {
+            numberOfSessions = 3;
+        }
+        else {//trainer
+            numberOfSessions = 24;
+        }
+
+        List<Session> sessions = new ArrayList<>();
+        for(int i=0; i<numberOfSessions; ++i) {
+            if(i< numberOfSessions/2) {
+                Session session = getDummySession(participant, type, (i+1),
+                        c.getTime(), program,
+                        type + " notes for participant " + participant.getFirstName() + " on session # " + (i+1),
+                        "Hi from an admin on session # " + (i+1) + " for participant " + participant.getFirstName());
+                sessions.add(session);
+            }
+            else {
+                Session session = getDummySession(participant, type, i+1, null, program, "", "");
+                sessions.add(session);
+            }
+            c.add(Calendar.DATE, 1);
+        }
+
+        return sessions;
+    }
+
+    private Session getDummySession(Participant participant, SpecialistType specialistType,
+                                    int indexNumber, Date logDate, Program program,
+                                    String specNotes, String adminNotes) {
+        Session session = new Session();
+        session.setParticipant(participant);
+        session.setWhoseNotes(specialistType);
+        session.setSessionIndexNumber(indexNumber);
+        session.setInitialLogDate(logDate);
+        session.setLastUpdatedDate(logDate);
+        session.setProgram(program);
+        session.setSpecialistNotes(specNotes);
+        session.setAdminNotes(adminNotes);
+
+        return session;
     }
 }

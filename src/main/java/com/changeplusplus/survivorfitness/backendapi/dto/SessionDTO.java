@@ -1,16 +1,16 @@
-package com.changeplusplus.survivorfitness.backendapi.entity;
+package com.changeplusplus.survivorfitness.backendapi.dto;
 
-import javax.persistence.*;
+import com.changeplusplus.survivorfitness.backendapi.entity.Session;
+
 import java.util.Date;
 
-@Entity
-public class Session {
+public class SessionDTO {
+    /*
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     private Integer sessionIndexNumber;
-    private Date initialLogDate;
-    private Date lastUpdatedDate;
+    private Date logDate;
 
     @Enumerated(EnumType.STRING)
     private SpecialistType whoseNotes;
@@ -27,8 +27,30 @@ public class Session {
 
     private String specialistNotes;
     private String adminNotes;
+     */
 
-    public Session() {
+    private Integer id;
+    private Date initialLogDate;
+    private Date lastUpdatedDate;
+    //    private SessionMeasurements sessionMeasurements;
+    private String specialistNotes;
+    private String adminNotes;
+    private Integer sessionIndexNumber;
+    private String whoseNotes;
+    private Integer participantId;
+
+    public SessionDTO(Session sessionEntity) {
+        this.id = sessionEntity.getId();
+        this.sessionIndexNumber = sessionEntity.getSessionIndexNumber();
+        this.specialistNotes = sessionEntity.getSpecialistNotes();
+        this.adminNotes = sessionEntity.getAdminNotes();
+        this.initialLogDate = sessionEntity.getInitialLogDate();
+        this.whoseNotes = sessionEntity.getWhoseNotes().toString();
+        this.participantId = sessionEntity.getParticipant().getId();
+        this.lastUpdatedDate = sessionEntity.getLastUpdatedDate();
+    }
+
+    public SessionDTO() {
     }
 
     public Integer getId() {
@@ -45,22 +67,6 @@ public class Session {
 
     public void setInitialLogDate(Date initialLogDate) {
         this.initialLogDate = initialLogDate;
-    }
-
-    public Program getProgram() {
-        return program;
-    }
-
-    public void setProgram(Program program) {
-        this.program = program;
-    }
-
-    public SessionMeasurements getSessionMeasurements() {
-        return sessionMeasurements;
-    }
-
-    public void setSessionMeasurements(SessionMeasurements sessionMeasurements) {
-        this.sessionMeasurements = sessionMeasurements;
     }
 
     public String getSpecialistNotes() {
@@ -87,20 +93,20 @@ public class Session {
         this.sessionIndexNumber = sessionIndexNumber;
     }
 
-    public Participant getParticipant() {
-        return participant;
-    }
-
-    public void setParticipant(Participant participant) {
-        this.participant = participant;
-    }
-
-    public SpecialistType getWhoseNotes() {
+    public String getWhoseNotes() {
         return whoseNotes;
     }
 
-    public void setWhoseNotes(SpecialistType whoseNotes) {
+    public void setWhoseNotes(String whoseNotes) {
         this.whoseNotes = whoseNotes;
+    }
+
+    public Integer getParticipantId() {
+        return participantId;
+    }
+
+    public void setParticipantId(Integer participantId) {
+        this.participantId = participantId;
     }
 
     public Date getLastUpdatedDate() {
