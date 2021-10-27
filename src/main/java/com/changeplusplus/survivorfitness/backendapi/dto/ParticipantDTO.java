@@ -13,7 +13,7 @@ public class ParticipantDTO {
     private Integer age;
     private String email;
     private String phoneNumber;
-    private Date startDate;
+    private Long startDate;
     private String goals;
     private String typeOfCancer;
     private String formsOfTreatment;
@@ -38,7 +38,7 @@ public class ParticipantDTO {
         this.age = participant.getAge();
         this.email = participant.getEmail();
         this.phoneNumber = participant.getPhoneNumber();
-        this.startDate = participant.getStartDate();
+        this.startDate = participant.getStartDate().getTime();
         this.goals = participant.getGoals();
         this.typeOfCancer = participant.getTypeOfCancer();
         this.formsOfTreatment = participant.getFormsOfTreatment();
@@ -94,11 +94,11 @@ public class ParticipantDTO {
         this.phoneNumber = phoneNumber;
     }
 
-    public Date getStartDate() {
+    public Long getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(Long startDate) {
         this.startDate = startDate;
     }
 

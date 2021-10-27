@@ -30,8 +30,8 @@ public class SessionDTO {
      */
 
     private Integer id;
-    private Date initialLogDate;
-    private Date lastUpdatedDate;
+    private Long initialLogDate;
+    private Long lastUpdatedDate;
     private String specialistNotes;
     private String adminNotes;
     private Integer sessionIndexNumber;
@@ -44,10 +44,10 @@ public class SessionDTO {
         this.sessionIndexNumber = sessionEntity.getSessionIndexNumber();
         this.specialistNotes = sessionEntity.getSpecialistNotes();
         this.adminNotes = sessionEntity.getAdminNotes();
-        this.initialLogDate = sessionEntity.getInitialLogDate();
+        this.initialLogDate = sessionEntity.getInitialLogDate().getTime();
         this.whoseNotes = sessionEntity.getWhoseNotes().toString();
         this.participantId = sessionEntity.getParticipant().getId();
-        this.lastUpdatedDate = sessionEntity.getLastUpdatedDate();
+        this.lastUpdatedDate = sessionEntity.getLastUpdatedDate().getTime();
 
         this.measurements = new ArrayList<>();
         for(Measurement measurementEntity: sessionEntity.getMeasurements()) {
@@ -66,12 +66,16 @@ public class SessionDTO {
         this.id = id;
     }
 
-    public Date getInitialLogDate() {
+    public Long getInitialLogDate() {
         return initialLogDate;
     }
 
-    public void setInitialLogDate(Date initialLogDate) {
+    public void setInitialLogDate(Long initialLogDate) {
         this.initialLogDate = initialLogDate;
+    }
+
+    public void setLastUpdatedDate(Long lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
     }
 
     public String getSpecialistNotes() {
@@ -114,12 +118,8 @@ public class SessionDTO {
         this.participantId = participantId;
     }
 
-    public Date getLastUpdatedDate() {
+    public Long getLastUpdatedDate() {
         return lastUpdatedDate;
-    }
-
-    public void setLastUpdatedDate(Date lastUpdatedDate) {
-        this.lastUpdatedDate = lastUpdatedDate;
     }
 
     public List<MeasurementDTO> getMeasurements() {
