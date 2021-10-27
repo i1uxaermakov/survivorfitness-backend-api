@@ -1,8 +1,11 @@
 package com.changeplusplus.survivorfitness.backendapi.dto;
 
+import com.changeplusplus.survivorfitness.backendapi.entity.Measurement;
 import com.changeplusplus.survivorfitness.backendapi.entity.Session;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class SessionDTO {
     /*
@@ -22,9 +25,6 @@ public class SessionDTO {
     @ManyToOne(fetch = FetchType.LAZY)
     private Participant participant;
 
-    @OneToOne(optional = true)
-    private SessionMeasurements sessionMeasurements;
-
     private String specialistNotes;
     private String adminNotes;
      */
@@ -32,12 +32,12 @@ public class SessionDTO {
     private Integer id;
     private Date initialLogDate;
     private Date lastUpdatedDate;
-    //    private SessionMeasurements sessionMeasurements;
     private String specialistNotes;
     private String adminNotes;
     private Integer sessionIndexNumber;
     private String whoseNotes;
     private Integer participantId;
+    private List<MeasurementDTO> measurements;
 
     public SessionDTO(Session sessionEntity) {
         this.id = sessionEntity.getId();
@@ -48,6 +48,11 @@ public class SessionDTO {
         this.whoseNotes = sessionEntity.getWhoseNotes().toString();
         this.participantId = sessionEntity.getParticipant().getId();
         this.lastUpdatedDate = sessionEntity.getLastUpdatedDate();
+
+        this.measurements = new ArrayList<>();
+        for(Measurement measurementEntity: sessionEntity.getMeasurements()) {
+            this.measurements.add(new MeasurementDTO(measurementEntity));
+        }
     }
 
     public SessionDTO() {
@@ -115,5 +120,13 @@ public class SessionDTO {
 
     public void setLastUpdatedDate(Date lastUpdatedDate) {
         this.lastUpdatedDate = lastUpdatedDate;
+    }
+
+    public List<MeasurementDTO> getMeasurements() {
+        return measurements;
+    }
+
+    public void setMeasurements(List<MeasurementDTO> measurements) {
+        this.measurements = measurements;
     }
 }

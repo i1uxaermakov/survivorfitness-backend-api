@@ -2,11 +2,13 @@ package com.changeplusplus.survivorfitness.backendapi.entity;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Session {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "session_id")
     private Integer id;
     private Integer sessionIndexNumber;
     private Date initialLogDate;
@@ -22,8 +24,8 @@ public class Session {
     @ManyToOne(fetch = FetchType.LAZY)
     private Participant participant;
 
-    @OneToOne(optional = true)
-    private SessionMeasurements sessionMeasurements;
+    @OneToMany(mappedBy="session", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    private List<Measurement> measurements;
 
     private String specialistNotes;
     private String adminNotes;
@@ -53,14 +55,6 @@ public class Session {
 
     public void setProgram(Program program) {
         this.program = program;
-    }
-
-    public SessionMeasurements getSessionMeasurements() {
-        return sessionMeasurements;
-    }
-
-    public void setSessionMeasurements(SessionMeasurements sessionMeasurements) {
-        this.sessionMeasurements = sessionMeasurements;
     }
 
     public String getSpecialistNotes() {
@@ -109,5 +103,13 @@ public class Session {
 
     public void setLastUpdatedDate(Date lastUpdatedDate) {
         this.lastUpdatedDate = lastUpdatedDate;
+    }
+
+    public List<Measurement> getMeasurements() {
+        return measurements;
+    }
+
+    public void setMeasurements(List<Measurement> measurements) {
+        this.measurements = measurements;
     }
 }

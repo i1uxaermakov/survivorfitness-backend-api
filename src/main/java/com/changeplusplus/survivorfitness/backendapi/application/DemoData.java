@@ -316,7 +316,7 @@ public class DemoData {
 
         List<Session> sessions = new ArrayList<>();
         for(int i=0; i<numberOfSessions; ++i) {
-            if(i< numberOfSessions/2) {
+            if(i < numberOfSessions/2) {
                 Session session = getDummySession(participant, type, (i+1),
                         c.getTime(), program,
                         type + " notes for participant " + participant.getFirstName() + " on session # " + (i+1),
@@ -330,7 +330,33 @@ public class DemoData {
             c.add(Calendar.DATE, 1);
         }
 
+        if(type == SpecialistType.TRAINER) {
+            Session session1 = sessions.get(0);
+            Session session12 = sessions.get(11);
+            Session session24 = sessions.get(23);
+
+            session1.setMeasurements(getDummyMeasurements(session1, participant));
+            session12.setMeasurements(getDummyMeasurements(session12, participant));
+            session24.setMeasurements(getDummyMeasurements(session24, participant));
+        }
+
         return sessions;
+    }
+
+
+    private List<Measurement> getDummyMeasurements(Session session, Participant participant) {
+        List<Measurement> list = new ArrayList<>();
+
+        Measurement weight = new Measurement(session, "weight", "180lbs " + participant.getFirstName() + " Session " + session.getSessionIndexNumber());
+        list.add(weight);
+
+        Measurement height = new Measurement(session, "height", "6 feet " + participant.getFirstName()  + " Session " + session.getSessionIndexNumber());
+        list.add(height);
+
+        Measurement canRunInMinutes = new Measurement(session, "Can Run In Minutes", "10 minutes " + participant.getFirstName() + " Session " + session.getSessionIndexNumber());
+        list.add(canRunInMinutes);
+
+        return list;
     }
 
     private Session getDummySession(Participant participant, SpecialistType specialistType,
