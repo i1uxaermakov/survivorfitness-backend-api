@@ -272,21 +272,6 @@ public class DemoData {
                 "forms of treatment",
                 "surgeries",
                 "loremipsu");
-//        participant.setDietitianOffice(dietitianOffice);
-//        participant.setDietitian(dietitian);
-//        participant.setTrainerGym(gym);
-//        participant.setTrainer(trainer);
-
-
-/*
-    private ProgramProgressStatus programProgressStatus;
-    private List<Session> sessions = new ArrayList<>();
-    private Participant participant;
-    private User trainer;
-    private Location trainerGym;
-    private User dietitian;
-    private Location dietitianOffice;
- */
 
         Program treatmentProgram = new Program();
         treatmentProgram.setProgramProgressStatus(ProgramProgressStatus.IN_PROGRESS);
@@ -324,7 +309,10 @@ public class DemoData {
                 sessions.add(session);
             }
             else {
-                Session session = getDummySession(participant, type, i+1, null, program, "", "");
+                Session session = getDummySession(participant, type, i+1, c.getTime(),
+                        program,
+                        type + " notes for participant " + participant.getFirstName() + " on session # " + (i+1),
+                        "Hi from an admin on session # " + (i+1) + " for participant " + participant.getFirstName());
                 sessions.add(session);
             }
             c.add(Calendar.DATE, 1);

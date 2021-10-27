@@ -16,6 +16,9 @@ public class MeasurementDTO {
         this.value = measurementEntity.getValue();
     }
 
+    public MeasurementDTO() {
+    }
+
     public Integer getId() {
         return id;
     }
