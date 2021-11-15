@@ -22,9 +22,13 @@ public class DemoData {
     @Autowired
     private UserRepository userRepository;
 
+    private Random random = new Random();
+
     @EventListener
     @Transactional
     public void appReady(ApplicationReadyEvent event) {
+        random.setSeed(123);
+
         //Creating Roles within the system
         UserRole dietitianRole =  new UserRole(UserRoleType.DIETITIAN);
         UserRole trainerRole =  new UserRole(UserRoleType.TRAINER);
@@ -300,8 +304,10 @@ public class DemoData {
         }
 
         List<Session> sessions = new ArrayList<>();
+
+        int numberOfLoggedSessions = random.nextInt(numberOfSessions);
         for(int i=0; i<numberOfSessions; ++i) {
-            if(i < numberOfSessions/2) {
+            if(i < numberOfLoggedSessions) {
                 Session session = getDummySession(participant, type, (i+1),
                         c.getTime(), program,
                         type + " notes for participant " + participant.getFirstName() + " on session # " + (i+1),
@@ -309,7 +315,7 @@ public class DemoData {
                 sessions.add(session);
             }
             else {
-                Session session = getDummySession(participant, type, i+1, c.getTime(),
+                Session session = getDummySession(participant, type, i+1, null,
                         program,
                         type + " notes for participant " + participant.getFirstName() + " on session # " + (i+1),
                         "Hi from an admin on session # " + (i+1) + " for participant " + participant.getFirstName());
@@ -323,26 +329,54 @@ public class DemoData {
             Session session12 = sessions.get(11);
             Session session24 = sessions.get(23);
 
-            session1.setMeasurements(getDummyMeasurements(session1, participant));
-            session12.setMeasurements(getDummyMeasurements(session12, participant));
-            session24.setMeasurements(getDummyMeasurements(session24, participant));
+            session1.setMeasurements(getDummyMeasurements(session1, participant, Objects.nonNull(session1.getInitialLogDate())));
+            session12.setMeasurements(getDummyMeasurements(session12, participant, Objects.nonNull(session12.getInitialLogDate())));
+            session24.setMeasurements(getDummyMeasurements(session24, participant, Objects.nonNull(session24.getInitialLogDate())));
         }
 
         return sessions;
     }
 
 
-    private List<Measurement> getDummyMeasurements(Session session, Participant participant) {
+    private List<Measurement> getDummyMeasurements(Session session, Participant participant, Boolean filledOut) {
         List<Measurement> list = new ArrayList<>();
 
-        Measurement weight = new Measurement(session, "weight", "180lbs " + participant.getFirstName() + " Session " + session.getSessionIndexNumber());
-        list.add(weight);
+        //general data
+        Measurement weight = new Measurement(session, "Weight", (filledOut) ? String.valueOf(random.nextInt(180)) : "", "General Data", "lbs");
+        Measurement bmi = new Measurement(session, "BMI", (filledOut) ? String.valueOf(random.nextInt(40)) : "", "General Data", "kg/m^2");
+        Measurement bodyFatPercentage = new Measurement(session, "Body Fat Percentage", (filledOut) ? String.valueOf(random.nextInt(100)) : "", "General Data", "%");
+        Measurement leanMass = new Measurement(session, "Lean Mass", (filledOut) ? String.valueOf(random.nextInt(Integer.parseInt(weight.getValue()))) : "", "General Data", "lbs");
+        Measurement bloodPressure = new Measurement(session, "Blood Pressure", (filledOut) ? String.valueOf(random.nextInt(180)) : "", "General Data", "mm Hg");
+        Measurement rangeOfMotion = new Measurement(session, "Weight", (filledOut) ? String.valueOf(random.nextInt(60)) : "", "General Data", "degree");
+        list.addAll(List.of(weight, bmi, bodyFatPercentage, leanMass, bloodPressure, rangeOfMotion));
 
-        Measurement height = new Measurement(session, "height", "6 feet " + participant.getFirstName()  + " Session " + session.getSessionIndexNumber());
-        list.add(height);
+        //skin Fold Tests
+        Measurement abdominal = new Measurement(session, "Abdominal Skin Fold", (filledOut) ? String.valueOf(random.nextInt(100)) : "", "Skin Fold Tests", "unit");
+        Measurement chest = new Measurement(session, "Chest Skin Fold", (filledOut) ? String.valueOf(random.nextInt(100)) : "", "Skin Fold Tests", "unit");
+        Measurement midaxillary = new Measurement(session, "Midaxillary", (filledOut) ? String.valueOf(random.nextInt(100)) : "", "Skin Fold Tests", "unit");
+        Measurement subscapular = new Measurement(session, "Subscapular", (filledOut) ? String.valueOf(random.nextInt(100)) : "", "Skin Fold Tests", "unit");
+        Measurement supraillac = new Measurement(session, "Supraillac", (filledOut) ? String.valueOf(random.nextInt(100)) : "", "Skin Fold Tests", "unit");
+        Measurement thigh = new Measurement(session, "Thigh", (filledOut) ? String.valueOf(random.nextInt(100)) : "", "Skin Fold Tests", "unit");
+        Measurement tricep = new Measurement(session, "Tricep", (filledOut) ? String.valueOf(random.nextInt(100)) : "", "Skin Fold Tests", "unit");
+        list.addAll(List.of(abdominal, chest, midaxillary, subscapular, supraillac, thigh, tricep));
 
-        Measurement canRunInMinutes = new Measurement(session, "Can Run In Minutes", "10 minutes " + participant.getFirstName() + " Session " + session.getSessionIndexNumber());
-        list.add(canRunInMinutes);
+        //girth measurements
+        Measurement abdominalGirth = new Measurement(session, "Abdominal Girth", (filledOut) ? String.valueOf(random.nextInt(100)) : "", "Girth Measurements", "unit");
+        Measurement bicepGirth = new Measurement(session, "Bicep Girth", (filledOut) ? String.valueOf(random.nextInt(100)) : "", "Girth Measurements", "unit");
+        Measurement calfGirth = new Measurement(session, "Calf Girth", (filledOut) ? String.valueOf(random.nextInt(100)) : "", "Girth Measurements", "unit");
+        Measurement chestGirth = new Measurement(session, "Chest Girth", (filledOut) ? String.valueOf(random.nextInt(100)) : "", "Girth Measurements", "unit");
+        Measurement hipGirth = new Measurement(session, "Hip Girth", (filledOut) ? String.valueOf(random.nextInt(100)) : "", "Girth Measurements", "unit");
+        Measurement thighGirth = new Measurement(session, "Thigh Girth", (filledOut) ? String.valueOf(random.nextInt(100)) : "", "Girth Measurements", "unit");
+        Measurement waistGirth = new Measurement(session, "Waist Girth", (filledOut) ? String.valueOf(random.nextInt(100)) : "", "Girth Measurements", "unit");
+        Measurement totalInchesLost = new Measurement(session, "Total Inches Lost", (filledOut) ? String.valueOf(random.nextInt(100)) : "", "Girth Measurements", "unit");
+        list.addAll(List.of(abdominalGirth, bicepGirth, calfGirth, chestGirth, hipGirth, thighGirth, waistGirth, totalInchesLost));
+
+        // treadmill tests
+        Measurement distance = new Measurement(session, "Distance", (filledOut) ? String.valueOf(random.nextInt(100)) : "", "Treadmill Tests", "unit");
+        Measurement speed = new Measurement(session, "Speed", (filledOut) ? String.valueOf(random.nextInt(100)) : "", "Treadmill Tests", "unit");
+        Measurement hr = new Measurement(session, "HR", (filledOut) ? String.valueOf(random.nextInt(100)) : "", "Treadmill Tests", "unit");
+        Measurement br = new Measurement(session, "BR", (filledOut) ? String.valueOf(random.nextInt(100)) : "", "Treadmill Tests", "unit");
+        list.addAll(List.of(distance, speed, hr, br));
 
         return list;
     }

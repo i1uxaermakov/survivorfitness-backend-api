@@ -15,13 +15,16 @@ public class Measurement {
     private Session session;
 
     private String name;
-
     private String value;
+    private String category;
+    private String unit;
 
-    public Measurement(Session session, String name, String value) {
+    public Measurement(Session session, String name, String value, String category, String unit) {
         this.session = session;
         this.name = name;
         this.value = value;
+        this.category = category;
+        this.unit = unit;
     }
 
     public Measurement() {
@@ -58,5 +61,21 @@ public class Measurement {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 }

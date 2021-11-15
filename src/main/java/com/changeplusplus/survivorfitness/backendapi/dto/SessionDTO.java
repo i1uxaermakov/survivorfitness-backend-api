@@ -3,9 +3,7 @@ package com.changeplusplus.survivorfitness.backendapi.dto;
 import com.changeplusplus.survivorfitness.backendapi.entity.Measurement;
 import com.changeplusplus.survivorfitness.backendapi.entity.Session;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class SessionDTO {
     /*
@@ -44,10 +42,15 @@ public class SessionDTO {
         this.sessionIndexNumber = sessionEntity.getSessionIndexNumber();
         this.specialistNotes = sessionEntity.getSpecialistNotes();
         this.adminNotes = sessionEntity.getAdminNotes();
-        this.initialLogDate = sessionEntity.getInitialLogDate().getTime();
+
+        Date initialLogDate = sessionEntity.getInitialLogDate();
+        this.initialLogDate = (Objects.nonNull(initialLogDate) ? initialLogDate.getTime() : null);
+
         this.whoseNotes = sessionEntity.getWhoseNotes().toString();
         this.participantId = sessionEntity.getParticipant().getId();
-        this.lastUpdatedDate = sessionEntity.getLastUpdatedDate().getTime();
+
+        Date lastUpdatedDate = sessionEntity.getLastUpdatedDate();
+        this.lastUpdatedDate = (Objects.nonNull(lastUpdatedDate) ? lastUpdatedDate.getTime() : null);
 
         this.measurements = new ArrayList<>();
         for(Measurement measurementEntity: sessionEntity.getMeasurements()) {

@@ -5,7 +5,7 @@ bold=$(tput bold)
 boldBlue=${bold}${blue}
 reset=$(tput sgr0)
 
-imageTag="v6-getNotes-addLocation"
+imageTag="v7-measurements"
 
 echo "\n\n${boldBlue}STARTING THE SCRIPT"
 echo "${boldBlue}Building a jar of the project"
