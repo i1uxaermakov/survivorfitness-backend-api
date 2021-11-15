@@ -347,7 +347,7 @@ public class DemoData {
         Measurement bodyFatPercentage = new Measurement(session, "Body Fat Percentage", (filledOut) ? String.valueOf(random.nextInt(100)) : "", "General Data", "%");
         Measurement leanMass = new Measurement(session, "Lean Mass", (filledOut) ? String.valueOf(random.nextInt(Integer.parseInt(weight.getValue()))) : "", "General Data", "lbs");
         Measurement bloodPressure = new Measurement(session, "Blood Pressure", (filledOut) ? String.valueOf(random.nextInt(180)) : "", "General Data", "mm Hg");
-        Measurement rangeOfMotion = new Measurement(session, "Weight", (filledOut) ? String.valueOf(random.nextInt(60)) : "", "General Data", "degree");
+        Measurement rangeOfMotion = new Measurement(session, "Range of Motion", (filledOut) ? String.valueOf(random.nextInt(60)) : "", "General Data", "degree");
         list.addAll(List.of(weight, bmi, bodyFatPercentage, leanMass, bloodPressure, rangeOfMotion));
 
         //skin Fold Tests
