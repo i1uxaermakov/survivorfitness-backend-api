@@ -58,7 +58,7 @@ public class SessionManagementService {
         sessionEntityInDb.setAdminNotes(sessionDtoToUpdate.getAdminNotes());
         sessionEntityInDb.setSpecialistNotes(sessionDtoToUpdate.getSpecialistNotes());
         if(Objects.isNull(sessionEntityInDb.getInitialLogDate())) {
-            sessionEntityInDb.setInitialLogDate(new Date());
+            sessionEntityInDb.setInitialLogDate(new Date(sessionDtoToUpdate.getInitialLogDate()));
         }
         sessionEntityInDb.setLastUpdatedDate(new Date());
 
