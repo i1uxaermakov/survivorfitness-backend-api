@@ -233,37 +233,43 @@ public class DemoData {
         // dietitian1 should have 3 people assigned to them
         // dietitian2 should have 4 people assigned to them
         // trainer1 should have 1 person assigned to them
-        // trainer2 should have 2 people assigned to them
-        // trainer3 should have 4 people assigned to them
+        // trainer2 should have 2 people assigned to them and 1 brand new one
+        // trainer3 should have 4 people assigned to them and 1 brand new one
         participantList.add(getSampleParticipant("Jela","Cornelius", 21, dietitianOffice1, dietitian1, gym1, trainer1));
         participantList.add(getSampleParticipant("Erica","Rhode", 22, dietitianOffice1, dietitian1, gym1, trainer2));
+        participantList.add(getSampleParticipant("John","Smith", 36, dietitianOffice1, dietitian1, gym1, trainer2, true));
         participantList.add(getSampleParticipant("Ilham","Kody", 23, dietitianOffice1, dietitian1, gym1, trainer3));
         participantList.add(getSampleParticipant("Floor","Nelson", 25, dietitianOffice1, dietitian2, gym1, trainer2));
         participantList.add(getSampleParticipant("Syuzanna","Mustapha", 26, dietitianOffice1, dietitian2, gym1, trainer3));
+        participantList.add(getSampleParticipant("Carol","Hilbert", 37, dietitianOffice1, dietitian2, gym1, trainer3, true));
         participantList.add(getSampleParticipant("Lykourgos","Galena", 27, dietitianOffice1, dietitian2, gym1, trainer3));
         participantList.add(getSampleParticipant("Ffransis","Sancha", 28, dietitianOffice1, dietitian2, gym1, trainer3));
 
         // dietitian3 should have 2 people assigned to them
         // dietitian4 should have 2 people assigned to them
         // dietitian5 should have 3 people assigned to them
-        // trainer4 should have 4 person assigned to them
+        // trainer4 should have 4 person assigned to them and 1 brand new one
         // trainer5 should have 2 people assigned to them
-        // trainer6 should have 1 people assigned to them
+        // trainer6 should have 1 people assigned to them and 1 brand new one
         participantList.add(getSampleParticipant("Hugo","Martin", 29, dietitianOffice2, dietitian3, gym2, trainer4));
         participantList.add(getSampleParticipant("Tiras","Manish", 30, dietitianOffice2, dietitian3, gym2, trainer4));
         participantList.add(getSampleParticipant("Nitika","Aynura", 31, dietitianOffice2, dietitian4, gym2, trainer4));
         participantList.add(getSampleParticipant("Vidya","Triana", 32, dietitianOffice2, dietitian4, gym2, trainer4));
+        participantList.add(getSampleParticipant("Kyle","Longbottom", 38, dietitianOffice2, dietitian3, gym2, trainer4, true));
         participantList.add(getSampleParticipant("Punita","Septus", 33, dietitianOffice2, dietitian5, gym2, trainer5));
         participantList.add(getSampleParticipant("Celestino","Maureen", 34, dietitianOffice2, dietitian5, gym2, trainer5));
         participantList.add(getSampleParticipant("Joel","Papak", 35, dietitianOffice2, dietitian5, gym2, trainer6));
+        participantList.add(getSampleParticipant("Christiano","Messi", 39, dietitianOffice2, dietitian5, gym2, trainer6, true));
 
         participantRepository.saveAll(participantList);
         // --------------------- END PARTICIPANT CREATION ---------------------
     }
 
-
-
     private Participant getSampleParticipant(String firstName, String lastName, Integer age, Location dietitianOffice, User dietitian, Location gym, User trainer) {
+        return getSampleParticipant(firstName, lastName, age, dietitianOffice, dietitian, gym, trainer, false);
+    }
+
+    private Participant getSampleParticipant(String firstName, String lastName, Integer age, Location dietitianOffice, User dietitian, Location gym, User trainer, boolean isNew) {
         Participant participant = new Participant(
                 firstName,
                 lastName,
@@ -284,15 +290,15 @@ public class DemoData {
         treatmentProgram.setDietitianOffice(dietitianOffice);
         treatmentProgram.setTrainerGym(gym);
         treatmentProgram.setParticipant(participant);
-        treatmentProgram.setDietitianSessions(getDummySessionsForParticipantBySpecialist(participant, SpecialistType.DIETITIAN, treatmentProgram));
-        treatmentProgram.setTrainerSessions(getDummySessionsForParticipantBySpecialist(participant, SpecialistType.TRAINER, treatmentProgram));
+        treatmentProgram.setDietitianSessions(getDummySessionsForParticipantBySpecialist(participant, SpecialistType.DIETITIAN, treatmentProgram, isNew));
+        treatmentProgram.setTrainerSessions(getDummySessionsForParticipantBySpecialist(participant, SpecialistType.TRAINER, treatmentProgram, isNew));
 
         participant.setTreatmentProgram(treatmentProgram);
         return participant;
     }
 
 
-    private List<Session> getDummySessionsForParticipantBySpecialist(Participant participant, SpecialistType type, Program program) {
+    private List<Session> getDummySessionsForParticipantBySpecialist(Participant participant, SpecialistType type, Program program, boolean isNew) {
         Calendar c = Calendar.getInstance();
 
         int numberOfSessions;
@@ -306,6 +312,10 @@ public class DemoData {
         List<Session> sessions = new ArrayList<>();
 
         int numberOfLoggedSessions = random.nextInt(numberOfSessions);
+        if(isNew) {
+            numberOfLoggedSessions = 0;
+        }
+
         for(int i=0; i<numberOfSessions; ++i) {
             if(i < numberOfLoggedSessions) {
                 Session session = getDummySession(participant, type, (i+1),
