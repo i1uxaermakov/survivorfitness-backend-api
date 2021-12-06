@@ -61,14 +61,14 @@ public class SessionManagementService {
         sessionEntityInDb.setLastUpdatedDate(new Date());
 
         // Update measurements
-//        for(MeasurementDTO measurementDTO: sessionDtoToUpdate.getMeasurements()) {
-//            Integer m_id = measurementDTO.getId();
-//            Measurement measurementInDb = measurementRepository.findById(m_id).orElse(null);
-//            if(Objects.isNull(measurementInDb)) {
-//                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Measurement with specified ID (" + m_id + ") not found.");
-//            }
-//            measurementInDb.setValue(measurementDTO.getValue());
-//        }
+        for(MeasurementDTO measurementDTO: sessionDtoToUpdate.getMeasurements()) {
+            Integer m_id = measurementDTO.getId();
+            Measurement measurementInDb = measurementRepository.findById(m_id).orElse(null);
+            if(Objects.isNull(measurementInDb)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Measurement with specified ID (" + m_id + ") not found.");
+            }
+            measurementInDb.setValue(measurementDTO.getValue());
+        }
 
         return getSessionDtoFromSessionEntity(sessionRepository.save(sessionEntityInDb));
     }
