@@ -11,6 +11,8 @@ services:
       - MYSQL_DATABASE=survivorfitnessdb
     expose:
       - "3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
 
   backend-api:
     image: ilyaermakov/survivor-fitness-backend:latest
@@ -29,3 +31,6 @@ services:
 
 networks:
   surfvivor-fitness-backend:
+
+volumes:
+  mysql-data:
