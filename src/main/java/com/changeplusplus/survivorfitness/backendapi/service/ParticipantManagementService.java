@@ -1,13 +1,17 @@
 package com.changeplusplus.survivorfitness.backendapi.service;
 
 import com.changeplusplus.survivorfitness.backendapi.dto.LocationDTO;
+import com.changeplusplus.survivorfitness.backendapi.dto.MeasurementDTO;
 import com.changeplusplus.survivorfitness.backendapi.dto.ParticipantDTO;
 import com.changeplusplus.survivorfitness.backendapi.dto.UserDTO;
 import com.changeplusplus.survivorfitness.backendapi.entity.*;
 import com.changeplusplus.survivorfitness.backendapi.repository.ParticipantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +20,12 @@ public class ParticipantManagementService {
 
     @Autowired
     private ParticipantRepository participantRepository;
+
+    @Autowired
+    private SessionManagementService sessionManagementService;
+
+    @Autowired
+    private MeasurementManagementService measurementManagementService;
 
     public ParticipantDTO getParticipantInfoById(Integer participantId) {
         Participant participantEntity = participantRepository.findParticipantById(participantId);
@@ -73,15 +83,51 @@ public class ParticipantManagementService {
         return getListOfParticipantDtosFromListOfParticipantEntities(participants);
     }
 
+    @Transactional
+    public ParticipantDTO createNewParticipant(
+            ParticipantDTO newParticipantData, Integer numberOfTrainerSessions,
+            List<Integer> whenToTakeMeasurements, List<MeasurementDTO> measurementsToTake,
+            Integer numberOfDietitianSessions) {
+
+        // Create Participant entity
+        Participant participantEntity = new Participant()
+                .setFirstName(newParticipantData.getFirstName())
+                .setLastName(newParticipantData.getLastName())
+                .setAge(newParticipantData.getAge())
+                .setEmail(newParticipantData.getEmail())
+                .setPhoneNumber(newParticipantData.getPhoneNumber())
+                .setStartDate(new Date(newParticipantData.getStartDate()))
+                .setGoals(newParticipantData.getGoals())
+                .setTypeOfCancer(newParticipantData.getTypeOfCancer())
+                .setFormsOfTreatment(newParticipantData.getFormsOfTreatment())
+                .setSurgeries(newParticipantData.getSurgeries())
+                .setPhysicianNotes(newParticipantData.getPhysicianNotes());
+
+        // Create Program entity
+        Program program = new Program()
+                .setProgramProgressStatus(ProgramProgressStatus.SPECIALISTS_NOT_ASSIGNED)
+                .setParticipant(participantEntity);
+
+        // Create Session entities
+        List<Session> dietitianSessions =
+                sessionManagementService.createDietitianSessionEntities(numberOfDietitianSessions, program);
+        List<Session> trainerSessions =
+                sessionManagementService.createTrainerSessionEntities(numberOfTrainerSessions,
+                        program, whenToTakeMeasurements, measurementsToTake);
+        program.setTrainerSessions(trainerSessions);
+        program.setDietitianSessions(dietitianSessions);
+
+        // Assign the program to the participant
+        participantEntity.setTreatmentProgram(program);
+
+        // Save the participant. The other entities will be saved by the cascade
+        participantEntity = participantRepository.save(participantEntity);
+
+        return getParticipantDtoFromParticipantEntity(participantEntity);
+    }
+
 
     private List<ParticipantDTO> getListOfParticipantDtosFromListOfParticipantEntities(List<Participant> participantEntitiesList) {
-//        List<ParticipantDTO> participantDtoList = new ArrayList<>();
-//        for(Participant participantEntity: participantEntitiesList) {
-//            ParticipantDTO dto = getParticipantDtoFromParticipantEntity(participantEntity);
-//            participantDtoList.add(dto);
-//        }
-//        return participantDtoList;
-
         return participantEntitiesList.stream()
                 .map(this::getParticipantDtoFromParticipantEntity)
                 .collect(Collectors.toList());

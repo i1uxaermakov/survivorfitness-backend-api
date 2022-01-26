@@ -59,14 +59,25 @@ public class ParticipantRestController {
             return new ResponseEntity<>(getGeneralInfoAboutAllParticipants(), HttpStatus.OK);
         }
         else {
-            return new ResponseEntity("This endpoint only supports sorting of participants by one parameter", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("This endpoint only supports sorting of participants by one parameter", HttpStatus.BAD_REQUEST);
         }
     }
 
-//    @PostMapping("/")
-//    public String addNewParticipant() {
-//        return "confirmation of participant added";
-//    }
+    @PostMapping("")
+    @ApiOperation(value = "Creates a Participant and the associated Program for the participant",
+            response = ParticipantResponse.class)
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
+    public ParticipantResponse addNewParticipant(@ApiParam(value = "Object containing information about the participant and the program for him/her", required = true)
+                                                     @RequestBody CreateParticipantRequest createParticipantRequest) {
+        ParticipantDTO participantDTO = participantManagementService.createNewParticipant(
+                createParticipantRequest.getParticipant(),
+                createParticipantRequest.getNumberOfTrainerSessions(),
+                createParticipantRequest.getSessionsIndicesWhenMeasurementsAreTaken(),
+                createParticipantRequest.getMeasurements(),
+                createParticipantRequest.getNumberOfDietitianSessions());
+
+        return new ParticipantResponse(participantDTO);
+    }
 
     @GetMapping("/{participantId}")
     @ApiOperation(value = "Finds detailed info about a specific participant",
