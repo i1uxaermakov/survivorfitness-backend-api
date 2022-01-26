@@ -1,10 +1,21 @@
 package com.changeplusplus.survivorfitness.backendapi.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Accessors(chain = true)
 public class Session {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -29,87 +40,4 @@ public class Session {
 
     private String specialistNotes;
     private String adminNotes;
-
-    public Session() {
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Date getInitialLogDate() {
-        return initialLogDate;
-    }
-
-    public void setInitialLogDate(Date initialLogDate) {
-        this.initialLogDate = initialLogDate;
-    }
-
-    public Program getProgram() {
-        return program;
-    }
-
-    public void setProgram(Program program) {
-        this.program = program;
-    }
-
-    public String getSpecialistNotes() {
-        return specialistNotes;
-    }
-
-    public void setSpecialistNotes(String specialistNotes) {
-        this.specialistNotes = specialistNotes;
-    }
-
-    public String getAdminNotes() {
-        return adminNotes;
-    }
-
-    public void setAdminNotes(String adminNotes) {
-        this.adminNotes = adminNotes;
-    }
-
-    public Integer getSessionIndexNumber() {
-        return sessionIndexNumber;
-    }
-
-    public void setSessionIndexNumber(Integer sessionIndexNumber) {
-        this.sessionIndexNumber = sessionIndexNumber;
-    }
-
-    public Participant getParticipant() {
-        return participant;
-    }
-
-    public void setParticipant(Participant participant) {
-        this.participant = participant;
-    }
-
-    public SpecialistType getWhoseNotes() {
-        return whoseNotes;
-    }
-
-    public void setWhoseNotes(SpecialistType whoseNotes) {
-        this.whoseNotes = whoseNotes;
-    }
-
-    public Date getLastUpdatedDate() {
-        return lastUpdatedDate;
-    }
-
-    public void setLastUpdatedDate(Date lastUpdatedDate) {
-        this.lastUpdatedDate = lastUpdatedDate;
-    }
-
-    public List<Measurement> getMeasurements() {
-        return measurements;
-    }
-
-    public void setMeasurements(List<Measurement> measurements) {
-        this.measurements = measurements;
-    }
 }
