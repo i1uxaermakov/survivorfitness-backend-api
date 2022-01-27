@@ -40,14 +40,9 @@ public class LocationRestController {
             response = LocationListResponse.class)
     @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
     public LocationResponse createNewLocation(@RequestBody LocationDTO locationDTO) {
-        LocationDTO savedLocationDTO = locationManagementService.saveNewLocation(locationDTO);
+        LocationDTO savedLocationDTO = locationManagementService.createNewLocation(locationDTO);
         return new LocationResponse(savedLocationDTO);
     }
-
-//    @PostMapping("/")
-//    public String addNewLocation() {
-//        return "confirmation";
-//    }
 
 
     @GetMapping("/{locationId}")

@@ -29,7 +29,7 @@ public class LocationManagementService {
     @Autowired
     private UserRepository userRepository;
 
-    public LocationDTO saveNewLocation(LocationDTO locationDTO) {
+    public LocationDTO createNewLocation(LocationDTO locationDTO) {
         User administrator = userRepository.findUserById(locationDTO.getAdministrator().getId());
         if(Objects.isNull(administrator)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Administrator with specified ID not found.");
