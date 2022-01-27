@@ -5,14 +5,18 @@ import com.changeplusplus.survivorfitness.backendapi.dto.MeasurementDTO;
 import com.changeplusplus.survivorfitness.backendapi.dto.ParticipantDTO;
 import com.changeplusplus.survivorfitness.backendapi.dto.UserDTO;
 import com.changeplusplus.survivorfitness.backendapi.entity.*;
+import com.changeplusplus.survivorfitness.backendapi.repository.LocationRepository;
 import com.changeplusplus.survivorfitness.backendapi.repository.ParticipantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,7 +29,7 @@ public class ParticipantManagementService {
     private SessionManagementService sessionManagementService;
 
     @Autowired
-    private MeasurementManagementService measurementManagementService;
+    private LocationRepository locationRepository;
 
     public ParticipantDTO getParticipantInfoById(Integer participantId) {
         Participant participantEntity = participantRepository.findParticipantById(participantId);
@@ -89,6 +93,24 @@ public class ParticipantManagementService {
             List<Integer> whenToTakeMeasurements, List<MeasurementDTO> measurementsToTake,
             Integer numberOfDietitianSessions) {
 
+        // Check if the trainer location is indeed a trainer location
+        Location trainerGym = locationRepository.findLocationById(newParticipantData.getTrainerLocation().getId());
+        if(Objects.isNull(trainerGym)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The gym specified does not exist.");
+        }
+        else if(trainerGym.getType() != LocationType.TRAINER_GYM) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The gym specified is not a gym. It has the type of " + trainerGym.getType());
+        }
+
+        // Check if the dietitian location is indeed a dietitian location
+        Location dietitianOffice = locationRepository.findLocationById(newParticipantData.getDietitianLocation().getId());
+        if(Objects.isNull(dietitianOffice)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The gym specified does not exist.");
+        }
+        else if(dietitianOffice.getType() != LocationType.DIETICIAN_OFFICE) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The gym specified is not a gym. It has the type of " + trainerGym.getType());
+        }
+
         // Create Participant entity
         Participant participantEntity = new Participant()
                 .setFirstName(newParticipantData.getFirstName())
@@ -106,7 +128,9 @@ public class ParticipantManagementService {
         // Create Program entity
         Program program = new Program()
                 .setProgramProgressStatus(ProgramProgressStatus.SPECIALISTS_NOT_ASSIGNED)
-                .setParticipant(participantEntity);
+                .setParticipant(participantEntity)
+                .setTrainerGym(trainerGym)
+                .setDietitianOffice(dietitianOffice);
 
         // Create Session entities
         List<Session> dietitianSessions =
