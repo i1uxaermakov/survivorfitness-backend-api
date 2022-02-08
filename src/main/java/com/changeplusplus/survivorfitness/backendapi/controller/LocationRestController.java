@@ -9,11 +9,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/v1/locations")
@@ -57,11 +60,17 @@ public class LocationRestController {
         return new LocationResponse(locationDTO);
     }
 
-//    @PutMapping("/{locationId}")
-//    public String updateInfoAboutSpecificLocation(@PathVariable("locationId") Long locationId) {
-//        return "update confirmation";
-//    }
-//
+    @PutMapping("/{locationId}")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
+    public String updateLocation(@PathVariable("locationId") Integer locationId, @RequestBody LocationDTO locationDTO) {
+
+        if(!Objects.equals(locationId, locationDTO.getId())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID in URL and ID of the session do not match.");
+        }
+        LocationDTO updatedLocationDTO = locationManagementService.updateLocation(locationDTO);
+        return new LocationResponse(updatedLocationDTO);
+    }
+
 //    @DeleteMapping("/{locationId}")
 //    public String deactivateSpecificLocation(@PathVariable("locationId") Long locationId) {
 //        return "delete confirmation";

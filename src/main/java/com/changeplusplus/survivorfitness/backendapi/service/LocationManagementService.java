@@ -71,6 +71,33 @@ public class LocationManagementService {
         return getLocationDtoFromLocationEntity(locationEntity);
     }
 
+    public LocationDTO updateLocation(LocationDTO locationDTO){
+        Location locationEntity = locationRepository.findLocationById(locationDTO.getId()).orElse(null);
+
+        if(Objects.isNull(locationEntity)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid ID");
+        }
+
+        locationEntity.setAddress(locationDTO.getAddress());
+        locationEntity.setName(locationDTO.getName());
+
+        User administrator = userRepository.findUserById(locationDTO.getAdministrator().getId());
+
+        if(Objects.isNull(administrator)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Administrator with specified ID not found.");
+        }
+
+        locationEntity.setAdministrator(administrator);
+
+
+        //should I check if it is a location admin first? or does it not matter
+        userManagementService.addRoleToUser(administrator, UserRoleType.LOCATION_ADMINISTRATOR);
+
+
+        return getLocationDtoFromLocationEntity(locationEntity);
+
+
+    }
 
     private LocationDTO getLocationDtoFromLocationEntity(Location locationEntity) {
         LocationDTO locationDTO = new LocationDTO();
@@ -102,4 +129,6 @@ public class LocationManagementService {
 
         return locationDTO;
     }
+
+
 }
