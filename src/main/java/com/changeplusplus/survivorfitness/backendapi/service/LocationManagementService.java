@@ -72,7 +72,7 @@ public class LocationManagementService {
     }
 
     public LocationDTO updateLocation(LocationDTO locationDTO){
-        Location locationEntity = locationRepository.findLocationById(locationDTO.getId()).orElse(null);
+        Location locationEntity = locationRepository.findLocationById(locationDTO.getId());
 
         if(Objects.isNull(locationEntity)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid ID");

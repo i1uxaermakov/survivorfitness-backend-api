@@ -62,7 +62,7 @@ public class LocationRestController {
 
     @PutMapping("/{locationId}")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
-    public String updateLocation(@PathVariable("locationId") Integer locationId, @RequestBody LocationDTO locationDTO) {
+    public LocationResponse updateLocation(@PathVariable("locationId") Integer locationId, @RequestBody LocationDTO locationDTO) {
 
         if(!Objects.equals(locationId, locationDTO.getId())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID in URL and ID of the session do not match.");
