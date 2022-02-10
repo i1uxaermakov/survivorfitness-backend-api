@@ -326,9 +326,7 @@ public class DemoData {
             }
             else {
                 Session session = getDummySession(participant, type, i+1, null,
-                        program,
-                        type + " notes for participant " + participant.getFirstName() + " on session # " + (i+1),
-                        "Hi from an admin on session # " + (i+1) + " for participant " + participant.getFirstName());
+                        program, "", "");
                 sessions.add(session);
             }
             c.add(Calendar.DATE, 1);
