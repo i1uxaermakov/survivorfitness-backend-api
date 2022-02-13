@@ -74,9 +74,6 @@ public class UserManagementService {
         return userDTO;
     }
 
-
-
-
     public static UserDTO getConciseUserDTOBasedOnUserEntity(User specialistEntity) {
         if(specialistEntity == null) {
             return null;
@@ -95,6 +92,14 @@ public class UserManagementService {
         UserDTO userDTO = getUserDtoBasedOnUserEntity(userEntity);
         return userDTO;
     }
+
+    public void removeRoleFromUser(User user, UserRoleType userRoleType){
+        if (user.hasRole(userRoleType)){
+            UserRole role = userRoleRepository.findUserRoleByName(userRoleType);
+            user.getRoles().removeIf(r -> r.equals(role));
+        }
+    }
+
 
     public void addRoleToUser(User user, UserRoleType userRoleType) {
         if(!user.hasRole(userRoleType)) {

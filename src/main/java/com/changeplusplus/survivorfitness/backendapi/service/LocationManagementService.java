@@ -39,6 +39,7 @@ public class LocationManagementService {
         locationEntity.setAdministrator(administrator);
         locationEntity = locationRepository.save(locationEntity);
 
+
         // also need to add the new role to the administrator (LOCATION_ADMINISTRATOR)
         userManagementService.addRoleToUser(administrator, UserRoleType.LOCATION_ADMINISTRATOR);
 
@@ -74,24 +75,29 @@ public class LocationManagementService {
     public LocationDTO updateLocation(LocationDTO locationDTO){
         Location locationEntity = locationRepository.findLocationById(locationDTO.getId());
 
+
         if(Objects.isNull(locationEntity)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid ID");
         }
+        User prevAdministrator = userRepository.findUserById(locationEntity.getAdministrator().getId());
 
         locationEntity.setAddress(locationDTO.getAddress());
         locationEntity.setName(locationDTO.getName());
 
-        User administrator = userRepository.findUserById(locationDTO.getAdministrator().getId());
+        User newAdministrator = userRepository.findUserById(locationDTO.getAdministrator().getId());
 
-        if(Objects.isNull(administrator)) {
+        if(Objects.isNull(newAdministrator)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Administrator with specified ID not found.");
         }
 
-        locationEntity.setAdministrator(administrator);
 
+        locationEntity.setAdministrator(newAdministrator);
+
+
+        userManagementService.removeRoleFromUser(prevAdministrator, UserRoleType.LOCATION_ADMINISTRATOR);
 
         //should I check if it is a location admin first? or does it not matter
-        userManagementService.addRoleToUser(administrator, UserRoleType.LOCATION_ADMINISTRATOR);
+        userManagementService.addRoleToUser(newAdministrator, UserRoleType.LOCATION_ADMINISTRATOR);
 
 
         return getLocationDtoFromLocationEntity(locationEntity);
