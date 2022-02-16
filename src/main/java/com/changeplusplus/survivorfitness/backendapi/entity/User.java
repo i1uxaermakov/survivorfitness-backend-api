@@ -1,11 +1,23 @@
 package com.changeplusplus.survivorfitness.backendapi.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name="users")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Accessors(chain = true)
 public class User {
 
     @Id
@@ -43,93 +55,12 @@ public class User {
             inverseJoinColumns=@JoinColumn(name="location_id"))
     private List<Location> locationsAssignedTo = new ArrayList<>();
 
-    public User() {
-        super();
-    }
-
-    // GETTERS & SETTERS
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public List<UserRole> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<UserRole> roles) {
-        this.roles = roles;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public List<Location> getLocationsAssignedTo() {
-        return locationsAssignedTo;
-    }
-
-    public void setLocationsAssignedTo(List<Location> locationsAssignedTo) {
-        this.locationsAssignedTo = locationsAssignedTo;
-    }
-
-    public boolean hasRole(UserRoleType roleType) {
+    public boolean hasRole(UserRoleType requestedRoleType) {
         for(UserRole role: roles) {
-            if(role.getName().equals(roleType)) {
+            if(role.getName().equals(requestedRoleType)) {
                 return true;
             }
         }
         return false;
     }
-    // GETTERS & SETTERS END
-
-
-
 }
