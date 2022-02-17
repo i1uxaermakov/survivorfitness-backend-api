@@ -120,6 +120,25 @@ public class User {
         this.locationsAssignedTo = locationsAssignedTo;
     }
 
+    public boolean hasLocation(Location location){
+        for (Location l : locationsAssignedTo) {
+            if (l.getId().equals(location.getId())){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addLocationIfAbsent(Location location){
+        if (!hasLocation(location)){
+            locationsAssignedTo.add(location);
+        }
+    }
+    public void removeLocationIfPresent(Location location){
+        locationsAssignedTo.removeIf(l -> l.getId().equals(location.getId()));
+
+    }
+
     public boolean hasRole(UserRoleType roleType) {
         for(UserRole role: roles) {
             if(role.getName().equals(roleType)) {

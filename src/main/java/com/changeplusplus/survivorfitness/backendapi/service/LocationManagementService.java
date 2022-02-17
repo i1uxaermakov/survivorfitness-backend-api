@@ -43,6 +43,9 @@ public class LocationManagementService {
         // also need to add the new role to the administrator (LOCATION_ADMINISTRATOR)
         userManagementService.addRoleToUser(administrator, UserRoleType.LOCATION_ADMINISTRATOR);
 
+        //need to add location itself to the administrator's set of locations?
+        userManagementService.addLocationToUser(administrator, locationEntity);
+
         return getLocationDtoFromLocationEntity(locationEntity);
     }
 
@@ -93,10 +96,15 @@ public class LocationManagementService {
 
         locationEntity.setAdministrator(newAdministrator);
 
+        userManagementService.addLocationToUser(newAdministrator, locationEntity);
 
-        userManagementService.removeRoleFromUser(prevAdministrator, UserRoleType.LOCATION_ADMINISTRATOR);
+        userManagementService.removeLocationFromUser(prevAdministrator, locationEntity);
 
-        //should I check if it is a location admin first? or does it not matter
+
+        if (newAdministrator.getLocationsAssignedTo().size() == 0) {
+            userManagementService.removeRoleFromUser(prevAdministrator, UserRoleType.LOCATION_ADMINISTRATOR);
+        }
+
         userManagementService.addRoleToUser(newAdministrator, UserRoleType.LOCATION_ADMINISTRATOR);
 
 
@@ -117,7 +125,6 @@ public class LocationManagementService {
         userDTO.setId(userEntity.getId());
         userDTO.setFirstName(userEntity.getFirstName());
         userDTO.setLastName(userEntity.getLastName());
-
         locationDTO.setAdministrator(userDTO);
         return locationDTO;
     }

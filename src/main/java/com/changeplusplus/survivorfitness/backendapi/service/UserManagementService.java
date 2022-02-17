@@ -97,6 +97,7 @@ public class UserManagementService {
         if (user.hasRole(userRoleType)){
             UserRole role = userRoleRepository.findUserRoleByName(userRoleType);
             user.getRoles().removeIf(r -> r.equals(role));
+            userRepository.save(user);
         }
     }
 
@@ -107,5 +108,15 @@ public class UserManagementService {
             user.getRoles().add(role);
             userRepository.save(user);
         }
+    }
+
+    public void addLocationToUser(User user, Location location){
+        user.addLocationIfAbsent(location);
+        userRepository.save(user);
+    }
+
+    public void removeLocationFromUser(User user, Location location){
+        user.removeLocationIfPresent(location);
+        userRepository.save(user);
     }
 }

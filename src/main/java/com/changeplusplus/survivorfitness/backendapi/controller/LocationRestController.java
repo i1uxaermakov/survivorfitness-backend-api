@@ -64,9 +64,12 @@ public class LocationRestController {
     @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
     public LocationResponse updateLocation(@PathVariable("locationId") Integer locationId, @RequestBody LocationDTO locationDTO) {
 
+        System.out.println(locationDTO.toString());
         if(!Objects.equals(locationId, locationDTO.getId())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID in URL and ID of the session do not match.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID in URL and ID of the session (" +
+           locationDTO.getId() + ") do not match.");
         }
+
         LocationDTO updatedLocationDTO = locationManagementService.updateLocation(locationDTO);
         return new LocationResponse(updatedLocationDTO);
     }
