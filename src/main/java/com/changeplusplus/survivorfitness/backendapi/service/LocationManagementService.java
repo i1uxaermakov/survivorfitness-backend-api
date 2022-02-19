@@ -3,6 +3,7 @@ package com.changeplusplus.survivorfitness.backendapi.service;
 import com.changeplusplus.survivorfitness.backendapi.dto.LocationDTO;
 import com.changeplusplus.survivorfitness.backendapi.dto.UserDTO;
 import com.changeplusplus.survivorfitness.backendapi.entity.Location;
+import com.changeplusplus.survivorfitness.backendapi.entity.LocationType;
 import com.changeplusplus.survivorfitness.backendapi.entity.User;
 import com.changeplusplus.survivorfitness.backendapi.entity.UserRoleType;
 import com.changeplusplus.survivorfitness.backendapi.entity.projection.LocationOnlyIdNameTypeProjection;
@@ -101,15 +102,24 @@ public class LocationManagementService {
 
         //Removes Location from prevAdministrator's list of "locationsAssignedTo" if prevAdmin is not a specialist at
         // that location
-        List<User> specialists = locationEntity.getSpecialists();
-        boolean isSpecialist = false;
-           for (User specialist : specialists){
-               if (specialist.getId().equals(prevAdministrator.getId())){
-                   isSpecialist = true;
-                   break;
-               }
-           }
+        //TODO: Create a "LocationsAssignment" data type to: {locationId, role at location} <-- will require lots of revamping
+        List<UserDTO> specialists = userManagementService.getGeneralInfoAboutSpecialistsOfSpecificTypeInSpecificLocation(
+                locationEntity.getType().equals(LocationType.DIETICIAN_OFFICE) ?
+                        UserRoleType.DIETITIAN : UserRoleType.TRAINER
+                , locationEntity.getId()
 
+        );
+        boolean isSpecialist = false;
+
+        for (UserDTO specialist : specialists){
+           System.out.println(specialist.getId());
+           if (specialist.getId().equals(prevAdministrator.getId())){
+               isSpecialist = true;
+               break;
+           }
+       }
+
+           System.out.println("isSpecialist: " + isSpecialist);
         if (!isSpecialist){
            //only if not a specialist at that location
            userManagementService.removeLocationFromUser(prevAdministrator, locationEntity);

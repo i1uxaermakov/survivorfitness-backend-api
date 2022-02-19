@@ -135,8 +135,11 @@ public class User {
         }
     }
     public void removeLocationIfPresent(Location location){
+        System.out.println("here");
         locationsAssignedTo.removeIf(l -> l.getId().equals(location.getId()));
-
+        for (Location l : locationsAssignedTo) {
+            System.out.println(l);
+        }
     }
 
     public boolean hasRole(UserRoleType roleType) {

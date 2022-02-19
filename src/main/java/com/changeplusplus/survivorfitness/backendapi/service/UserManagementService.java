@@ -116,6 +116,7 @@ public class UserManagementService {
     }
 
     public void removeLocationFromUser(User user, Location location){
+        System.out.println("removeLocationFromUser");
         user.removeLocationIfPresent(location);
         userRepository.save(user);
     }
