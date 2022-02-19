@@ -55,6 +55,29 @@ public class User {
             inverseJoinColumns=@JoinColumn(name="location_id"))
     private List<Location> locationsAssignedTo = new ArrayList<>();
 
+
+    public boolean hasLocation(Location location){
+        for (Location l : locationsAssignedTo) {
+            if (l.getId().equals(location.getId())){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addLocationIfAbsent(Location location){
+        if (!hasLocation(location)){
+            locationsAssignedTo.add(location);
+        }
+    }
+    public void removeLocationIfPresent(Location location){
+        System.out.println("here");
+        locationsAssignedTo.removeIf(l -> l.getId().equals(location.getId()));
+        for (Location l : locationsAssignedTo) {
+            System.out.println(l);
+        }
+    }
+
     public boolean hasRole(UserRoleType requestedRoleType) {
         for(UserRole role: roles) {
             if(role.getName().equals(requestedRoleType)) {
