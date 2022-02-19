@@ -15,17 +15,27 @@ services:
       - mysql-data:/var/lib/mysql
 
   backend-api:
-    image: ilyaermakov/survivor-fitness-backend:latest
+    image: ilyaermakov/survivor-fitness-backend:v9-add-users-email
     networks:
       - surfvivor-fitness-backend
     container_name: backend-api-survivorfitness
     ports:
       - "8080:8080"
     environment:
-      CHANGEPLUSPLUS_SURVIVORFITNESS_DB_HOST: mysql-database # same as the database service name
-      CHANGEPLUSPLUS_SURVIVORFITNESS_DB_DATABASENAME: survivorfitnessdb
-      CHANGEPLUSPLUS_SURVIVORFITNESS_DB_USERNAME: root
-      CHANGEPLUSPLUS_SURVIVORFITNESS_DB_PASSWORD: Password2020!
+      # Domain name is the same as the database service name
+      SFF_DB_URL: jdbc:mysql://mysql-database:3306/survivorfitnessdb
+      SFF_DB_USERNAME: root
+      SFF_DB_PASSWORD: Password2020!
+      SFF_DB_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SFF_DB_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL8Dialect
+      SFF_DB_DDL_AUTO: create
+      SFF_JWT_SECRET_KEY: ${SFF_JWT_SECRET_KEY}
+      SFF_JWT_ISSUER: SurvivorFitness-Backend
+      SFF_JWT_SUBJECT: JWT-Token
+      SFF_EMAIL_SMTP_HOST: ${SFF_EMAIL_SMTP_HOST}
+      SFF_EMAIL_TLS_PORT: ${SFF_EMAIL_TLS_PORT}
+      SFF_EMAIL_USERNAME: ${SFF_EMAIL_USERNAME}
+      SFF_EMAIL_PASSWORD: ${SFF_EMAIL_PASSWORD}
     depends_on:
       - mysql-database
 

@@ -20,6 +20,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
@@ -41,6 +42,9 @@ public class UserManagementService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private EmailService emailService;
 
     private static final int MINIMUM_PASSWORD_LENGTH = 8;
 
@@ -97,6 +101,7 @@ public class UserManagementService {
         return userDTO;
     }
 
+    @Transactional
     public UserDTO createNewUser(UserDTO newUserData) {
         // Check if the current user is allowed to add the new user and
         // get the user entity populated with the data about the new user
@@ -110,19 +115,24 @@ public class UserManagementService {
         // Save the new user in the database
         User savedUserEntity = userRepository.save(newUserEntity);
 
-        // TODO send an email with the password to the user
+        // Send an email containing the login credentials to the new user
+        emailService.sendEmail(
+                savedUserEntity.getEmail(),
+                "Your Survivor Fitness Account",
+                "Hi!\n" +
+                        "An account has been created for you in the Survivor Fitness App! Below are your login credentials.\n" +
+                        "Please log into the app and change your password.\n\n" +
+                        "Email/Username: " + savedUserEntity.getEmail() + "\n" +
+                        "Password: " + rawPassword + "\n\n" +
+                        "Thanks,\n" +
+                        "Survivor Fitness Team");
 
         // Convert the user entity to the DTO and return it
-        // TODO REMOVE THE RAW PASSWORD
-        return getUserDtoBasedOnUserEntity(savedUserEntity).setPassword(rawPassword);
+        return getUserDtoBasedOnUserEntity(savedUserEntity);
     }
 
 
-    /**
-     * Does NOT set the password of the new user!
-     * @param newUserData
-     * @return
-     */
+
     private User getPopulatedUserEntityAndCheckIfAllowedToCreate(UserDTO newUserData) {
         // Create the new user entity and populate the fields that don't need verification
         User userEntity = new User()
