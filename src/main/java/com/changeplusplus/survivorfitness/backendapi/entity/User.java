@@ -55,6 +55,12 @@ public class User {
             inverseJoinColumns=@JoinColumn(name="location_id"))
     private List<Location> locationsAssignedTo = new ArrayList<>();
 
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinTable(
+            name="location_assignments",
+            joinColumns=@JoinColumn(name="user_id"),
+            inverseJoinColumns=@JoinColumn(name="la_id"))
+    private List<LocationAssignment> locationAssignments = new ArrayList<>();
 
     public boolean hasLocation(Location location){
         for (Location l : locationsAssignedTo) {
