@@ -78,6 +78,8 @@ public class LocationManagementService {
 
     //function to implement details of updating the location
     public LocationDTO updateLocation(LocationDTO locationDTO){
+
+        //gets relevant location obj from database + old administrator
         Location locationEntity = locationRepository.findLocationById(locationDTO.getId());
 
         if(Objects.isNull(locationEntity)) {
@@ -85,9 +87,13 @@ public class LocationManagementService {
         }
         User prevAdministrator = userRepository.findUserById(locationEntity.getAdministrator().getId());
 
+
+        //updates address + name
         locationEntity.setAddress(locationDTO.getAddress());
         locationEntity.setName(locationDTO.getName());
 
+
+        //logic to update the administrator
         User newAdministrator = userRepository.findUserById(locationDTO.getAdministrator().getId());
 
         if(Objects.isNull(newAdministrator)) {
@@ -96,8 +102,8 @@ public class LocationManagementService {
 
 
         locationEntity.setAdministrator(newAdministrator);
-        //info all updated about the location
 
+        //info is now all updated about the location
         userManagementService.addLocationToUser(newAdministrator, locationEntity);
 
         //Removes Location from prevAdministrator's list of "locationsAssignedTo" if prevAdmin is not a specialist at
@@ -142,8 +148,8 @@ public class LocationManagementService {
         }
 
 
+        //adds location admin to new user and saves it to DB
         userManagementService.addRoleToUser(newAdministrator, UserRoleType.LOCATION_ADMINISTRATOR);
-
         Location savedLocationEntity = locationRepository.save(locationEntity);
 
         return getLocationDtoFromLocationEntity(savedLocationEntity);
