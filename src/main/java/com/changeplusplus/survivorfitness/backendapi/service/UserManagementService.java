@@ -74,9 +74,6 @@ public class UserManagementService {
         return userDTO;
     }
 
-
-
-
     public static UserDTO getConciseUserDTOBasedOnUserEntity(User specialistEntity) {
         if(specialistEntity == null) {
             return null;
@@ -96,11 +93,31 @@ public class UserManagementService {
         return userDTO;
     }
 
+    public void removeRoleFromUser(User user, UserRoleType userRoleType){
+        if (user.hasRole(userRoleType)){
+            UserRole role = userRoleRepository.findUserRoleByName(userRoleType);
+            user.getRoles().removeIf(r -> r.equals(role));
+            userRepository.save(user);
+        }
+    }
+
+
     public void addRoleToUser(User user, UserRoleType userRoleType) {
         if(!user.hasRole(userRoleType)) {
             UserRole role = userRoleRepository.findUserRoleByName(userRoleType);
             user.getRoles().add(role);
             userRepository.save(user);
         }
+    }
+
+    public void addLocationToUser(User user, Location location){
+        user.addLocationIfAbsent(location);
+        userRepository.save(user);
+    }
+
+    public void removeLocationFromUser(User user, Location location){
+        System.out.println("removeLocationFromUser");
+        user.removeLocationIfPresent(location);
+        userRepository.save(user);
     }
 }
