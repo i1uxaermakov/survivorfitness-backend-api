@@ -78,7 +78,6 @@ public class LocationManagementService {
     public LocationDTO updateLocation(LocationDTO locationDTO){
         Location locationEntity = locationRepository.findLocationById(locationDTO.getId());
 
-
         if(Objects.isNull(locationEntity)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid ID");
         }
@@ -98,17 +97,42 @@ public class LocationManagementService {
 
         userManagementService.addLocationToUser(newAdministrator, locationEntity);
 
-        userManagementService.removeLocationFromUser(prevAdministrator, locationEntity);
+        List<User> specialists = locationEntity.getSpecialists();
+        boolean isSpecialist = false;
+           for (User specialist : specialists){
+               if (specialist.getId().equals(prevAdministrator.getId())){
+                   isSpecialist = true;
+                   break;
+               }
+           }
+
+        if (!isSpecialist){
+           //only if not a specialist at that location
+           userManagementService.removeLocationFromUser(prevAdministrator, locationEntity);
+        }
+
+        boolean isStillLocationAdmin = false;
 
 
-        if (newAdministrator.getLocationsAssignedTo().size() == 0) {
+        for (Location location : prevAdministrator.getLocationsAssignedTo()) {
+            if (location.getAdministrator().getId().equals(prevAdministrator.getId())){
+                isStillLocationAdmin = true;
+                break;
+            }
+            //remove role only if they're a location admin of this place
+            // go through their locations and check the admin field and if it's equal to this user
+        }
+
+        if (!isStillLocationAdmin){
             userManagementService.removeRoleFromUser(prevAdministrator, UserRoleType.LOCATION_ADMINISTRATOR);
         }
 
+
         userManagementService.addRoleToUser(newAdministrator, UserRoleType.LOCATION_ADMINISTRATOR);
 
+        Location savedLocationEntity = locationRepository.save(locationEntity);
 
-        return getLocationDtoFromLocationEntity(locationEntity);
+        return getLocationDtoFromLocationEntity(savedLocationEntity);
 
 
     }

@@ -61,6 +61,10 @@ public class LocationRestController {
     }
 
     @PutMapping("/{locationId}")
+    @ApiOperation(value = "Edits  info about specific location",
+            notes = "Provide an ID to look up a specific location. If a location with a specified ID doesn't exist, the endpoint returns location = null.\n" +
+                    "The endpoint is available to users with roles SUPER_ADMIN and LOCATION_ADMINISTRATOR.",
+            response = LocationResponse.class)
     @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
     public LocationResponse updateLocation(@PathVariable("locationId") Integer locationId, @RequestBody LocationDTO locationDTO) {
 
