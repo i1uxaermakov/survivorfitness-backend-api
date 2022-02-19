@@ -75,6 +75,7 @@ public class LocationManagementService {
         return getLocationDtoFromLocationEntity(locationEntity);
     }
 
+    //function to implement details of updating the location
     public LocationDTO updateLocation(LocationDTO locationDTO){
         Location locationEntity = locationRepository.findLocationById(locationDTO.getId());
 
@@ -94,9 +95,12 @@ public class LocationManagementService {
 
 
         locationEntity.setAdministrator(newAdministrator);
+        //info all updated about the location
 
         userManagementService.addLocationToUser(newAdministrator, locationEntity);
 
+        //Removes Location from prevAdministrator's list of "locationsAssignedTo" if prevAdmin is not a specialist at
+        // that location
         List<User> specialists = locationEntity.getSpecialists();
         boolean isSpecialist = false;
            for (User specialist : specialists){
@@ -111,16 +115,16 @@ public class LocationManagementService {
            userManagementService.removeLocationFromUser(prevAdministrator, locationEntity);
         }
 
+        //whether the prevAdministrator is still a location admin at some other location
         boolean isStillLocationAdmin = false;
 
-
+        //removes location admin role from prevAdministrator only if they are not a location admin somewhere else
         for (Location location : prevAdministrator.getLocationsAssignedTo()) {
             if (location.getAdministrator().getId().equals(prevAdministrator.getId())){
                 isStillLocationAdmin = true;
                 break;
             }
-            //remove role only if they're a location admin of this place
-            // go through their locations and check the admin field and if it's equal to this user
+
         }
 
         if (!isStillLocationAdmin){
