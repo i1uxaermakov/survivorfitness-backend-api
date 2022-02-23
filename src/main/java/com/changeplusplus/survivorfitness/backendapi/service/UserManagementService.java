@@ -108,7 +108,7 @@ public class UserManagementService {
 
 
     @Transactional
-    public UserDTO createNewUser(UserDTO newUserData) {
+    public UserDTO createNewUser(UserDTO newUserData) { // todo update adding location assignments
         // Check if the current user is allowed to add the new user and
         // get the user entity populated with the data about the new user
         User newUserEntity = getPopulatedUserEntityAndCheckIfAllowedToCreate(newUserData);

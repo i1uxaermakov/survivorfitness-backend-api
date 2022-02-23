@@ -30,7 +30,7 @@ public class LocationManagementService {
     @Autowired
     private UserRepository userRepository;
 
-    public LocationDTO createNewLocation(LocationDTO locationDTO) {
+    public LocationDTO createNewLocation(LocationDTO locationDTO) {//todo change adding roles locations to user to adding location assignment
         User administrator = userRepository.findUserById(locationDTO.getAdministrator().getId());
         if(Objects.isNull(administrator)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Administrator with specified ID not found.");
@@ -77,7 +77,7 @@ public class LocationManagementService {
     }
 
     //function to implement details of updating the location
-    public LocationDTO updateLocation(LocationDTO locationDTO){
+    public LocationDTO updateLocation(LocationDTO locationDTO){//todo change to use location assignment
 
         //gets relevant location obj from database + old administrator
         Location locationEntity = locationRepository.findLocationById(locationDTO.getId());
