@@ -1,6 +1,5 @@
 package com.changeplusplus.survivorfitness.backendapi.entity;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,15 +21,20 @@ public class LocationAssignment {
     @Column(name = "la_id")
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.EAGER)//todo mapping
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="location_id")
     private Location location;
 
-    @ManyToOne(fetch = FetchType.EAGER)//todo mapping
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
     private User user;
 
     @Enumerated(EnumType.STRING)
     private UserRoleType userRoleType;
 
+    public LocationAssignment(User user, Location location, UserRoleType userRoleType) {
+        this.user = user;
+        this.location = location;
+        this.userRoleType = userRoleType;
+    }
 }

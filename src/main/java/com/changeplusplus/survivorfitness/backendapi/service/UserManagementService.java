@@ -2,10 +2,7 @@ package com.changeplusplus.survivorfitness.backendapi.service;
 
 import com.changeplusplus.survivorfitness.backendapi.dto.LocationDTO;
 import com.changeplusplus.survivorfitness.backendapi.dto.UserDTO;
-import com.changeplusplus.survivorfitness.backendapi.entity.Location;
-import com.changeplusplus.survivorfitness.backendapi.entity.User;
-import com.changeplusplus.survivorfitness.backendapi.entity.UserRole;
-import com.changeplusplus.survivorfitness.backendapi.entity.UserRoleType;
+import com.changeplusplus.survivorfitness.backendapi.entity.*;
 import com.changeplusplus.survivorfitness.backendapi.repository.LocationRepository;
 import com.changeplusplus.survivorfitness.backendapi.repository.UserRepository;
 import com.changeplusplus.survivorfitness.backendapi.repository.UserRoleRepository;
@@ -93,9 +90,17 @@ public class UserManagementService {
             userDTO.getLocations().add(locationDTO);
         }
 
-        List<UserRole> roleEntities = userEntity.getRoles();
-        for(UserRole roleEntity: roleEntities) {
-            userDTO.getRoles().add(roleEntity.getName().toString());
+        // Assign the roles of the userDTO based on Location Assignments
+        List<LocationAssignment> locationAssignments = userEntity.getLocationAssignments();
+        for(LocationAssignment la: locationAssignments) {
+            userDTO.getRoles().add(la.getUserRoleType().name());
+        }
+
+        // Add a Super Admin role to the userDTO if the user is super admin
+        // This step is necessary because SUPER_ADMIN role is not indicated
+        // in Location Assignments
+        if(userEntity.isSuperAdmin()) {
+            userDTO.getRoles().add(UserRoleType.SUPER_ADMIN.name());
         }
 
         return userDTO;

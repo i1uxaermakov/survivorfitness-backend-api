@@ -40,6 +40,9 @@ public class User {
     @Column(name = "phone_number")
     private String phoneNumber;
 
+    @Column(name = "is_super_admin")
+    private boolean isSuperAdmin = false;
+
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(
             name="user_roles",
@@ -55,11 +58,7 @@ public class User {
             inverseJoinColumns=@JoinColumn(name="location_id"))
     private List<Location> locationsAssignedTo = new ArrayList<>();
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-    @JoinTable(
-            name="location_assignments",
-            joinColumns=@JoinColumn(name="user_id"),
-            inverseJoinColumns=@JoinColumn(name="la_id"))
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "user")
     private List<LocationAssignment> locationAssignments = new ArrayList<>();
 
     public boolean hasLocation(Location location){

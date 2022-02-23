@@ -26,30 +26,30 @@ public class Program {
     @Enumerated(EnumType.STRING)
     private ProgramProgressStatus programProgressStatus;
 
-    @OneToMany(mappedBy="program", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)//todo mapping
+    @OneToMany(mappedBy="program", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @Where(clause = "whoseNotes='TRAINER'")
     private List<Session> trainerSessions = new ArrayList<>();
 
-    @OneToMany(mappedBy="program", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)//todo mapping
+    @OneToMany(mappedBy="program", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @Where(clause = "whoseNotes='DIETITIAN'")
     private List<Session> dietitianSessions = new ArrayList<>();
 
     @OneToOne(mappedBy = "treatmentProgram", fetch = FetchType.LAZY)
     private Participant participant;
 
-    @ManyToOne(fetch = FetchType.EAGER)//todo mapping
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="trainer_user_id")
     private User trainer;
 
-    @ManyToOne(fetch = FetchType.EAGER)//todo mapping
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="trainer_location_id")
     private Location trainerGym;
 
-    @ManyToOne(fetch = FetchType.EAGER)//todo mapping
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="dietitian_user_id")
     private User dietitian;
 
-    @ManyToOne(fetch = FetchType.EAGER)//todo mapping
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="dietitian_location_id")
     private Location dietitianOffice;
 }
