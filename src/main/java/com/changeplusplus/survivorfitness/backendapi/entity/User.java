@@ -84,11 +84,12 @@ public class User {
     }
 
     public boolean hasRole(UserRoleType requestedRoleType) {
-        for(UserRole role: roles) {
-            if(role.getName().equals(requestedRoleType)) {
+        for(LocationAssignment la: locationAssignments) {
+            if(la.getUserRoleType().equals(requestedRoleType)) {
                 return true;
             }
         }
-        return false;
+        
+        return isSuperAdmin && requestedRoleType == UserRoleType.SUPER_ADMIN;
     }
 }
