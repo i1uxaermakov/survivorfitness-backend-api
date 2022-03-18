@@ -44,12 +44,12 @@ public class UserManagementService {
     private static final int MINIMUM_PASSWORD_LENGTH = 8;
 
     public List<UserDTO> getGeneralInfoAboutAllSpecialistsOfSpecificType(UserRoleType type) {
-        List<User> dietitiansList = userRepository.findUsersByRolesName(type);
+        List<User> dietitiansList = userRepository.findUsersByLocationAssignmentsUserRoleType(type);
         return getListOfUserDTOsWithUserInfoAndLocationInfo(dietitiansList);
     }
 
     public List<UserDTO> getGeneralInfoAboutSpecialistsOfSpecificTypeInSpecificLocation(UserRoleType type, Integer locationId) {
-        List<User> userList = userRepository.findUsersByRolesNameAndLocationsAssignedToId(type, locationId);
+        List<User> userList = userRepository.findUsersByLocationAssignmentsUserRoleTypeAndLocationAssignmentsLocationId(type, locationId);
         return getListOfUserDTOsWithUserInfoAndLocationInfo(userList);
     }
 
@@ -102,7 +102,19 @@ public class UserManagementService {
             userRolesSet.add(UserRoleType.SUPER_ADMIN.name());
         }
 
+        // Assign the list of roles of the user to the userDTO
         userDTO.setRoles(new ArrayList<>(userRolesSet));
+
+        // Get Locations the user is assigned to from te Location Assignments
+        Set<LocationDTO> locationDTOs = new HashSet<>();
+        for(LocationAssignment la: locationAssignments) {
+            LocationDTO locationDTO = new LocationDTO()
+                    .setId(la.getLocation().getId())
+                    .setName(la.getLocation().getName())
+                    .setType(la.getLocation().getType().name());
+            locationDTOs.add(locationDTO);
+        }
+        userDTO.setLocations(new ArrayList<>(locationDTOs));
 
         return userDTO;
     }

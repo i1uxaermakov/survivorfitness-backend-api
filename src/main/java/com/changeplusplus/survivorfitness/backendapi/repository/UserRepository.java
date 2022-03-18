@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface UserRepository extends CrudRepository<User, Integer> {
     User findUserByEmail(String email);
-    List<User> findUsersByRolesNameAndLocationsAssignedToId(UserRoleType roleName, Integer locationId);//todo change the search by role and location within location assignment
-    List<User> findUsersByRolesName(UserRoleType roleName);// change the search by role within location assignment
+    List<User> findUsersByLocationAssignmentsUserRoleTypeAndLocationAssignmentsLocationId(UserRoleType roleName, Integer locationId);
+    List<User> findUsersByLocationAssignmentsUserRoleType(UserRoleType roleName);// change the search by role within location assignment
     User findUserById(Integer userId);
 }
