@@ -1,5 +1,6 @@
 package com.changeplusplus.survivorfitness.backendapi.controller;
 
+import com.changeplusplus.survivorfitness.backendapi.dto.CreateUserRequest;
 import com.changeplusplus.survivorfitness.backendapi.dto.UserDTO;
 import com.changeplusplus.survivorfitness.backendapi.dto.UserListResponse;
 import com.changeplusplus.survivorfitness.backendapi.dto.UserResponse;
@@ -32,8 +33,10 @@ public class UserRestController {
     @ApiOperation(value = "Creates a new user and returns it back to the caller.",
             response = UserResponse.class)
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'LOCATION_ADMINISTRATOR')")
-    public UserResponse createNewUser(@RequestBody UserDTO userDTO) {
-        UserDTO newUser = userManagementService.createNewUser(userDTO);
+    public UserResponse createNewUser(@RequestBody CreateUserRequest createUserRequestBody) {
+        UserDTO newUser = userManagementService.createNewUser(
+                createUserRequestBody.getUser(),
+                createUserRequestBody.getLocationAssignments());
         return new UserResponse(newUser);
     }
 }

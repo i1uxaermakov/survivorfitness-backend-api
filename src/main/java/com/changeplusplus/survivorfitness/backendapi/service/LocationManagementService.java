@@ -41,11 +41,8 @@ public class LocationManagementService {
         locationEntity = locationRepository.save(locationEntity);
 
 
-        // also need to add the new role to the administrator (LOCATION_ADMINISTRATOR)
-        userManagementService.addRoleToUser(administrator, UserRoleType.LOCATION_ADMINISTRATOR);
-
-        //need to add location itself to the administrator's set of locations?
-        userManagementService.addLocationToUser(administrator, locationEntity);
+        userManagementService.addLocationAssignmentToUser(administrator,
+                locationEntity, UserRoleType.LOCATION_ADMINISTRATOR);
 
         return getLocationDtoFromLocationEntity(locationEntity);
     }
@@ -79,82 +76,34 @@ public class LocationManagementService {
     //function to implement details of updating the location
     public LocationDTO updateLocation(LocationDTO locationDTO){
 
-        //gets relevant location obj from database + old administrator
+        //gets relevant location object from database + old administrator
         Location locationEntity = locationRepository.findLocationById(locationDTO.getId());
-
         if(Objects.isNull(locationEntity)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid ID");
         }
-        User prevAdministrator = userRepository.findUserById(locationEntity.getAdministrator().getId());
-
 
         //updates address + name
         locationEntity.setAddress(locationDTO.getAddress());
         locationEntity.setName(locationDTO.getName());
 
-
         //logic to update the administrator
+        User prevAdministrator = userRepository.findUserById(locationEntity.getAdministrator().getId());
         User newAdministrator = userRepository.findUserById(locationDTO.getAdministrator().getId());
-
         if(Objects.isNull(newAdministrator)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Administrator with specified ID not found.");
         }
 
-
         locationEntity.setAdministrator(newAdministrator);
-
         //info is now all updated about the location
-        userManagementService.addLocationToUser(newAdministrator, locationEntity);
 
-        //Removes Location from prevAdministrator's list of "locationsAssignedTo" if prevAdmin is not a specialist at
-        // that location
-        //TODO: Create a "LocationsAssignment" data type to: {locationId, role at location} <-- will require lots of revamping
-        List<UserDTO> specialists = userManagementService.getGeneralInfoAboutSpecialistsOfSpecificTypeInSpecificLocation(
-                locationEntity.getType().equals(LocationType.DIETICIAN_OFFICE) ?
-                        UserRoleType.DIETITIAN : UserRoleType.TRAINER
-                , locationEntity.getId()
+        //add location assignment to new administrator
+        userManagementService.addLocationAssignmentToUser(newAdministrator, locationEntity, UserRoleType.LOCATION_ADMINISTRATOR);
 
-        );
-        boolean isSpecialist = false;
+        //remove location assignment from previous administrator
+        userManagementService.removeLocationAssignmentFromUser(prevAdministrator, locationEntity, UserRoleType.LOCATION_ADMINISTRATOR);
 
-        for (UserDTO specialist : specialists){
-           System.out.println(specialist.getId());
-           if (specialist.getId().equals(prevAdministrator.getId())){
-               isSpecialist = true;
-               break;
-           }
-       }
-
-           System.out.println("isSpecialist: " + isSpecialist);
-        if (!isSpecialist){
-           //only if not a specialist at that location
-           userManagementService.removeLocationFromUser(prevAdministrator, locationEntity);
-        }
-
-        //whether the prevAdministrator is still a location admin at some other location
-        boolean isStillLocationAdmin = false;
-
-        //removes location admin role from prevAdministrator only if they are not a location admin somewhere else
-        for (Location location : prevAdministrator.getLocationsAssignedTo()) {
-            if (location.getAdministrator().getId().equals(prevAdministrator.getId())){
-                isStillLocationAdmin = true;
-                break;
-            }
-
-        }
-
-        if (!isStillLocationAdmin){
-            userManagementService.removeRoleFromUser(prevAdministrator, UserRoleType.LOCATION_ADMINISTRATOR);
-        }
-
-
-        //adds location admin to new user and saves it to DB
-        userManagementService.addRoleToUser(newAdministrator, UserRoleType.LOCATION_ADMINISTRATOR);
         Location savedLocationEntity = locationRepository.save(locationEntity);
-
         return getLocationDtoFromLocationEntity(savedLocationEntity);
-
-
     }
 
     private LocationDTO getLocationDtoFromLocationEntity(Location locationEntity) {

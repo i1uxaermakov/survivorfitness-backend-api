@@ -20,8 +20,9 @@ public class UserDTO {
     private String firstName;
     private String lastName;
     private String email;
+    private boolean isSuperAdmin;
 
-//    @JsonIgnore TODO REMOVE WHEN EMAIL is ready
+    @JsonIgnore
     private String password;
     private String phoneNumber;
     private List<LocationDTO> locations = new ArrayList<>();

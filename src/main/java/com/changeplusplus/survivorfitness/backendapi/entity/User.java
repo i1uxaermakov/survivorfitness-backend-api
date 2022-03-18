@@ -40,6 +40,9 @@ public class User {
     @Column(name = "phone_number")
     private String phoneNumber;
 
+    @Column(name = "is_super_admin")
+    private boolean isSuperAdmin = false;
+
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(
             name="user_roles",
@@ -55,6 +58,8 @@ public class User {
             inverseJoinColumns=@JoinColumn(name="location_id"))
     private List<Location> locationsAssignedTo = new ArrayList<>();
 
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "user")
+    private List<LocationAssignment> locationAssignments = new ArrayList<>();
 
     public boolean hasLocation(Location location){
         for (Location l : locationsAssignedTo) {
@@ -79,11 +84,12 @@ public class User {
     }
 
     public boolean hasRole(UserRoleType requestedRoleType) {
-        for(UserRole role: roles) {
-            if(role.getName().equals(requestedRoleType)) {
+        for(LocationAssignment la: locationAssignments) {
+            if(la.getUserRoleType().equals(requestedRoleType)) {
                 return true;
             }
         }
-        return false;
+        
+        return isSuperAdmin && requestedRoleType == UserRoleType.SUPER_ADMIN;
     }
 }
