@@ -61,28 +61,6 @@ public class User {
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "user")
     private List<LocationAssignment> locationAssignments = new ArrayList<>();
 
-    public boolean hasLocation(Location location){
-        for (Location l : locationsAssignedTo) {
-            if (l.getId().equals(location.getId())){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void addLocationIfAbsent(Location location){
-        if (!hasLocation(location)){
-            locationsAssignedTo.add(location);
-        }
-    }
-    public void removeLocationIfPresent(Location location){
-        System.out.println("here");
-        locationsAssignedTo.removeIf(l -> l.getId().equals(location.getId()));
-        for (Location l : locationsAssignedTo) {
-            System.out.println(l);
-        }
-    }
-
     public boolean hasRole(UserRoleType requestedRoleType) {
         for(LocationAssignment la: locationAssignments) {
             if(la.getUserRoleType().equals(requestedRoleType)) {
