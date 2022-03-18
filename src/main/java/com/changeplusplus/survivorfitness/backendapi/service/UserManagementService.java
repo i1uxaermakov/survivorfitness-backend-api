@@ -289,7 +289,6 @@ public class UserManagementService {
                             && la.getUser().getId().equals(user.getId())
                             && la.getUserRoleType().name().equals(userRoleType.name()))
                 .forEach(la -> {
-                    System.out.println(la);
                     user.getLocationAssignments().remove(la);
                     locationAssignmentRepository.delete(la);
                 });
