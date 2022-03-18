@@ -282,22 +282,6 @@ public class UserManagementService {
     }
 
     public void removeLocationAssignmentFromUser(User user, Location location, UserRoleType userRoleType){
-        System.out.println("looking for");
-        System.out.println(user.getEmail());
-        System.out.println(user.getId());
-        System.out.println(location.getId());
-        System.out.println(userRoleType.name());
-        System.out.println();
-
-        user.getLocationAssignments().forEach(la ->
-        {
-            System.out.println(la.getUser().getEmail());
-            System.out.println(la.getUser().getId());
-            System.out.println(la.getLocation().getId());
-            System.out.println(la.getUserRoleType().name());
-            System.out.println();
-        });
-
         user.getLocationAssignments()
                 .stream()
                 .filter(
