@@ -22,7 +22,7 @@ public class DemoData {
     @Autowired
     private UserRepository userRepository;
 
-    private Random random = new Random();
+    private final Random random = new Random();
 
     @EventListener
     @Transactional
@@ -30,16 +30,16 @@ public class DemoData {
         random.setSeed(123);
 
         //Creating Roles within the system
-        UserRole dietitianRole =  new UserRole(UserRoleType.DIETITIAN);
-        UserRole trainerRole =  new UserRole(UserRoleType.TRAINER);
-        UserRole locationAdministratorRole =  new UserRole(UserRoleType.LOCATION_ADMINISTRATOR);
-        UserRole superAdminRole = new UserRole(UserRoleType.SUPER_ADMIN);
+//        UserRole dietitianRole =  new UserRole(UserRoleType.DIETITIAN);
+//        UserRole trainerRole =  new UserRole(UserRoleType.TRAINER);
+//        UserRole locationAdministratorRole =  new UserRole(UserRoleType.LOCATION_ADMINISTRATOR);
+//        UserRole superAdminRole = new UserRole(UserRoleType.SUPER_ADMIN);
         //userRoleRepository.saveAll(Arrays.asList(dietitianRole,trainerRole,locationAdministratorRole,superAdminRole));
 
 
         // --------------------- BEGIN USER CREATION ---------------------
 
-        //Creating 4 users: 2 dietitians and 2 trainers
+        //Creating users
         List<User> userList = new ArrayList<>();
 
         // Dietitians 1-2 will be assigned to dietitianOffice1
@@ -50,7 +50,7 @@ public class DemoData {
         dietitian1.setPassword("$2y$10$t.bDbsrV4zHcjd4vp1mJeeZpqGkvVXnA0oxndf87GXx8.Ss2Ik6bW"); //passwordSri
         dietitian1.setPhoneNumber("123 456 7890");
         dietitian1.setEnabled(true);
-        dietitian1.getRoles().add(dietitianRole);
+//        dietitian1.getRoles().add(dietitianRole);
         userList.add(dietitian1);
 
         User dietitian2 = new User();
@@ -60,7 +60,7 @@ public class DemoData {
         dietitian2.setPassword("$2y$10$s4v/XFDayJUh7P9CjhE/BeOC4Ah0JJ4ApZmMbXQgE2JVc8N6EGoqS"); //passwordDecima
         dietitian2.setPhoneNumber("123 456 7890");
         dietitian2.setEnabled(true);
-        dietitian2.getRoles().add(dietitianRole);
+//        dietitian2.getRoles().add(dietitianRole);
         userList.add(dietitian2);
 
         // Dietitians 3-5 will be assigned to dietitianOffice2
@@ -71,7 +71,7 @@ public class DemoData {
         dietitian3.setPassword("$2y$10$3WTba/10y9wrYNrvc1gKfe4xgSUCEWJpqEDZjp1jEpo4gH15djwxK"); //passwordKapil
         dietitian3.setPhoneNumber("123 456 7890");
         dietitian3.setEnabled(true);
-        dietitian3.getRoles().add(dietitianRole);
+//        dietitian3.getRoles().add(dietitianRole);
         userList.add(dietitian3);
 
         User dietitian4 = new User();
@@ -81,7 +81,7 @@ public class DemoData {
         dietitian4.setPassword("$2y$10$SlB9vI8L2fQXPam9dgOJw.J1fkLYe8xgOGNbNu72Qtpxbr9ql6ywm"); //passwordAleksanteri
         dietitian4.setPhoneNumber("123 456 7890");
         dietitian4.setEnabled(true);
-        dietitian4.getRoles().add(dietitianRole);
+//        dietitian4.getRoles().add(dietitianRole);
         userList.add(dietitian4);
 
         User dietitian5 = new User();
@@ -91,7 +91,7 @@ public class DemoData {
         dietitian5.setPassword("$2y$10$p8HdMCeILpg9.nPbH.qJc.lsuLZjNEoSFE3nV7ZoOc8cmcZHFIbd2"); //passwordMaple
         dietitian5.setPhoneNumber("123 456 7890");
         dietitian5.setEnabled(true);
-        dietitian5.getRoles().add(dietitianRole);
+//        dietitian5.getRoles().add(dietitianRole);
         userList.add(dietitian5);
 
         // trainers 1-3 will be assigned to gym1
@@ -102,7 +102,7 @@ public class DemoData {
         trainer1.setPassword("$2y$10$ndQfmq0yOtv.9YlufxwrSeBLttr4UIBhnqxn5nNtgypRif1uXKlZi"); //passwordNikitha
         trainer1.setPhoneNumber("123 456 7890");
         trainer1.setEnabled(true);
-        trainer1.getRoles().add(trainerRole);
+//        trainer1.getRoles().add(trainerRole);
         userList.add(trainer1);
 
         User trainer2 = new User();
@@ -112,7 +112,7 @@ public class DemoData {
         trainer2.setPassword("$2y$10$UBskGYSibAH99d.43757/OjSRAJyj/8ZxscpA9xHm3RM0.cKXb4uy"); //passwordIris
         trainer2.setPhoneNumber("123 456 7890");
         trainer2.setEnabled(true);
-        trainer2.getRoles().add(trainerRole);
+//        trainer2.getRoles().add(trainerRole);
         userList.add(trainer2);
 
         User trainer3 = new User();
@@ -122,7 +122,7 @@ public class DemoData {
         trainer3.setPassword("$2y$10$K.vpt9cccteMabQLp43m3.pAnRlDk9ct4iLPgrUCE3J3aw8PE9LgG"); //passwordMarita
         trainer3.setPhoneNumber("123 456 7890");
         trainer3.setEnabled(true);
-        trainer3.getRoles().add(trainerRole);
+//        trainer3.getRoles().add(trainerRole);
         userList.add(trainer3);
 
         // trainers 4-6 will be assigned to gym2
@@ -133,7 +133,7 @@ public class DemoData {
         trainer4.setPassword("$2y$10$.yUgLxVpwaVoXGPekyWae.to2IxWT4D8boBY.xlbiSuHiuRmkjsKO"); //passwordHerbert
         trainer4.setPhoneNumber("123 456 7890");
         trainer4.setEnabled(true);
-        trainer4.getRoles().add(trainerRole);
+//        trainer4.getRoles().add(trainerRole);
         userList.add(trainer4);
 
         User trainer5 = new User();
@@ -143,7 +143,7 @@ public class DemoData {
         trainer5.setPassword("$2y$10$mvx.kwSUuKj.cKv0WvUhNeWQ9o4LbKUmjTkptBCSrHi6BivOhsFga"); //passwordMarciana
         trainer5.setPhoneNumber("123 456 7890");
         trainer5.setEnabled(true);
-        trainer5.getRoles().add(trainerRole);
+//        trainer5.getRoles().add(trainerRole);
         userList.add(trainer5);
 
         User trainer6 = new User();
@@ -153,7 +153,7 @@ public class DemoData {
         trainer6.setPassword("$2y$10$E2A4WEsRxQtRfMD/lUUV7.Bmnwlb3fCCsJ8AburohZAkMcmzwFs4y"); //passwordFrieda
         trainer6.setPhoneNumber("123 456 7890");
         trainer6.setEnabled(true);
-        trainer6.getRoles().add(trainerRole);
+//        trainer6.getRoles().add(trainerRole);
         userList.add(trainer6);
 
         //Creating a super admin
@@ -164,11 +164,12 @@ public class DemoData {
         super_admin1.setPassword("$2y$10$V3MWloOYB/Gu3.a9dltBquAqLTq/VshYXesr8p4UiYdTtMiPTXxtq"); //passwordTheo
         super_admin1.setPhoneNumber("123 456 7890");
         super_admin1.setEnabled(true);
-        super_admin1.getRoles().add(superAdminRole);
+//        super_admin1.getRoles().add(superAdminRole);
+        super_admin1.setSuperAdmin(true);
         userList.add(super_admin1);
 
 
-        userRepository.saveAll(userList);
+//        userRepository.saveAll(userList);
 
         // --------------------- END USER CREATION ---------------------
 
@@ -181,10 +182,14 @@ public class DemoData {
         gym1.setType(LocationType.TRAINER_GYM);
         gym1.setAddress("4793 Rio Vista Ave Nashville, TN 37203");
         gym1.setAdministrator(trainer1);
-        trainer1.getRoles().add(locationAdministratorRole);
-        trainer1.getLocationsAssignedTo().add(gym1);
-        trainer2.getLocationsAssignedTo().add(gym1);
-        trainer3.getLocationsAssignedTo().add(gym1);
+//        trainer1.getRoles().add(locationAdministratorRole);
+//        trainer1.getLocationsAssignedTo().add(gym1);
+//        trainer2.getLocationsAssignedTo().add(gym1);
+//        trainer3.getLocationsAssignedTo().add(gym1);
+        trainer1.getLocationAssignments().add(new LocationAssignment(trainer1, gym1, UserRoleType.LOCATION_ADMINISTRATOR));
+        trainer1.getLocationAssignments().add(new LocationAssignment(trainer1, gym1, UserRoleType.TRAINER));
+        trainer2.getLocationAssignments().add(new LocationAssignment(trainer2, gym1, UserRoleType.TRAINER));
+        trainer3.getLocationAssignments().add(new LocationAssignment(trainer3, gym1, UserRoleType.TRAINER));
         locationList.add(gym1);
 
         Location gym2 = new Location();
@@ -192,10 +197,14 @@ public class DemoData {
         gym2.setType(LocationType.TRAINER_GYM);
         gym2.setAddress("1200 Villa Pl, Nashville, TN 37212");
         gym2.setAdministrator(trainer4);
-        trainer4.getRoles().add(locationAdministratorRole);
-        trainer4.getLocationsAssignedTo().add(gym2);
-        trainer5.getLocationsAssignedTo().add(gym2);
-        trainer6.getLocationsAssignedTo().add(gym2);
+//        trainer4.getRoles().add(locationAdministratorRole);
+//        trainer4.getLocationsAssignedTo().add(gym2);
+//        trainer5.getLocationsAssignedTo().add(gym2);
+//        trainer6.getLocationsAssignedTo().add(gym2);
+        trainer4.getLocationAssignments().add(new LocationAssignment(trainer4, gym2, UserRoleType.LOCATION_ADMINISTRATOR));
+        trainer4.getLocationAssignments().add(new LocationAssignment(trainer4, gym2, UserRoleType.TRAINER));
+        trainer5.getLocationAssignments().add(new LocationAssignment(trainer5, gym2, UserRoleType.TRAINER));
+        trainer6.getLocationAssignments().add(new LocationAssignment(trainer6, gym2, UserRoleType.TRAINER));
         locationList.add(gym2);
 
         Location dietitianOffice1 = new Location();
@@ -203,9 +212,12 @@ public class DemoData {
         dietitianOffice1.setType(LocationType.DIETICIAN_OFFICE);
         dietitianOffice1.setAddress("101 Fairmont Place Nashville, TN 37203");
         dietitianOffice1.setAdministrator(dietitian1);
-        dietitian1.getRoles().add(locationAdministratorRole);
-        dietitian1.getLocationsAssignedTo().add(dietitianOffice1);
-        dietitian2.getLocationsAssignedTo().add(dietitianOffice1);
+//        dietitian1.getRoles().add(locationAdministratorRole);
+//        dietitian1.getLocationsAssignedTo().add(dietitianOffice1);
+//        dietitian2.getLocationsAssignedTo().add(dietitianOffice1);
+        dietitian1.getLocationAssignments().add(new LocationAssignment(dietitian1, dietitianOffice1, UserRoleType.LOCATION_ADMINISTRATOR));
+        dietitian1.getLocationAssignments().add(new LocationAssignment(dietitian1, dietitianOffice1, UserRoleType.DIETITIAN));
+        dietitian2.getLocationAssignments().add(new LocationAssignment(dietitian2, dietitianOffice1, UserRoleType.DIETITIAN));
         locationList.add(dietitianOffice1);
 
         Location dietitianOffice2 = new Location();
@@ -213,12 +225,17 @@ public class DemoData {
         dietitianOffice2.setType(LocationType.DIETICIAN_OFFICE);
         dietitianOffice2.setAddress("114-A 29th Ave N, Nashville, TN 37203");
         dietitianOffice2.setAdministrator(dietitian3);
-        dietitian3.getRoles().add(locationAdministratorRole);
-        dietitian3.getLocationsAssignedTo().add(dietitianOffice2);
-        dietitian4.getLocationsAssignedTo().add(dietitianOffice2);
-        dietitian5.getLocationsAssignedTo().add(dietitianOffice2);
+//        dietitian3.getRoles().add(locationAdministratorRole);
+//        dietitian3.getLocationsAssignedTo().add(dietitianOffice2);
+//        dietitian4.getLocationsAssignedTo().add(dietitianOffice2);
+//        dietitian5.getLocationsAssignedTo().add(dietitianOffice2);
+        dietitian3.getLocationAssignments().add(new LocationAssignment(dietitian3, dietitianOffice2, UserRoleType.LOCATION_ADMINISTRATOR));
+        dietitian3.getLocationAssignments().add(new LocationAssignment(dietitian3, dietitianOffice2, UserRoleType.DIETITIAN));
+        dietitian4.getLocationAssignments().add(new LocationAssignment(dietitian4, dietitianOffice2, UserRoleType.DIETITIAN));
+        dietitian5.getLocationAssignments().add(new LocationAssignment(dietitian5, dietitianOffice2, UserRoleType.DIETITIAN));
         locationList.add(dietitianOffice2);
 
+        userRepository.saveAll(userList);
         locationRepository.saveAll(locationList);
         // --------------------- END LOCATION CREATION ---------------------
 
