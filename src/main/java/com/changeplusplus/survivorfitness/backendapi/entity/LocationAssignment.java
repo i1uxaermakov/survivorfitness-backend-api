@@ -1,9 +1,6 @@
 package com.changeplusplus.survivorfitness.backendapi.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
@@ -15,6 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
+@ToString
 public class LocationAssignment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -4,6 +4,7 @@ import com.changeplusplus.survivorfitness.backendapi.dto.LocationAssignmentDTO;
 import com.changeplusplus.survivorfitness.backendapi.dto.LocationDTO;
 import com.changeplusplus.survivorfitness.backendapi.dto.UserDTO;
 import com.changeplusplus.survivorfitness.backendapi.entity.*;
+import com.changeplusplus.survivorfitness.backendapi.repository.LocationAssignmentRepository;
 import com.changeplusplus.survivorfitness.backendapi.repository.LocationRepository;
 import com.changeplusplus.survivorfitness.backendapi.repository.UserRepository;
 import com.changeplusplus.survivorfitness.backendapi.repository.UserRoleRepository;
@@ -34,6 +35,9 @@ public class UserManagementService {
 
     @Autowired
     private LocationRepository locationRepository;
+
+    @Autowired
+    private LocationAssignmentRepository locationAssignmentRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -78,15 +82,7 @@ public class UserManagementService {
         UserDTO userDTO = getConciseUserDTOBasedOnUserEntity(userEntity);
         userDTO.setEmail(userEntity.getEmail());
         userDTO.setPassword(userEntity.getPassword());
-
-        List<Location> locationEntities = userEntity.getLocationsAssignedTo();
-        for(Location locationEntity: locationEntities) {
-            LocationDTO locationDTO = new LocationDTO();
-            locationDTO.setId(locationEntity.getId());
-            locationDTO.setName(locationEntity.getName());
-
-            userDTO.getLocations().add(locationDTO);
-        }
+        userDTO.setSuperAdmin(userEntity.isSuperAdmin());
 
         // Assign the roles of the userDTO based on Location Assignments
         List<LocationAssignment> locationAssignments = userEntity.getLocationAssignments();
@@ -274,9 +270,50 @@ public class UserManagementService {
     }
 
     public void addLocationToUser(User user, Location location){
+
         user.addLocationIfAbsent(location);
         userRepository.save(user);
     }
+
+    public void addLocationAssignmentToUser(User user, Location location, UserRoleType userRoleType){
+        LocationAssignment locationAssignment = new LocationAssignment(user, location, userRoleType);
+        user.getLocationAssignments().add(locationAssignment);
+        userRepository.save(user);
+    }
+
+    public void removeLocationAssignmentFromUser(User user, Location location, UserRoleType userRoleType){
+        System.out.println("looking for");
+        System.out.println(user.getEmail());
+        System.out.println(user.getId());
+        System.out.println(location.getId());
+        System.out.println(userRoleType.name());
+        System.out.println();
+
+        user.getLocationAssignments().forEach(la ->
+        {
+            System.out.println(la.getUser().getEmail());
+            System.out.println(la.getUser().getId());
+            System.out.println(la.getLocation().getId());
+            System.out.println(la.getUserRoleType().name());
+            System.out.println();
+        });
+
+        user.getLocationAssignments()
+                .stream()
+                .filter(
+                    la -> la.getLocation().getId().equals(location.getId())
+                            && la.getUser().getId().equals(user.getId())
+                            && la.getUserRoleType().name().equals(userRoleType.name()))
+                .forEach(la -> {
+                    System.out.println(la);
+                    user.getLocationAssignments().remove(la);
+                    locationAssignmentRepository.delete(la);
+                });
+    }
+
+
+
+
 
     public void removeLocationFromUser(User user, Location location){
         System.out.println("removeLocationFromUser");
