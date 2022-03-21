@@ -1,13 +1,11 @@
 package com.changeplusplus.survivorfitness.backendapi.controller;
 
-import com.changeplusplus.survivorfitness.backendapi.dto.CreateUserRequest;
-import com.changeplusplus.survivorfitness.backendapi.dto.UserDTO;
-import com.changeplusplus.survivorfitness.backendapi.dto.UserListResponse;
-import com.changeplusplus.survivorfitness.backendapi.dto.UserResponse;
+import com.changeplusplus.survivorfitness.backendapi.dto.*;
 import com.changeplusplus.survivorfitness.backendapi.service.UserManagementService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,5 +36,15 @@ public class UserRestController {
                 createUserRequestBody.getUser(),
                 createUserRequestBody.getLocationAssignments());
         return new UserResponse(newUser);
+    }
+
+    @PostMapping("/{userId}/change_password")
+    public ResponseEntity changePassword(@PathVariable int userId,
+                                         @RequestBody ChangePasswordRequest changePasswordRequestBody) {
+        userManagementService.changePassword(userId,
+                changePasswordRequestBody.getCurrentPassword(),
+                changePasswordRequestBody.getNewPassword());
+
+        return ResponseEntity.ok("Password has been successfully changed!");
     }
 }

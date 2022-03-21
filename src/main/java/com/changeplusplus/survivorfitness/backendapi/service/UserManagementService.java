@@ -270,4 +270,52 @@ public class UserManagementService {
                     locationAssignmentRepository.delete(la);
                 });
     }
+
+
+    /**
+     * Verifies the old password of the user and changes the password to
+     * the new one.
+     * @param userId ID of the user that the password is changed for
+     * @param oldPassword old password of the user
+     * @param newPassword new password of the user
+     */
+    public void changePassword(int userId, String oldPassword, String newPassword) {
+        User userChangingPassword = userRepository.findUserById(userId);
+        if(Objects.isNull(userChangingPassword)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found.");
+        }
+
+        // Get information about the current user (the one who is adding a new user)
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+        String currentUserEmail = (String) authentication.getPrincipal();
+        User currentUser = userRepository.findUserByEmail(currentUserEmail);
+
+        // Only the user themselves and the super admin can change the password of a user
+        // Return an error if another user is trying to change the password
+        if(!(currentUser.getId() == userId || currentUser.isSuperAdmin())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "Only the user themselves or a super admin can change password of this user.");
+        }
+
+        // Check if the old password provided matches the one saved
+        if(!passwordEncoder.matches(oldPassword, userChangingPassword.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "The old password does not match the one currently saved in the database!");
+        }
+
+        // Update password and save the user
+        userChangingPassword.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(userChangingPassword);
+
+        // Send a confirmation email to the user
+        emailService.sendEmail(userChangingPassword.getEmail(),
+                "Your password has been changed!",
+                "Hi!\n\n" +
+                        "Your password has just been changed. If it wasn't you, " +
+                        "please contact Survivor Fitness Foundation management " +
+                        "so that they could reset your password.\n\n" +
+                        "Thanks,\n" +
+                        "Survivor Fitness Team");
+    }
 }
