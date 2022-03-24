@@ -5,9 +5,13 @@ import com.changeplusplus.survivorfitness.backendapi.service.UserManagementServi
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -46,5 +50,16 @@ public class UserRestController {
                 changePasswordRequestBody.getNewPassword());
 
         return ResponseEntity.ok("Password has been successfully changed!");
+    }
+
+
+    @PutMapping("/{userId}")
+    public UserResponse updateUser(@PathVariable Integer userId, @RequestBody UserDTO userDtoToUpdate) {
+        if(!Objects.equals(userId, userDtoToUpdate.getId())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Id in URL and id of the user are different.");
+        }
+
+        UserDTO updatedUser = userManagementService.updateUser(userDtoToUpdate);
+        return new UserResponse(updatedUser);
     }
 }

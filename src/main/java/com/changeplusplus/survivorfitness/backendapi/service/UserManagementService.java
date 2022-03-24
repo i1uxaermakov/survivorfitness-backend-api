@@ -318,4 +318,43 @@ public class UserManagementService {
                         "Thanks,\n" +
                         "Survivor Fitness Team");
     }
+
+
+    /**
+     * Updates the user in the database. Does NOT change id, password, or email.
+     * @param userDtoToUpdate
+     * @return
+     */
+    public UserDTO updateUser(UserDTO userDtoToUpdate) {
+        User userEntityToUpdate = userRepository.findUserById(userDtoToUpdate.getId());
+        if(Objects.isNull(userEntityToUpdate)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found.");
+        }
+
+        userEntityToUpdate.setFirstName(userDtoToUpdate.getFirstName())
+                .setLastName(userDtoToUpdate.getLastName())
+                .setPhoneNumber(userDtoToUpdate.getPhoneNumber());
+
+        if(!Objects.equals(userDtoToUpdate.isSuperAdmin(), userEntityToUpdate.isSuperAdmin())
+            // add check if the user is admin
+        ) {
+
+        }
+
+        return null;
+    }
+
+
+    /**
+     *
+     * @return
+     */
+    public User getCurrentlyLoggedInUser() {
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+        String currentUserEmail = (String) authentication.getPrincipal();
+        User currentUser = userRepository.findUserByEmail(currentUserEmail);
+
+        return currentUser;
+    }
 }
