@@ -89,7 +89,10 @@ public class LocationManagementService {
         //logic to update the administrator
         User prevAdministrator = userRepository.findUserById(locationEntity.getAdministrator().getId());
         User newAdministrator = userRepository.findUserById(locationDTO.getAdministrator().getId());
-        if(Objects.isNull(newAdministrator)) {
+
+
+
+        if(Objects.isNull(prevAdministrator) || Objects.isNull(newAdministrator)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Administrator with specified ID not found.");
         }
 

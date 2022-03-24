@@ -126,10 +126,20 @@ public class ParticipantRestController {
         return new SessionListResponse(listPair.getFirst(), listPair.getSecond());
     }
 
-//    @PutMapping("/{participantId}")
-//    public String updateInfoAboutSpecificParticipant(@PathVariable("participantId") Integer participantId) {
-//        return "confirmation of participant being update";
-//    }
+
+    @PutMapping("/{participantId}")
+    @ApiOperation(value = "Edits info about a specific participant",
+            notes = "This endpoint is available to super admins only.",
+            response = ParticipantResponse.class)
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'LOCATION_ADMINISTRATOR', 'TRAINER', 'DIETITIAN')")
+    public ParticipantResponse updateParticipant(@PathVariable("participantId") Integer participantId,
+                                    @ApiParam(value = "Object containing information about the participant" +
+                                            " and their program", required = true)
+                                    @RequestBody ParticipantDTO participantDTO) {
+        ParticipantDTO updatedParticipantDTO = participantManagementService.editParticipant(participantDTO);
+        return new ParticipantResponse(updatedParticipantDTO);
+    }
+
 //
 //    @DeleteMapping("/{participantId}")
 //    public String deactivateSpecificParticipant(@PathVariable("participantId") Integer participantId) {
