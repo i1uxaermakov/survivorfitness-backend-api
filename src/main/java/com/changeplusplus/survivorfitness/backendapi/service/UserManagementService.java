@@ -285,7 +285,7 @@ public class UserManagementService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found.");
         }
 
-        // Get information about the current user (the one who is adding a new user)
+        // Get information about the current user
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
         String currentUserEmail = (String) authentication.getPrincipal();
