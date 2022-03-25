@@ -1,6 +1,7 @@
 package com.changeplusplus.survivorfitness.backendapi.entity;
 
 import com.changeplusplus.survivorfitness.backendapi.dto.LocationDTO;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "locations")
+@ToString
 public class Location {
 
     @Id

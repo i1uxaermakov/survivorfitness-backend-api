@@ -103,10 +103,12 @@ public class UserManagementService {
         // Get Locations the user is assigned to from te Location Assignments
         Set<LocationDTO> locationDTOs = new HashSet<>();
         for(LocationAssignment la: locationAssignments) {
+            Location location = la.getLocation();
+
             LocationDTO locationDTO = new LocationDTO()
-                    .setId(la.getLocation().getId())
-                    .setName(la.getLocation().getName())
-                    .setType(la.getLocation().getType().name());
+                    .setId(location.getId())
+                    .setName(location.getName())
+                    .setType(location.getType().name());
             locationDTOs.add(locationDTO);
         }
         userDTO.setLocations(new ArrayList<>(locationDTOs));
@@ -405,5 +407,23 @@ public class UserManagementService {
         String currentUserEmail = (String) authentication.getPrincipal();
 
         return userRepository.findUserByEmail(currentUserEmail);
+    }
+  
+    /**
+     * Get all users that exist in the database;
+     * @return A list of UserDTOs (all users)
+     */
+    public List<UserDTO> getAllUsers() {
+        // Retrieve all user entities from the database
+        return userRepository.findAll()
+
+                // Convert the list into a stream of User objects
+                .stream()
+
+                // Convert each User object into a UserDTO object
+                .map(this::getUserDtoBasedOnUserEntity)
+
+                // Collect all UserDTOs into a list and return it
+                .collect(Collectors.toList());
     }
 }

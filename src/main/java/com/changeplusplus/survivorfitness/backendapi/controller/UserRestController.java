@@ -76,4 +76,16 @@ public class UserRestController {
                 createOrEditUserRequestBody.getLocationAssignments());
         return new UserResponse(updatedUser);
     }
+  
+  
+    /**
+     * Find all users in the database. This operation is only allowed
+     * for Super Admins.
+     * @return A UserListResponse with the list of all users inside
+     */
+    @GetMapping("")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
+    public UserListResponse getAllUsers() {
+        return new UserListResponse(userManagementService.getAllUsers());
+    }
 }
