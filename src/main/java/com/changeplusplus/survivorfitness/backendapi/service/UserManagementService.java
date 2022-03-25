@@ -426,4 +426,41 @@ public class UserManagementService {
                 // Collect all UserDTOs into a list and return it
                 .collect(Collectors.toList());
     }
+
+
+    /**
+     * Resets user's password to a new random one. Sends an email to user with the new password.
+     * @param email Email of the user to reset password for
+     */
+    public void resetUserPassword(String email) {
+        // Make the email all-lowercase b/c they are saved so in the database
+        email = email.toLowerCase();
+
+        // Find the User entity in the database. Throw an exception if the user
+        // hasn't been found
+        User userEntityToUpdate = userRepository.findUserByEmail(email);
+        if(Objects.isNull(userEntityToUpdate)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found.");
+        }
+
+        // Create a new random password for the user and encode it
+        String rawPassword = RandomStringUtils.randomAlphanumeric(MINIMUM_PASSWORD_LENGTH);
+        String hashedPassword = passwordEncoder.encode(rawPassword);
+        userEntityToUpdate.setPassword(hashedPassword);
+
+        // Save the user in the database
+        User savedUserEntity = userRepository.save(userEntityToUpdate);
+
+        // Send an email containing the new login credentials to the user
+        emailService.sendEmail(
+                savedUserEntity.getEmail(),
+                "Your Survivor Fitness Account: Password has been reset",
+                "Hi!\n\n" +
+                        "Your password in the Survivor Fitness App has been reset! Below are your new login credentials. " +
+                        "Please log into the app and change your password.\n\n" +
+                        "Email/Username: " + email + "\n" +
+                        "Password: " + rawPassword + "\n\n" +
+                        "Thanks,\n" +
+                        "Survivor Fitness Team");
+    }
 }

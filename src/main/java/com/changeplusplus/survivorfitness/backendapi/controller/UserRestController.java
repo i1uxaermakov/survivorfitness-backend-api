@@ -88,4 +88,18 @@ public class UserRestController {
     public UserListResponse getAllUsers() {
         return new UserListResponse(userManagementService.getAllUsers());
     }
+
+
+    /**
+     * An endpoint to reset the password of a user identified by the @param email.
+     * The endpoint can be used by the users that are not logged in.
+     * @param email Email of the user that needs their password to be reset.
+     * @return A string saying that the password has been successfully reset.
+     */
+    @GetMapping("/reset_password")
+    public ResponseEntity<String> resetPassword(@RequestParam String email) {
+        userManagementService.resetUserPassword(email);
+        return ResponseEntity.ok("The password for user " + email +
+                " has been successfully reset!");
+    }
 }
