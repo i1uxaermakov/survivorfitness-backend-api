@@ -70,4 +70,12 @@ public class User {
         
         return isSuperAdmin && requestedRoleType == UserRoleType.SUPER_ADMIN;
     }
+
+    /**
+     * Returns full name of the user
+     * @return full name of the user
+     */
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
 }
