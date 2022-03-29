@@ -12,8 +12,8 @@ import java.util.List;
 public class OnDataExportRequestedEvent extends ApplicationEvent {
     private List<String> emailsToSendResultsTo;
 
-    public OnDataExportRequestedEvent(List<String> emailsToSendResultsTo) {
-        super(emailsToSendResultsTo);
+    public OnDataExportRequestedEvent(Object source, List<String> emailsToSendResultsTo) {
+        super(source);
         this.emailsToSendResultsTo = emailsToSendResultsTo;
     }
 }

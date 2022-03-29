@@ -9,6 +9,7 @@ import lombok.experimental.Accessors;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -40,4 +41,19 @@ public class Session {
 
     private String specialistNotes;
     private String adminNotes;
+
+
+    /**
+     * Finds the value of the measurement specified by @param measurementName
+     * @param measurementName name of the measurement to look for
+     * @return the value of the measurement. If the measurement is not found, it returns null
+     */
+    public String getValueOfMeasurement(String measurementName) {
+        for(Measurement m: measurements) {
+            if(Objects.equals(m.getName(), measurementName)) {
+                return m.getValue();
+            }
+        }
+        return null;
+    }
 }

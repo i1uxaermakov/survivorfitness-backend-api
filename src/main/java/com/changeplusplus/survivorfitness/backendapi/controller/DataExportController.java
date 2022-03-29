@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/export-data")
+@RequestMapping("/api/v1/export-data")
 public class DataExportController {
 
     @Autowired
@@ -29,7 +29,7 @@ public class DataExportController {
         String currentUserEmail = (String) authentication.getPrincipal();
 
         // Publish an event to trigger the export of the data in the background
-        eventPublisher.publishEvent(new OnDataExportRequestedEvent(List.of(currentUserEmail)));
+        eventPublisher.publishEvent(new OnDataExportRequestedEvent(this, List.of(currentUserEmail)));
 
         // Let the user know that the data export process has started
         return ResponseEntity.ok("Your request for exporting the data has been received. We will send you an email when the data export is complete.");
