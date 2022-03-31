@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -127,6 +128,12 @@ public class ParticipantRestController {
     }
 
 
+    /** updateParticipant - endpoint to update info about a participant
+     *
+     * @param participantId - id of the participant to update
+     * @param participantDTO - DTO of the new participant object
+     * @return - response of 2xx or 4xx, depending on success of update
+     */
     @PutMapping("/{participantId}")
     @ApiOperation(value = "Edits info about a specific participant",
             notes = "This endpoint is available to super admins only.",
@@ -136,6 +143,12 @@ public class ParticipantRestController {
                                     @ApiParam(value = "Object containing information about the participant" +
                                             " and their program", required = true)
                                     @RequestBody ParticipantDTO participantDTO) {
+        if(!Objects.equals(participantId, participantDTO.getId())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID in URL (" +
+                    participantId +
+                    ") and ID of the session (" +
+                    participantDTO.getId() + ") do not match.");
+        }
         ParticipantDTO updatedParticipantDTO = participantManagementService.editParticipant(participantDTO);
         return new ParticipantResponse(updatedParticipantDTO);
     }

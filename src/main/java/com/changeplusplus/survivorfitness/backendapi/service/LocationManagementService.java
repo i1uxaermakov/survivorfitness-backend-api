@@ -73,7 +73,11 @@ public class LocationManagementService {
         return getLocationDtoFromLocationEntity(locationEntity);
     }
 
-    //function to implement details of updating the location
+    /**
+     * Function to implement the details of updating the location
+     * @param locationDTO - object that contains updated info about the location
+     * @return a DTO of the newly updated location
+     */
     public LocationDTO updateLocation(LocationDTO locationDTO){
 
         //gets relevant location object from database + old administrator

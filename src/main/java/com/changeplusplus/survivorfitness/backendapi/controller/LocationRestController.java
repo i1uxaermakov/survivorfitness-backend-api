@@ -60,6 +60,13 @@ public class LocationRestController {
         return new LocationResponse(locationDTO);
     }
 
+
+    /** updateLocation - endpoint that is used to update information about a location
+     *
+     * @param locationId - ID of the location
+     * @param locationDTO - DTO object of the location object to update
+     * @return - 200 if successful, 4XX if unsuccessful
+     */
     @PutMapping("/{locationId}")
     @ApiOperation(value = "Edits  info about specific location",
             notes = "Provide an ID to look up a specific location. If a location with a specified ID doesn't exist, the endpoint returns location = null.\n" +
@@ -68,7 +75,8 @@ public class LocationRestController {
     @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
     public LocationResponse updateLocation(@PathVariable("locationId") Integer locationId, @RequestBody LocationDTO locationDTO) {
         if(!Objects.equals(locationId, locationDTO.getId())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID in URL and ID of the session (" +
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID in URL " +
+                    locationId + " and ID of the session (" +
            locationDTO.getId() + ") do not match.");
         }
 

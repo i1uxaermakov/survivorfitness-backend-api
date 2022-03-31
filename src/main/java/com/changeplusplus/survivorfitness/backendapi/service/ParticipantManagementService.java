@@ -94,6 +94,11 @@ public class ParticipantManagementService {
     }
 
 
+    /**
+     * editParticipant - method that updates the participant object
+     * @param participantDTO - new DTO object of the participant
+     * @return - updated DTO of the participant retrieved from the database
+     */
     @Transactional
     public ParticipantDTO editParticipant(
             ParticipantDTO participantDTO
@@ -119,12 +124,27 @@ public class ParticipantManagementService {
         String currentUserEmail = (String) authentication.getPrincipal();
         User currentUser = userRepository.findUserByEmail(currentUserEmail);
 
+
+        //whether the new participant object has modified the treatment program at all
+        boolean programHasChanged = ProgramProgressStatus.valueOf(participantDTO.getTreatmentProgramStatus()) !=
+                programEntity.getProgramProgressStatus()
+                ||
+                !Objects.equals(programEntity.getTrainerGym().getId(), trainerGym.getId()) ||
+                !Objects.equals(programEntity.getDietitianOffice().getId(), dietitianOffice.getId()) ||
+                !Objects.equals(programEntity.getTrainer().getId(),
+                        participantDTO.getTrainer().getId()) ||
+                !Objects.equals(programEntity.getDietitian().getId(),
+                        participantDTO.getDietitian().getId()
+                );
+
         //Only super admins and location admins can change info about the program
-        if(
+        if(programHasChanged &&
             !currentUser.hasRole(UserRoleType.SUPER_ADMIN) &&
             !currentUser.hasRole(UserRoleType.LOCATION_ADMINISTRATOR)
         ) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The current user is not allowed to create Super Admins.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "The current user is not allowed to change information about the " +
+                            "program.");
         }
 
         Participant updatedParticipantEntity =
