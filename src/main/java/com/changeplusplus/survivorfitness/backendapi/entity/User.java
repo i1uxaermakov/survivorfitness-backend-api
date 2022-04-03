@@ -35,12 +35,13 @@ public class User {
 
     private String password;
 
+    @Column(columnDefinition = "BOOLEAN")
     private boolean enabled;
 
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(name = "is_super_admin")
+    @Column(name = "is_super_admin", columnDefinition = "BOOLEAN")
     private boolean isSuperAdmin = false;
 
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
