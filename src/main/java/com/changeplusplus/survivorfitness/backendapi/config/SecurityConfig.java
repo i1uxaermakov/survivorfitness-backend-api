@@ -55,30 +55,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
-    /*
-     * @Override protected void configure(AuthenticationManagerBuilder auth) throws
-     * Exception {
-     * auth.inMemoryAuthentication().withUser("admin").password("12345").authorities
-     * ("admin").and(). withUser("user").password("12345").authorities("read").and()
-     * .passwordEncoder(NoOpPasswordEncoder.getInstance()); }
-     */
-
-    /*
-     * @Override protected void configure(AuthenticationManagerBuilder auth) throws
-     * Exception { InMemoryUserDetailsManager userDetailsService = new
-     * InMemoryUserDetailsManager(); UserDetails user =
-     * User.withUsername("admin").password("12345").authorities("admin").build();
-     * UserDetails user1 =
-     * User.withUsername("user").password("12345").authorities("read").build();
-     * userDetailsService.createUser(user); userDetailsService.createUser(user1);
-     * auth.userDetailsService(userDetailsService); }
-     */
-
-    /*
-     * @Bean public UserDetailsService userDetailsService(DataSource dataSource) {
-     * return new JdbcUserDetailsManager(dataSource); }
-     */
-
     @Override
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {

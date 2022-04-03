@@ -43,23 +43,9 @@ public class User {
     @Column(name = "is_super_admin", columnDefinition = "BOOLEAN")
     private boolean isSuperAdmin = false;
 
-    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-    @JoinTable(
-            name="user_roles",
-            joinColumns=@JoinColumn(name="user_id"),
-            inverseJoinColumns=@JoinColumn(name="role_id"))
-    private List<UserRole> roles = new ArrayList<>();
-
-
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-    @JoinTable(
-            name="user_locations",
-            joinColumns=@JoinColumn(name="user_id"),
-            inverseJoinColumns=@JoinColumn(name="location_id"))
-    private List<Location> locationsAssignedTo = new ArrayList<>();
-
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "user")
     private List<LocationAssignment> locationAssignments = new ArrayList<>();
+
 
     /**
      * Checks if the user has the specified role.
@@ -72,9 +58,9 @@ public class User {
                 return true;
             }
         }
-        
         return isSuperAdmin && requestedRoleType == UserRoleType.SUPER_ADMIN;
     }
+
 
     /**
      * Returns full name of the user
@@ -83,6 +69,7 @@ public class User {
     public String getFullName() {
         return firstName + " " + lastName;
     }
+
 
     /**
      * Checks if the user has a location assignment with @param locationId
