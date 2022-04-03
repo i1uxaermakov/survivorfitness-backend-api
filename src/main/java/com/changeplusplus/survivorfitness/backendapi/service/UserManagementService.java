@@ -80,7 +80,7 @@ public class UserManagementService {
         UserDTO userDTO = getConciseUserDTOBasedOnUserEntity(userEntity);
         userDTO.setEmail(userEntity.getEmail());
         userDTO.setPassword(userEntity.getPassword());
-        userDTO.setSuperAdmin(userEntity.isSuperAdmin());
+        userDTO.setIsSuperAdmin(userEntity.isSuperAdmin());
         userDTO.setPhoneNumber(userEntity.getPhoneNumber());
 
         // Assign the roles of the userDTO based on Location Assignments
@@ -158,7 +158,7 @@ public class UserManagementService {
                 .setFirstName(newUserData.getFirstName())
                 .setLastName(newUserData.getLastName())
                 .setPhoneNumber(newUserData.getPhoneNumber())
-                .setSuperAdmin(newUserData.isSuperAdmin());
+                .setSuperAdmin(newUserData.getIsSuperAdmin());
 
         // Get information about the current user (the one who is adding a new user)
         Authentication authentication =
@@ -167,7 +167,7 @@ public class UserManagementService {
         User currentUser = userRepository.findUserByEmail(currentUserEmail);
 
         // If a non-SuperAdmin user is trying to create a super admin user, block it
-        if(newUserData.isSuperAdmin() && !currentUser.hasRole(UserRoleType.SUPER_ADMIN)) {
+        if(newUserData.getIsSuperAdmin() && !currentUser.hasRole(UserRoleType.SUPER_ADMIN)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The current user is not allowed to create Super Admins.");
         }
 

@@ -63,4 +63,12 @@ public class Participant {
         this.surgeries = surgeries;
         this.physicianNotes = physicianNotes;
     }
+
+    /**
+     * Returns full name of the participant
+     * @return full name of the participant
+     */
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
 }

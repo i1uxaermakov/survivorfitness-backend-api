@@ -20,7 +20,7 @@ public class UserDTO {
     private String firstName;
     private String lastName;
     private String email;
-    private boolean isSuperAdmin;
+    private Boolean isSuperAdmin;
 
     @JsonIgnore
     private String password;

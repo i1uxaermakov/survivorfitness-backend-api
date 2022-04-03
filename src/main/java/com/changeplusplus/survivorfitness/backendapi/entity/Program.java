@@ -27,11 +27,11 @@ public class Program {
     private ProgramProgressStatus programProgressStatus;
 
     @OneToMany(mappedBy="program", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @Where(clause = "whoseNotes='TRAINER'")
+    @Where(clause = "whose_notes = 'TRAINER'")
     private List<Session> trainerSessions = new ArrayList<>();
 
     @OneToMany(mappedBy="program", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @Where(clause = "whoseNotes='DIETITIAN'")
+    @Where(clause = "whose_notes = 'DIETITIAN'")
     private List<Session> dietitianSessions = new ArrayList<>();
 
     @OneToOne(mappedBy = "treatmentProgram", fetch = FetchType.LAZY)

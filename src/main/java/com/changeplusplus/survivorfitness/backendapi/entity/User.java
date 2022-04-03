@@ -34,12 +34,13 @@ public class User {
 
     private String password;
 
+    @Column(columnDefinition = "BOOLEAN")
     private boolean enabled;
 
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(name = "is_super_admin")
+    @Column(name = "is_super_admin", columnDefinition = "BOOLEAN")
     private boolean isSuperAdmin = false;
 
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
@@ -75,6 +76,13 @@ public class User {
         return isSuperAdmin && requestedRoleType == UserRoleType.SUPER_ADMIN;
     }
 
+    /**
+     * Returns full name of the user
+     * @return full name of the user
+     */
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
 
     /**
      * Checks if the user has a location assignment with @param locationId
