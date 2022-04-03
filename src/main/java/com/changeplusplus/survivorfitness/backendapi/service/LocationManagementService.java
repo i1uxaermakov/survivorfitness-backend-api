@@ -73,7 +73,11 @@ public class LocationManagementService {
         return getLocationDtoFromLocationEntity(locationEntity);
     }
 
-    //function to implement details of updating the location
+    /**
+     * Function to implement the details of updating the location
+     * @param locationDTO - object that contains updated info about the location
+     * @return a DTO of the newly updated location
+     */
     public LocationDTO updateLocation(LocationDTO locationDTO){
 
         //gets relevant location object from database + old administrator
@@ -89,7 +93,10 @@ public class LocationManagementService {
         //logic to update the administrator
         User prevAdministrator = userRepository.findUserById(locationEntity.getAdministrator().getId());
         User newAdministrator = userRepository.findUserById(locationDTO.getAdministrator().getId());
-        if(Objects.isNull(newAdministrator)) {
+
+
+
+        if(Objects.isNull(prevAdministrator) || Objects.isNull(newAdministrator)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Administrator with specified ID not found.");
         }
 

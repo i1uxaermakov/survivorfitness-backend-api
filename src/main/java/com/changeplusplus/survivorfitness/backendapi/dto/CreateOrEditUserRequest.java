@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateUserRequest {
+public class CreateOrEditUserRequest {
     private UserDTO user;
     private List<LocationAssignmentDTO> locationAssignments;
 }

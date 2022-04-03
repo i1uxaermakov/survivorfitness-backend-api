@@ -13,4 +13,5 @@ public interface UserRepository extends CrudRepository<User, Integer> {
     List<User> findUsersByLocationAssignmentsUserRoleTypeAndLocationAssignmentsLocationId(UserRoleType roleName, Integer locationId);
     List<User> findUsersByLocationAssignmentsUserRoleType(UserRoleType roleName);// change the search by role within location assignment
     User findUserById(Integer userId);
+    List<User> findAll();
 }

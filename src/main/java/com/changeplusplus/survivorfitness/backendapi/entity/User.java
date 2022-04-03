@@ -9,7 +9,6 @@ import lombok.experimental.Accessors;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name="users")
@@ -62,6 +61,11 @@ public class User {
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "user")
     private List<LocationAssignment> locationAssignments = new ArrayList<>();
 
+    /**
+     * Checks if the user has the specified role.
+     * @param requestedRoleType the role to look for
+     * @return true if the user has the role and false otherwise
+     */
     public boolean hasRole(UserRoleType requestedRoleType) {
         for(LocationAssignment la: locationAssignments) {
             if(la.getUserRoleType().equals(requestedRoleType)) {
@@ -78,5 +82,22 @@ public class User {
      */
     public String getFullName() {
         return firstName + " " + lastName;
+    }
+
+    /**
+     * Checks if the user has a location assignment with @param locationId
+     * and @param userRoleType
+     * @param locationId ID of the location to search for
+     * @param userRoleType role to search for
+     * @return true if the user has the specified location assignment and
+     * false otherwise
+     */
+    public boolean hasLocationAssignment(Integer locationId, UserRoleType userRoleType) {
+        for(LocationAssignment la: locationAssignments) {
+            if(la.getUserRoleType().equals(userRoleType) && la.getLocation().getId().equals(locationId)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

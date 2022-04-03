@@ -13,6 +13,7 @@ import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -29,9 +30,6 @@ import java.util.stream.Collectors;
 public class UserManagementService {
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private UserRoleRepository userRoleRepository;
 
     @Autowired
     private LocationRepository locationRepository;
@@ -83,6 +81,7 @@ public class UserManagementService {
         userDTO.setEmail(userEntity.getEmail());
         userDTO.setPassword(userEntity.getPassword());
         userDTO.setIsSuperAdmin(userEntity.isSuperAdmin());
+        userDTO.setPhoneNumber(userEntity.getPhoneNumber());
 
         // Assign the roles of the userDTO based on Location Assignments
         List<LocationAssignment> locationAssignments = userEntity.getLocationAssignments();
@@ -104,10 +103,12 @@ public class UserManagementService {
         // Get Locations the user is assigned to from te Location Assignments
         Set<LocationDTO> locationDTOs = new HashSet<>();
         for(LocationAssignment la: locationAssignments) {
+            Location location = la.getLocation();
+
             LocationDTO locationDTO = new LocationDTO()
-                    .setId(la.getLocation().getId())
-                    .setName(la.getLocation().getName())
-                    .setType(la.getLocation().getType().name());
+                    .setId(location.getId())
+                    .setName(location.getName())
+                    .setType(location.getType().name());
             locationDTOs.add(locationDTO);
         }
         userDTO.setLocations(new ArrayList<>(locationDTOs));
@@ -285,11 +286,9 @@ public class UserManagementService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found.");
         }
 
-        // Get information about the current user
-        Authentication authentication =
-                SecurityContextHolder.getContext().getAuthentication();
-        String currentUserEmail = (String) authentication.getPrincipal();
-        User currentUser = userRepository.findUserByEmail(currentUserEmail);
+        // Get information about the current user (the one who is changing
+        // the password of the user)
+        User currentUser = getCurrentlyLoggedInUser();
 
         // Only the user themselves and the super admin can change the password of a user
         // Return an error if another user is trying to change the password
@@ -315,6 +314,152 @@ public class UserManagementService {
                         "Your password has just been changed. If it wasn't you, " +
                         "please contact Survivor Fitness Foundation management " +
                         "so that they could reset your password.\n\n" +
+                        "Thanks,\n" +
+                        "Survivor Fitness Team");
+    }
+
+
+    /**
+     * Updates the user in the database. Does NOT change id, password, or email.
+     * @param userDtoToUpdate UserDTO of the User to be updated
+     * @return UserDTO as it is now saved in the database
+     */
+    public UserDTO updateUser(UserDTO userDtoToUpdate, List<LocationAssignmentDTO> locationAssignmentDTOS) {
+        // Find the User entity in the database. Throw an exception if the user
+        // hasn't been found
+        User userEntityToUpdate = userRepository.findUserById(userDtoToUpdate.getId());
+        if(Objects.isNull(userEntityToUpdate)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found.");
+        }
+
+        // Update primitive fields of the User
+        userEntityToUpdate.setFirstName(userDtoToUpdate.getFirstName())
+                .setLastName(userDtoToUpdate.getLastName())
+                .setPhoneNumber(userDtoToUpdate.getPhoneNumber());
+
+        // Go over all LocationAssignmentDTOs received from the request and
+        // add all LocationAssignments that are missing
+        for(LocationAssignmentDTO laDTO: locationAssignmentDTOS) {
+            if(!userEntityToUpdate.hasLocationAssignment(laDTO.getLocationId(), laDTO.getUserRoleType())) {
+                // Retrieve the Location object from the database and throw
+                // an exception if it does not exist
+                Location location = locationRepository.findLocationById(laDTO.getLocationId());
+                if(Objects.isNull(location)) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "Location with id " + laDTO.getLocationId() + " does not exist!");
+                }
+
+                // Add the missing LocationAssignment to the User
+                userEntityToUpdate.getLocationAssignments().add(
+                        new LocationAssignment(userEntityToUpdate, location,
+                                laDTO.getUserRoleType()));
+            }
+        }
+
+        // If after adding all missing LocationAssignments the sizes of
+        // locationAssignmentDTOS and userEntityToUpdate.getLocationAssignments()
+        // aren't equal, it means that some LocationAssignments have been deleted.
+        // Go over the LocationAssignments of the User and see which ones are missing
+        // in the locationAssignmentDTOS list – delete those from the user and from
+        // the database.
+        if(locationAssignmentDTOS.size() != userEntityToUpdate.getLocationAssignments().size()) {
+            List<LocationAssignment> lasToDelete = new ArrayList<>();
+
+            // Go over all LocationAssignments and add the ones not present
+            // in the locationAssignmentDTOS to lasToDelete
+            for(LocationAssignment la: userEntityToUpdate.getLocationAssignments()) {
+                if(!dtoListContainsLocationAssignmentDTO(locationAssignmentDTOS, la)) {
+                    lasToDelete.add(la);
+                }
+            }
+
+            // Delete all identified LocationAssignments from the User and
+            // from the database
+            userEntityToUpdate.getLocationAssignments().removeAll(lasToDelete);
+            locationAssignmentRepository.deleteAll(lasToDelete);
+        }
+
+        // Save the updated User to the database
+        User updatedUserEntity = userRepository.save(userEntityToUpdate);
+
+        // Convert User object to the UserDTO and return it
+        return getUserDtoBasedOnUserEntity(updatedUserEntity);
+    }
+
+
+
+    private boolean dtoListContainsLocationAssignmentDTO(List<LocationAssignmentDTO> laDTOs, LocationAssignment locationAssignment) {
+        return laDTOs.stream()
+                .anyMatch(dto -> dto.getLocationId() == locationAssignment.getLocation().getId() &&
+                        dto.getUserRoleType().equals(locationAssignment.getUserRoleType()));
+    }
+
+
+    /**
+     * Gets the currently logged-in user. The method can only be used by
+     * authenticated users.
+     * @return User object of the currently logged-in user
+     */
+    @PreAuthorize("isAuthenticated()")
+    public User getCurrentlyLoggedInUser() {
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+        String currentUserEmail = (String) authentication.getPrincipal();
+
+        return userRepository.findUserByEmail(currentUserEmail);
+    }
+  
+    /**
+     * Get all users that exist in the database;
+     * @return A list of UserDTOs (all users)
+     */
+    public List<UserDTO> getAllUsers() {
+        // Retrieve all user entities from the database
+        return userRepository.findAll()
+
+                // Convert the list into a stream of User objects
+                .stream()
+
+                // Convert each User object into a UserDTO object
+                .map(this::getUserDtoBasedOnUserEntity)
+
+                // Collect all UserDTOs into a list and return it
+                .collect(Collectors.toList());
+    }
+
+
+    /**
+     * Resets user's password to a new random one. Sends an email to user with the new password.
+     * @param email Email of the user to reset password for
+     */
+    public void resetUserPassword(String email) {
+        // Make the email all-lowercase b/c they are saved so in the database
+        email = email.toLowerCase();
+
+        // Find the User entity in the database. Throw an exception if the user
+        // hasn't been found
+        User userEntityToUpdate = userRepository.findUserByEmail(email);
+        if(Objects.isNull(userEntityToUpdate)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found.");
+        }
+
+        // Create a new random password for the user and encode it
+        String rawPassword = RandomStringUtils.randomAlphanumeric(MINIMUM_PASSWORD_LENGTH);
+        String hashedPassword = passwordEncoder.encode(rawPassword);
+        userEntityToUpdate.setPassword(hashedPassword);
+
+        // Save the user in the database
+        User savedUserEntity = userRepository.save(userEntityToUpdate);
+
+        // Send an email containing the new login credentials to the user
+        emailService.sendEmail(
+                savedUserEntity.getEmail(),
+                "Your Survivor Fitness Account: Password has been reset",
+                "Hi!\n\n" +
+                        "Your password in the Survivor Fitness App has been reset! Below are your new login credentials. " +
+                        "Please log into the app and change your password.\n\n" +
+                        "Email/Username: " + email + "\n" +
+                        "Password: " + rawPassword + "\n\n" +
                         "Thanks,\n" +
                         "Survivor Fitness Team");
     }
