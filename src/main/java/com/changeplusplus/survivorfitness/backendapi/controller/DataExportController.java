@@ -20,6 +20,11 @@ public class DataExportController {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
+    /**
+     * An endpoint for starting an asynchronous participant data export. When the process is done,
+     * the user will get an email notification
+     * @return
+     */
     @GetMapping()
     @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
     public ResponseEntity<String> exportData() {
@@ -32,6 +37,7 @@ public class DataExportController {
         eventPublisher.publishEvent(new OnDataExportRequestedEvent(this, List.of(currentUserEmail)));
 
         // Let the user know that the data export process has started
-        return ResponseEntity.ok("Your request for exporting the data has been received. We will send you an email when the data export is complete.");
+        return ResponseEntity.ok("Your request for exporting the data has been received. " +
+                "We will send you an email when the data export is complete.");
     }
 }

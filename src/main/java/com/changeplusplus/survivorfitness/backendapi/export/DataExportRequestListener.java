@@ -59,7 +59,7 @@ public class DataExportRequestListener implements ApplicationListener<OnDataExpo
      * it to @param emailsToNotify via email.
      * @param emailsToNotify A list of emails to send the export file to
      */
-    private void doExportData(List<String> emailsToNotify) throws Exception { //TODO change exception handling
+    private void doExportData(List<String> emailsToNotify) throws Exception {
         List<Participant> participants = participantRepository.findAll();
 
         // Get all unique measurement names
@@ -88,7 +88,8 @@ public class DataExportRequestListener implements ApplicationListener<OnDataExpo
                 email,
                 "SFF - Data Export Completed",
                 "Hello,\n\n" +
-                        "The export of data about participants has been completed. Please find the generated spreadsheet attached to this email.\n\n" +
+                        "The export of data about participants has been completed. " +
+                        "Please find the generated spreadsheet attached to this email.\n\n" +
                         "Thanks,\n" +
                         "Survivor Fitness Team",
                 outputFile));

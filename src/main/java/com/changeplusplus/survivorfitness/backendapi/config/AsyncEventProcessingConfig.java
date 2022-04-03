@@ -9,7 +9,8 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
 @Configuration
 public class AsyncEventProcessingConfig {
     /**
-     * Bean needed for asynchronous processing of events like data-export.
+     * Bean needed for asynchronous processing of events like data-export. Without this configuration,
+     * all events would be handled synchronously.
      * @return an ApplicationEventMulticaster object (used by Spring framework)
      */
     @Bean(name = "applicationEventMulticaster")
