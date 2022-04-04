@@ -48,7 +48,7 @@ public class UserManagementService {
      */
     public List<UserDTO> getGeneralInfoAboutAllSpecialistsOfSpecificType(UserRoleType type) {
         if(Objects.equals(UserRoleType.SUPER_ADMIN, type)) {
-            List<User> superAdmins = userRepository.findUsersBySuperAdmin(true);
+            List<User> superAdmins = userRepository.findUsersByIsSuperAdmin(true);
             return getUserDTOsBasedOnUserEntities(superAdmins);
         }
 
