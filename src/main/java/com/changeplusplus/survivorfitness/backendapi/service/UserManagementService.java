@@ -40,33 +40,69 @@ public class UserManagementService {
 
     private static final int MINIMUM_PASSWORD_LENGTH = 8;
 
+
+    /**
+     * Finds all specialists that have the specified @param role type.
+     * @param type Type of the Users needed (TRAINER, DIETITIAN, LOCATION_ADMINISTRATOR, or SUPER_ADMIN)
+     * @return a list of users of the specified type
+     */
     public List<UserDTO> getGeneralInfoAboutAllSpecialistsOfSpecificType(UserRoleType type) {
-        List<User> dietitiansList = userRepository.findUsersByLocationAssignmentsUserRoleType(type);
-        return getListOfUserDTOsWithUserInfoAndLocationInfo(dietitiansList);
+        if(Objects.equals(UserRoleType.SUPER_ADMIN, type)) {
+            List<User> superAdmins = userRepository.findUsersBySuperAdmin(true);
+            return getUserDTOsBasedOnUserEntities(superAdmins);
+        }
+
+        List<User> specialistEntities = userRepository.findDistinctUsersByLocationAssignmentsUserRoleType(type);
+        return getUserDTOsBasedOnUserEntities(specialistEntities);
     }
 
-    public List<UserDTO> getGeneralInfoAboutSpecialistsOfSpecificTypeInSpecificLocation(UserRoleType type, Integer locationId) {
-        List<User> userList = userRepository.findUsersByLocationAssignmentsUserRoleTypeAndLocationAssignmentsLocationId(type, locationId);
-        return getListOfUserDTOsWithUserInfoAndLocationInfo(userList);
+
+    /**
+     * Find all specialists that have the @param role in the location specified by @param locationId
+     * @param role Role of the Users needed
+     * @param locationId The location the users have to be assigned to
+     * @return a list of users with the specified role in the specified location
+     */
+    public List<UserDTO> getGeneralInfoAboutSpecialistsOfSpecificTypeInSpecificLocation(UserRoleType role, Integer locationId) {
+        List<User> userList = userRepository.findUsersByLocationAssignmentsUserRoleTypeAndLocationAssignmentsLocationId(role, locationId);
+        return getUserDTOsBasedOnUserEntities(userList);
     }
 
+
+    /**
+     * Finds the User with the specified @param email.
+     * @param email The email to look for
+     * @return Info about the user that has the email. If such a user doesn't exist, returns null.
+     */
     public UserDTO getUserInfoByEmail(String email) {
         User userEntity = userRepository.findUserByEmail(email);
         UserDTO userDTO = getUserDtoBasedOnUserEntity(userEntity);
         return userDTO;
     }
 
-    private List<UserDTO> getListOfUserDTOsWithUserInfoAndLocationInfo(List<User> usersWithRole) {
-        List<UserDTO> userDTOList = new ArrayList<>();
 
-        for(User userEntity: usersWithRole) {
-            userDTOList.add(getUserDtoBasedOnUserEntity(userEntity));
-        }
+    /**
+     * Converts a list of User entities into a list of UserDTOs.
+     * @param users The list of User entities to convert
+     * @return a list of UserDTOs that are based on User entities
+     */
+    private List<UserDTO> getUserDTOsBasedOnUserEntities(List<User> users) {
+        // Convert the list into a stream of User objects
+        return users.stream()
 
-        return userDTOList;
+            // Convert each User object into a UserDTO object
+            .map(this::getUserDtoBasedOnUserEntity)
+
+            // Collect all UserDTOs into a list and return it
+            .collect(Collectors.toList());
     }
 
 
+    /**
+     * Converts a User entity into a UserDTO. Returns the new UserDTO
+     * @param userEntity the entity to convert to the DTO
+     * @return UserDTO with the fields set to the values of User Entity
+     */
     private UserDTO getUserDtoBasedOnUserEntity(User userEntity) {
         if(userEntity == null) {
             return null;
@@ -112,6 +148,14 @@ public class UserManagementService {
     }
 
 
+    /**
+     * Creates a new User based on @param newUserData and sets its LocationAssignments based
+     * on @param newUserLocationAssignments. Saves the new User in the database. Creates a random
+     * password for the new user and sends it to them in an email.
+     * @param newUserData UserDTO containing the data about the new User
+     * @param newUserLocationAssignments contains the locations and the roles in those locations of the new user
+     * @return UserDTO based on the new User entity as it has just been saved in the database
+     */
     @Transactional
     public UserDTO createNewUser(UserDTO newUserData, List<LocationAssignmentDTO> newUserLocationAssignments) {
         // Check if the current user is allowed to add the new user and
@@ -144,8 +188,15 @@ public class UserManagementService {
     }
 
 
-
-    private User getPopulatedUserEntityForCreatingUser(UserDTO newUserData, List<LocationAssignmentDTO> newUserLocationAssignments) {
+    /**
+     * A helper method for createNewUser(). Creates a new User objects and populates it with the data
+     * from @param newUserData and @param newUserLocationAssignments
+     * @param newUserData UserDTO containing the data about the new User
+     * @param newUserLocationAssignments contains the locations and the roles in those locations of the new user
+     * @return User entity with all the fields assigned according to the parameters. The entity has not been saved yet.
+     */
+    private User getPopulatedUserEntityForCreatingUser(UserDTO newUserData,
+                                                       List<LocationAssignmentDTO> newUserLocationAssignments) {
         // Create the new user entity and populate the fields that don't need verification
         User userEntity = new User()
                 .setEmail(newUserData.getEmail())
@@ -156,23 +207,33 @@ public class UserManagementService {
                 .setSuperAdmin(newUserData.getIsSuperAdmin());
 
         // Get information about the current user (the one who is adding a new user)
-        Authentication authentication =
-                SecurityContextHolder.getContext().getAuthentication();
-        String currentUserEmail = (String) authentication.getPrincipal();
-        User currentUser = userRepository.findUserByEmail(currentUserEmail);
+        User currentUser = getCurrentlyLoggedInUser();
 
         // If a non-SuperAdmin user is trying to create a super admin user, block it
         if(newUserData.getIsSuperAdmin() && !currentUser.hasRole(UserRoleType.SUPER_ADMIN)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The current user is not allowed to create Super Admins.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "The current user is not allowed to create Super Admins.");
         }
 
-        List<LocationAssignment> locationAssignments = verifyAndGetLocationAssignmentsOfNewUser(currentUser, userEntity, newUserLocationAssignments);
+        // Get the verified location assignments of the new user and assign them to the new user object
+        List<LocationAssignment> locationAssignments = verifyAndGetLocationAssignmentsOfNewUser(
+                currentUser, userEntity, newUserLocationAssignments);
         userEntity.setLocationAssignments(locationAssignments);
 
         return userEntity;
     }
 
 
+    /**
+     * A helper method for createUser method. Verifies that the current user (the one currently
+     * logged in) can add the new user to the locations/roles specified in @param newUserLocationAssignments.
+     * If the current User is authorized to do that, the method will return a list of location
+     * assignments for the new user. These location assignments will not have been saved into the database.
+     * @param currentUser currently logged in user
+     * @param newUser the new user entity the location assignments should be checked for
+     * @param newUserLocationAssignments new user's location assignments that should be checked
+     * @return a list of LocationAssignments for the new user
+     */
     private List<LocationAssignment> verifyAndGetLocationAssignmentsOfNewUser(
             User currentUser, User newUser,
             List<LocationAssignmentDTO> newUserLocationAssignments) {
@@ -186,9 +247,11 @@ public class UserManagementService {
             for(LocationAssignmentDTO locationAssignmentDTO: newUserLocationAssignments) {
                 Location locationEntity = locationRepository.findLocationById(locationAssignmentDTO.getLocationId());
                 if(Objects.isNull(locationEntity)) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The location " + locationAssignmentDTO.getLocationId() + " the new user is assigned to does not exist.");
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The location " +
+                            locationAssignmentDTO.getLocationId() + " the new user is assigned to does not exist.");
                 }
-                locationAssignments.add(new LocationAssignment(newUser, locationEntity, locationAssignmentDTO.getUserRoleType()));
+                locationAssignments.add(new LocationAssignment(newUser, locationEntity,
+                        locationAssignmentDTO.getUserRoleType()));
             }
 
             // All checks have been verified, return the location assignment entities
@@ -198,37 +261,50 @@ public class UserManagementService {
         else if(currentUser.hasRole(UserRoleType.LOCATION_ADMINISTRATOR)) {
             // Location admins cannot add a user to multiple locations
             if(newUserLocationAssignments.size() != 1) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Location Administrator has to assign the new user to one location only.");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Location Administrator has to assign the new user to one location only.");
             }
             LocationAssignmentDTO singleLocationAssignment = newUserLocationAssignments.get(0);
 
             // Find the location that the new user is being assigned to and check if it exists
-            Location locationNewUserIsAssignedTo = locationRepository.findLocationById(singleLocationAssignment.getLocationId());
+            Location locationNewUserIsAssignedTo = locationRepository.findLocationById(
+                    singleLocationAssignment.getLocationId());
             if(Objects.isNull(locationNewUserIsAssignedTo)) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The location the new user is assigned to does not exist.");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "The location the new user is assigned to does not exist.");
             }
 
             // Check if the location administrator is adding the user to the
             // location they are administering
             if(!Objects.equals(locationNewUserIsAssignedTo.getAdministrator().getId(), currentUser.getId())) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The user is not the administrator of the location");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "The user is not the administrator of the location");
             }
 
             // Check if the location administrator is adding only Dietitians or Trainers
             if(singleLocationAssignment.getUserRoleType() != UserRoleType.DIETITIAN &&
                     singleLocationAssignment.getUserRoleType() != UserRoleType.TRAINER) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Location Administrator can only add Trainers and Dietitians");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Location Administrator can only add Trainers and Dietitians");
             }
 
             // All checks have been verified, return the location list
-            return List.of(new LocationAssignment(newUser, locationNewUserIsAssignedTo, singleLocationAssignment.getUserRoleType()));
+            return List.of(new LocationAssignment(newUser, locationNewUserIsAssignedTo,
+                    singleLocationAssignment.getUserRoleType()));
         }
 
         // Only SUPER_ADMINS and LOCATION_ADMINS are allowed to add new users
-        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "The current user is not allowed to add new users.");
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
+                "The current user is not allowed to add new users.");
     }
 
 
+    /**
+     * Creates a UserDTO based on the User entity but only sets the id and the first/last name.
+     * This method is used whenever only these fields are needed.
+     * @param specialistEntity the User entities to retrieve values from
+     * @return a new UserDTO with id, first name, and last name set
+     */
     public static UserDTO getConciseUserDTOBasedOnUserEntity(User specialistEntity) {
         if(specialistEntity == null) {
             return null;
@@ -242,18 +318,38 @@ public class UserManagementService {
         return userDTO;
     }
 
+
+    /**
+     * Finds UserDTO by the specified @param userId
+     * @param userId ID of the user to look for
+     * @return UserDTO with the specified userId
+     */
     public UserDTO getUserInfoById(Integer userId) {
         User userEntity = userRepository.findUserById(userId);
         UserDTO userDTO = getUserDtoBasedOnUserEntity(userEntity);
         return userDTO;
     }
 
+
+    /**
+     * Adds a Location Assignment to the user and saves the user in the database.
+     * @param user the User the new Location Assignment is created for
+     * @param location The Location the user is assigned to
+     * @param userRoleType The role the user has at that location
+     */
     public void addLocationAssignmentToUser(User user, Location location, UserRoleType userRoleType){
         LocationAssignment locationAssignment = new LocationAssignment(user, location, userRoleType);
         user.getLocationAssignments().add(locationAssignment);
         userRepository.save(user);
     }
 
+
+    /**
+     * Removes a Location Assignment from a user and deletes the Location Assignment from the database.
+     * @param user the User whose Location Assignment has to be removed
+     * @param location The Location of the Location Assignment that has to be removed
+     * @param userRoleType The role at @param location that has to be removed
+     */
     public void removeLocationAssignmentFromUser(User user, Location location, UserRoleType userRoleType){
         user.getLocationAssignments()
                 .stream()
@@ -382,8 +478,16 @@ public class UserManagementService {
     }
 
 
-
-    private boolean dtoListContainsLocationAssignmentDTO(List<LocationAssignmentDTO> laDTOs, LocationAssignment locationAssignment) {
+    /**
+     * Checks if the list of LocationAssignmentDTOs contains a LocationAssignmentDTO with the
+     * same fields as @param locationAssignment. This method is used in the updateUser function
+     * to check if the LocationAssignments of the User have changed.
+     * @param laDTOs the list of LocationAssignmentDTOs to inspect
+     * @param locationAssignment the locationAssignment to look for
+     * @return true if a laDTOs contains a dto with the same fields as locationAssignment and false otherwise
+     */
+    private boolean dtoListContainsLocationAssignmentDTO(List<LocationAssignmentDTO> laDTOs,
+                                                         LocationAssignment locationAssignment) {
         return laDTOs.stream()
                 .anyMatch(dto -> dto.getLocationId() == locationAssignment.getLocation().getId() &&
                         dto.getUserRoleType().equals(locationAssignment.getUserRoleType()));
@@ -403,7 +507,8 @@ public class UserManagementService {
 
         return userRepository.findUserByEmail(currentUserEmail);
     }
-  
+
+
     /**
      * Get all users that exist in the database;
      * @return A list of UserDTOs (all users)
