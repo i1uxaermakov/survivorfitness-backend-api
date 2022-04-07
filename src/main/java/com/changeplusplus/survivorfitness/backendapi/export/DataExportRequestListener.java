@@ -217,10 +217,10 @@ public class DataExportRequestListener implements ApplicationListener<OnDataExpo
         addCellToRow(row, participant.getFormsOfTreatment(), style);
         addCellToRow(row, participant.getSurgeries(), style);
         addCellToRow(row, participant.getPhysicianNotes(), style);
-        addCellToRow(row, trainer.getFullName(), style);
-        addCellToRow(row, gym.getName(), style);
-        addCellToRow(row, dietitian.getFullName(), style);
-        addCellToRow(row, dietitianOffice.getName(), style);
+        addCellToRow(row, (!Objects.isNull(trainer)) ? trainer.getFullName() : "", style);
+        addCellToRow(row, (!Objects.isNull(gym)) ? gym.getName() : "", style);
+        addCellToRow(row, (!Objects.isNull(dietitian)) ? dietitian.getFullName() : "", style);
+        addCellToRow(row, (!Objects.isNull(dietitianOffice)) ? dietitianOffice.getName() : "", style);
 
         // Go over trainer sessions and save session notes
         List<Session> trainerSessions = program.getTrainerSessions();
