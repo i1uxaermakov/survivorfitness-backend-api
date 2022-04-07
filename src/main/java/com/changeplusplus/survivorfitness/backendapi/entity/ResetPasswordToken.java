@@ -31,10 +31,10 @@ public class ResetPasswordToken {
 
 
     /**
-     *
-     * @param user
-     * @param token
-     * @param hoursUntilExpiry
+     * A constructor for the ResetPasswordToken class that sets the user, the token string, and the date of expiry
+     * @param user User the token is created for
+     * @param token A unique string that will identify this ResetPasswordToken
+     * @param hoursUntilExpiry Hours until expiry of this token.
      */
     public ResetPasswordToken(User user, String token, int hoursUntilExpiry) {
         this.id = null;
@@ -45,9 +45,9 @@ public class ResetPasswordToken {
 
 
     /**
-     *
-     * @param expiryTimeInHours
-     * @return
+     * Given the hours until expiry, this method will calculate the Date object of the expiry date.
+     * @param expiryTimeInHours hours until expiry of the token
+     * @return Date object that represents the moment when the ResetPasswordToken expires.
      */
     private Date calculateExpiryDate(int expiryTimeInHours) {
         Calendar cal = Calendar.getInstance();
