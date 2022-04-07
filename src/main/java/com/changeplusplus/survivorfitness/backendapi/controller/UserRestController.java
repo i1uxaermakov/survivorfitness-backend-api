@@ -91,15 +91,30 @@ public class UserRestController {
 
 
     /**
-     * An endpoint to reset the password of a user identified by the @param email.
+     * An endpoint to reset the password of a user identified by the @param token.
      * The endpoint can be used by the users that are not logged in.
-     * @param email Email of the user that needs their password to be reset.
+     * @param token The token that identifies the user whose password should be changed
      * @return A string saying that the password has been successfully reset.
      */
     @GetMapping("/reset_password")
-    public ResponseEntity<String> resetPassword(@RequestParam String email) {
-        userManagementService.resetUserPassword(email);
-        return ResponseEntity.ok("The password for user " + email +
+    public ResponseEntity<String> resetPassword(@RequestParam String token) {
+        userManagementService.resetUserPassword(token);
+        return ResponseEntity.ok("The password for user with token " + token +
                 " has been successfully reset!");
+    }
+
+    /**
+     * An endpoint to request the reset of the password of the user identified by @param email. The user will
+     * receive an email with a link that will actually reset the password.
+     * The endpoint can be used by the users that are not logged in.
+     * @param email Email of the user whose password should be changed.
+     * @return A string saying that the user will receive an email with a link that actually resets
+     * their password
+     */
+    @GetMapping("/request_password_reset")
+    public ResponseEntity<String> requestPasswordReset(@RequestParam String email) {
+        userManagementService.requestPasswordReset(email);
+        return ResponseEntity.ok("The password reset has been requested for user " + email +
+                ". The user will receive an email with a link that will actually reset the password.");
     }
 }

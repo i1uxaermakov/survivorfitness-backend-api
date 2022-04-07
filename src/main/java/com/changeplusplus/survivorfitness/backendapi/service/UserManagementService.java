@@ -6,9 +6,11 @@ import com.changeplusplus.survivorfitness.backendapi.dto.UserDTO;
 import com.changeplusplus.survivorfitness.backendapi.entity.*;
 import com.changeplusplus.survivorfitness.backendapi.repository.LocationAssignmentRepository;
 import com.changeplusplus.survivorfitness.backendapi.repository.LocationRepository;
+import com.changeplusplus.survivorfitness.backendapi.repository.ResetPasswordTokenRepository;
 import com.changeplusplus.survivorfitness.backendapi.repository.UserRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -37,6 +39,15 @@ public class UserManagementService {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private ResetPasswordTokenRepository resetPasswordTokenRepository;
+
+    @Value("${survivorfitness-backend.password-reset-token.expiration-time-in-hours}")
+    private int RESET_PASSWORD_TOKEN_EXPIRY_IN_HOURS;
+
+    @Value("${survivorfitness-backend.domain-name}")
+    private String SFF_DOMAIN_NAME;
 
     private static final int MINIMUM_PASSWORD_LENGTH = 8;
 
@@ -530,18 +541,25 @@ public class UserManagementService {
 
     /**
      * Resets user's password to a new random one. Sends an email to user with the new password.
-     * @param email Email of the user to reset password for
+     * @param token  String token that identifies the user to change the password for
      */
-    public void resetUserPassword(String email) {
-        // Make the email all-lowercase b/c they are saved so in the database
-        email = email.toLowerCase();
-
-        // Find the User entity in the database. Throw an exception if the user
-        // hasn't been found
-        User userEntityToUpdate = userRepository.findUserByEmail(email);
-        if(Objects.isNull(userEntityToUpdate)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found.");
+    public void resetUserPassword(String token) {
+        // Retrieve Verification token from the database
+        ResetPasswordToken resetPasswordToken =
+                resetPasswordTokenRepository.findResetPasswordTokenByToken(token);
+        if(resetPasswordToken == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "No ResetPassword was found with the specified token.");
         }
+
+        // Make sure the token hasn't expired
+        if(resetPasswordToken.getExpiryDate().getTime() - (new Date()).getTime() <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The verification token has expired. " +
+                    "Please ask the child to log into the app and resend the verification link.");
+        }
+
+        // Find the User entity to change the password for
+        User userEntityToUpdate = resetPasswordToken.getUser();
 
         // Create a new random password for the user and encode it
         String rawPassword = RandomStringUtils.randomAlphanumeric(MINIMUM_PASSWORD_LENGTH);
@@ -558,9 +576,57 @@ public class UserManagementService {
                 "Hi!\n\n" +
                         "Your password in the Survivor Fitness App has been reset! Below are your new login credentials. " +
                         "Please log into the app and change your password.\n\n" +
-                        "Email/Username: " + email + "\n" +
+                        "Email/Username: " + userEntityToUpdate.getEmail() + "\n" +
                         "Password: " + rawPassword + "\n\n" +
                         "Thanks,\n" +
                         "Survivor Fitness Team");
+    }
+
+
+    /**
+     * Generates a ResetPasswordToken and a link to actually reset the password
+     * of the account. Sends an email with the password resetting link to the user.
+     * The user would need to follow the link to get their password reset.
+     * @param email The email of the user the password reset is requested for
+     */
+    public void requestPasswordReset(String email) {
+        // Make the email all-lowercase b/c they are saved so in the database
+        email = email.toLowerCase();
+
+        // Find the User entity in the database. Throw an exception if the user
+        // hasn't been found
+        User userEntityToResetPasswordFor = userRepository.findUserByEmail(email);
+        if(Objects.isNull(userEntityToResetPasswordFor)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found.");
+        }
+
+        // Create ResetPasswordToken for the user and save it in the database
+        ResetPasswordToken passwordToken = createResetPasswordToken(userEntityToResetPasswordFor);
+
+        // Email the user with the link to reset the password
+        emailService.sendEmail(
+                userEntityToResetPasswordFor.getEmail(),
+                "SFF - Password Reset has been requested",
+                "Hello,\n\n" +
+                        "A password reset has been requested for your account. If it was you, " +
+                        "please follow the link below, and you will receive another email with the " +
+                        "new password. You can then change your password in the mobile app. Please note " +
+                        "that this link will expire in " + RESET_PASSWORD_TOKEN_EXPIRY_IN_HOURS + " hours. " +
+                        "If it expires, you will need to send request a password reset once again.\n\n" +
+                        "http://" + SFF_DOMAIN_NAME + "/api/v1/users/reset_password?token=" + passwordToken.getToken() + "\r\n\n" +//TODO
+                        "Thanks,\n" +
+                        "Survivor Fitness Team");
+    }
+
+
+    /**
+     * Creates a PasswordResetToken and saves it in the database.
+     * @param user The account that the PasswordResetToken has to be created for.
+     * @return PasswordResetToken for @param user that is already saved in the database.
+     */
+    private ResetPasswordToken createResetPasswordToken(User user) {
+        String stringToken = UUID.randomUUID().toString();
+        ResetPasswordToken resetPasswordToken = new ResetPasswordToken(user, stringToken, RESET_PASSWORD_TOKEN_EXPIRY_IN_HOURS);
+        return resetPasswordTokenRepository.save(resetPasswordToken);
     }
 }
