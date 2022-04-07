@@ -1,6 +1,9 @@
 package com.changeplusplus.survivorfitness.backendapi.controller;
 
+import com.changeplusplus.survivorfitness.backendapi.dto.LocationListResponse;
 import com.changeplusplus.survivorfitness.backendapi.export.OnDataExportRequestedEvent;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
@@ -13,20 +16,28 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+
+/**
+ * DataExportController - controller class used to export participant data
+ */
 @RestController
 @RequestMapping("/api/v1/export-data")
+@Api(tags = "Data Export Controller",
+        description = "Provides the endpoint to export data.")
 public class DataExportController {
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
     /**
-     * An endpoint for starting an asynchronous participant data export. When the process is done,
-     * the user will get an email notification
-     * @return
+     * Export Data endpoint - creates a request to export all the available data about the participants
+     * @return if successful, a message indicating that the request was received.
      */
-    @GetMapping()
+    @GetMapping("")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
+    @ApiOperation(value = "Creates a request to export all existing data about participants/",
+            notes="The endpoint is only available to users with the role SUPER_ADMIN.",
+            response = ResponseEntity.class)
     public ResponseEntity<String> exportData() {
         // Get the email of the current user
         Authentication authentication =
