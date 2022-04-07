@@ -13,12 +13,27 @@ import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.util.Arrays;
 
+
+/**
+ * A class that encapsulates the functionality for sending emails.
+ */
 @Service
 public class EmailService {
 
+    /**
+     * A Java Spring class that allows users to send emails. It is automatically
+     * configured using spring.mail.* properties in the application.properties file
+     */
     @Autowired
     private JavaMailSender javaMailSender;
 
+
+    /**
+     * Sends an email to the email address in @param emailTo.
+     * @param emailTo the email address of the receiver
+     * @param subject the subject of the email
+     * @param message the body of the message
+     */
     public void sendEmail(String emailTo, String subject, String message) {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setTo(emailTo);
@@ -37,11 +52,11 @@ public class EmailService {
 
 
     /**
-     *
-     * @param emailTo
-     * @param subject
-     * @param messageText
-     * @param attachment
+     * Sends an email to the email address in @param emailTo with an attachment in it.
+     * @param emailTo the email address of the receiver
+     * @param subject the subject of the email
+     * @param messageText the body of the message
+     * @param attachment the file to attach to the email
      */
     public void sendEmailWithAttachment(String emailTo, String subject, String messageText, File attachment) {
         try {
