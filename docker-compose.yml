@@ -15,7 +15,7 @@ services:
       - mysql-data:/var/lib/mysql
 
   backend-api:
-    image: ilyaermakov/survivor-fitness-backend:v9-add-users-email
+    image: ilyaermakov/survivor-fitness-backend:v15-reset-password-via-email
     networks:
       - surfvivor-fitness-backend
     container_name: backend-api-survivorfitness
