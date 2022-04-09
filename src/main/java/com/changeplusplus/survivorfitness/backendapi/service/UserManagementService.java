@@ -23,32 +23,85 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * The class that encapsulates all functionality related to the management of User
+ * entities (retrieval, creation, etc.) @Service annotation indicates to the Spring
+ * framework that it should create a singleton of this class and maintain its state.
+ * Users of this class can get a reference to it by creating a field of this class in
+ * another class and annotating it with @Autowired (see below for examples of
+ * autowiring other services).
+ */
 @Service
 public class UserManagementService {
+
+    /**
+     * A reference to the interface that manages interaction with the database that
+     * pertains to User entity (all SQL operations with User table)
+     */
     @Autowired
     private UserRepository userRepository;
 
+
+    /**
+     * A reference to the interface that manages interaction with the database that
+     * pertains to Location entity (all SQL operations with Locations table)
+     */
     @Autowired
     private LocationRepository locationRepository;
 
+
+    /**
+     * A reference to the interface that manages interaction with the database that
+     * pertains to LocationAssignment entity (all SQL operations with LocationAssignments table)
+     */
     @Autowired
     private LocationAssignmentRepository locationAssignmentRepository;
 
+
+    /**
+     * A reference to an object maintained by Spring framework. Allows users to
+     * encode a raw password. Used to encode new users' passwords to save them in
+     * the database in a non-raw format.
+     */
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+
+    /**
+     * A reference to the service that encapsulates all functionality related to sending emails.
+     */
     @Autowired
     private EmailService emailService;
 
+
+    /**
+     * A reference to the interface that manages interaction with the database that
+     * pertains to ResetPasswordToken entity (all SQL operations with ResetPasswordTokens table)
+     */
     @Autowired
     private ResetPasswordTokenRepository resetPasswordTokenRepository;
 
+
+    /**
+     * Defines in how man hours a link to reset the password will expire. The value for this field is
+     * retrieved from /resources/application.properties file. This variable is used
+     * to create create ResetPassword tokens and links associated with them.
+     */
     @Value("${survivorfitness-backend.password-reset-token.expiration-time-in-hours}")
     private int RESET_PASSWORD_TOKEN_EXPIRY_IN_HOURS;
 
+
+    /**
+     * Domain name of where the application is hosted. The value for this field is
+     * retrieved from /resources/application.properties file. This variable is used
+     * to create links to the backend (for example, a link to reset the password)
+     */
     @Value("${survivorfitness-backend.domain-name}")
     private String SFF_DOMAIN_NAME;
 
+    /**
+     * Minimum number of characters in the password. Used to enforce security of the application.
+     */
     private static final int MINIMUM_PASSWORD_LENGTH = 8;
 
 
@@ -333,7 +386,7 @@ public class UserManagementService {
     /**
      * Finds UserDTO by the specified @param userId
      * @param userId ID of the user to look for
-     * @return UserDTO with the specified userId
+     * @return UserDTO with the specified userId. If the user doesn't exist, returns null.
      */
     public UserDTO getUserInfoById(Integer userId) {
         User userEntity = userRepository.findUserById(userId);
@@ -613,7 +666,7 @@ public class UserManagementService {
                         "new password. You can then change your password in the mobile app. Please note " +
                         "that this link will expire in " + RESET_PASSWORD_TOKEN_EXPIRY_IN_HOURS + " hours. " +
                         "If it expires, you will need to send request a password reset once again.\n\n" +
-                        "http://" + SFF_DOMAIN_NAME + "/api/v1/users/reset_password?token=" + passwordToken.getToken() + "\r\n\n" +//TODO
+                        "http://" + SFF_DOMAIN_NAME + "/api/v1/users/reset_password?token=" + passwordToken.getToken() + "\r\n\n" +
                         "Thanks,\n" +
                         "Survivor Fitness Team");
     }
