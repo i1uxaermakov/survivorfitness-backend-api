@@ -19,6 +19,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * ParticipantRestController – endpoints to create and edit all information about participants
+ */
 @RestController
 @RequestMapping("/api/v1/participants")
 @Api(tags = "Participant Controller", description = "Endpoints for retrieval and management of information about participants.")
@@ -30,6 +33,16 @@ public class ParticipantRestController {
     @Autowired
     private SessionManagementService sessionManagementService;
 
+    /**
+     * getGeneralInfoAboutParticipants - an API to retrieve information about all participants, or
+     * filter by one parameter (details in the APIOperation notes)
+     * can only use at most 1 of the parameters below
+     * @param dietitianOfficeId - optional parameter that indicates a dietitianOffice ID to retrieve info from
+     * @param gymId - optional parameter that indicates a gym ID to retrieve info from
+     * @param dietitianUserId - optional parameter that indicates a dietitian to retrieve participants info from
+     * @param trainerUserId - optional parameter that indicates a trainer user ID to retrieve
+     * @return - list of information about the participants
+     */
     @GetMapping("")
     @ApiOperation(value = "Finds general info about participants",
             notes = "This endpoint allows to select participants by dietitian office, gym, trainer, and dietitian. However, the endpoint only supports the selection of participants by one parameter. " +
@@ -64,6 +77,13 @@ public class ParticipantRestController {
         }
     }
 
+
+    /**
+     * addNewParticipant - creates a new participant in the database along with a Program for them
+     * @param createParticipantRequest - an object that includes all info about the participant,
+     *                                along with information about training sessions and when to take measurements
+     * @return participant object retrieved from database
+     */
     @PostMapping("")
     @ApiOperation(value = "Creates a Participant and the associated Program for the participant",
             response = ParticipantResponse.class)
@@ -80,9 +100,16 @@ public class ParticipantRestController {
         return new ParticipantResponse(participantDTO);
     }
 
+
+    /**
+     * getInfoAboutSpecificParticipant - receives detailed info about a specific participant
+     * @param participantId - required - participant to retrieve info about
+     * @return - participantDTO retrieved from DB (detailed info about the participant)
+     */
     @GetMapping("/{participantId}")
     @ApiOperation(value = "Finds detailed info about a specific participant",
-            notes = "Provide an ID to look up a specific participant. If a participant with a specified ID doesn't exist, the endpoint returns paticipant = null.\n" +
+            notes = "Provide an ID to look up a specific participant. If a participant with a specified ID doesn't exist," +
+                    " the endpoint returns participant = null.\n" +
                     "The endpoint is available to all authenticated users.",
             response = ParticipantResponse.class)
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'LOCATION_ADMINISTRATOR', 'TRAINER', 'DIETITIAN')")
@@ -94,8 +121,15 @@ public class ParticipantRestController {
     }
 
 
+    /**
+     * getTrainerSessionNotesOfParticipant – gets all notes from TRAINER sessions w/ participants
+     * @param participantId - ID of the participant to get trainer data about
+     * @return list of SessionDTO's which contains information about the participant's sessions
+     */
     @GetMapping("/{participantId}/trainer-notes")
     @ApiOperation(value = "Find trainer session notes for the participant",
+            notes = "Returns participant = null if invalid participant ID provided. " +
+                    "This endpoint is available to all participants. ",
             response = SessionListResponse.class)
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'LOCATION_ADMINISTRATOR', 'TRAINER', 'DIETITIAN')")
     public SessionListResponse getTrainerSessionNotesOfParticipant(
@@ -105,8 +139,14 @@ public class ParticipantRestController {
         return new SessionListResponse(trainerSessions, null);
     }
 
+    /**
+     * getDietitianSessionNotesOfParticipant - gets all DIETITIAN notes from sessions w/ participants
+     * @param participantId - ID of the participant to get trainer data about
+     * @return list of SessionDTO's which contains information about the participant's DIETITIAN sessions
+     */
     @GetMapping("/{participantId}/dietitian-notes")
     @ApiOperation(value = "Find dietitian session notes for the participant",
+            notes = "This endpoint is available to all participants.",
             response = SessionListResponse.class)
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'LOCATION_ADMINISTRATOR', 'TRAINER', 'DIETITIAN')")
     public SessionListResponse getDietitianSessionNotesOfParticipant(
@@ -116,6 +156,11 @@ public class ParticipantRestController {
         return new SessionListResponse(null, dietitianSessions);
     }
 
+    /**
+     * getAllSessionNotesOfParticipant –– gets both trainer and dietitian notes for a participant
+     * @param participantId required ID Value of the participant whose notes you are retrieving
+     * @return a pair of SessionDTOs - <TrainerSessionNotes, DietitianSessionNotes>
+     */
     @GetMapping("/{participantId}/all-notes")
     @ApiOperation(value = "Find all session notes for the participant",
             response = SessionListResponse.class)
@@ -132,7 +177,7 @@ public class ParticipantRestController {
      *
      * @param participantId - id of the participant to update
      * @param participantDTO - DTO of the new participant object
-     * @return - response of 2xx or 4xx, depending on success of update
+     * @return - updated participantDTO, retrieved from the database
      */
     @PutMapping("/{participantId}")
     @ApiOperation(value = "Edits info about a specific participant",
@@ -160,32 +205,54 @@ public class ParticipantRestController {
 //    }
 
 
-
-
+    /**
+     * helper method for getGeneralInfoAboutParticipants to retrieve participants at a dietitian office
+     * @param dietitianOfficeId - id of the dietitianOffice to retrieve participant info about
+     * @return - list of participants at a dietitian office
+     */
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'LOCATION_ADMINISTRATOR')")
     private ParticipantListResponse getParticipantsAtSpecificDietitianOffice(Integer dietitianOfficeId) {
         List<ParticipantDTO> participantDTOList = participantManagementService.getParticipantsAtSpecificDietitianOffice(dietitianOfficeId);
         return new ParticipantListResponse(participantDTOList);
     }
 
+    /**
+     * helper method for getGeneralInfoAboutParticipants to retrieve participant info at a specific gym
+     * @param gymId - id of the gym to retrieve participant info about
+     * @return - list of participants at a dietitian office
+     */
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'LOCATION_ADMINISTRATOR')")
     private ParticipantListResponse getParticipantsAtSpecificGym(Integer gymId) {
         List<ParticipantDTO> participantDTOList = participantManagementService.getParticipantsAtSpecificTrainerGym(gymId);
         return new ParticipantListResponse(participantDTOList);
     }
 
+    /**
+     * helper method for getGeneralInfoAboutParticipants to retrieve participant info with a specific dietitian
+     * @param dietitianUserId - id of the dietitian to retrieve participant info about
+     * @return - list of participants with that assigned dietitian
+     */
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'LOCATION_ADMINISTRATOR', 'DIETITIAN')")
     private ParticipantListResponse getParticipantsAssignedToSpecificDietitian(Integer dietitianUserId) {
         List<ParticipantDTO> participantDTOList = participantManagementService.getParticipantsAssignedToSpecificDietitian(dietitianUserId);
         return new ParticipantListResponse(participantDTOList);
     }
 
+    /**
+     * helper method for getGeneralInfoAboutParticipants to retrieve participant info with a specific trainer
+     * @param trainerUserId - id of the trainer to retrieve participant info about
+     * @return - list of participants with that assigned trainer
+     */
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'LOCATION_ADMINISTRATOR')")
     private ParticipantListResponse getParticipantsAssignedToSpecificTrainer(@RequestParam(name="trainerUserId") Integer trainerUserId) {
         List<ParticipantDTO> participantDTOList = participantManagementService.getParticipantsAssignedToSpecificTrainer(trainerUserId);
         return new ParticipantListResponse(participantDTOList);
     }
 
+    /**
+     * gets general info about all participants - when no query parameter ID is passed into the getParticipants call
+     * @return list of all participants
+     */
     @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
     private ParticipantListResponse getGeneralInfoAboutAllParticipants() {
         List<ParticipantDTO> participantsInfo = participantManagementService.getGeneralInfoAboutAllParticipants();

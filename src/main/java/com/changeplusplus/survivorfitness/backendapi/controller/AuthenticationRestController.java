@@ -46,7 +46,12 @@ public class AuthenticationRestController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-
+    /**
+     * API operation to request a user authentication
+     * @param authenticationRequest - a request to authenticate that includes a username and a password
+     * @return JWT token and user object if the authentication request is successful
+     * @throws Exception - throws an exception if the authentication request is invalid (username or password is invalid)
+     */
     @PostMapping("/authenticate")
     @ApiOperation(value = "Finds a user with the provided username and responds with " +
             "JWT-token and info about the user if authentication is successful.",
@@ -72,7 +77,6 @@ public class AuthenticationRestController {
 
         return ResponseEntity.ok(new AuthenticationResponse(jwt, authentication.getUserDTO()));
     }
-
 
     private String populateAuthorities(Collection<? extends GrantedAuthority> collection) {
         Set<String> authoritiesSet = new HashSet<>();

@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Dietitian Controller - used to retrieve all info about dietitians (only retrieval happens here, creation of
+ * dietitians and all users in general is in the UserRestController)
+ */
 @RestController
 @RequestMapping("/api/v1/dietitians")
 @Api(tags = "Dietitian Controller", description = "Endpoints for retrieval of information about dietitians.")
@@ -20,6 +24,13 @@ public class DietitianRestController {
     @Autowired
     UserManagementService userManagementService;
 
+    /**
+     * getInfoAboutDietitians - retrieves information about dietitians in general, or at a specific location
+     * @param locationId - an optional parameter to retrieve dietitians at a specific location. If not provided,
+     *                   the endpoint will return information about all dietitians
+     * @return list of dietitians requested (all dietitians if no locationId is specified, or
+     * only those at the specified location)
+     */
     @GetMapping("")
     @ApiOperation(value = "Finds general info about dietitians.",
             notes = "If locationId is specified, the endpoint returns information about dietitians in that location. " +
