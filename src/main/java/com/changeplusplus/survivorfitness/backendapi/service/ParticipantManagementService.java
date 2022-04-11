@@ -313,12 +313,36 @@ public class ParticipantManagementService {
                 .setSurgeries(newParticipantData.getSurgeries())
                 .setPhysicianNotes(newParticipantData.getPhysicianNotes());
 
+        // If the trainer ID is provided, retrieve that trainer from the database and check if they exist
+        // If trainer is not provided, set it to null
+        User trainer = null;
+        if(!Objects.isNull(newParticipantData.getTrainer())) {
+            trainer = userRepository.findUserById(newParticipantData.getTrainer().getId());
+            if (Objects.isNull(trainer)){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Trainer with specified ID not found.");
+            }
+        }
+
+        // If the dietitian ID is provided, retrieve that dietitian from the database and check if they exist
+        // If dietitian is not provided, set it to null
+        User dietitian = null;
+        if(!Objects.isNull(newParticipantData.getDietitian())) {
+            dietitian = userRepository.findUserById(newParticipantData.getDietitian().getId());
+            if (Objects.isNull(dietitian)){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Dietitian with specified ID not found.");
+            }
+        }
+
         // Create Program entity
         Program program = new Program()
                 .setProgramProgressStatus(ProgramProgressStatus.SPECIALISTS_NOT_ASSIGNED)
                 .setParticipant(participantEntity)
                 .setTrainerGym(trainerGym)
-                .setDietitianOffice(dietitianOffice);
+                .setDietitianOffice(dietitianOffice)
+                .setTrainer(trainer)
+                .setDietitian(dietitian);
 
         // Create Session entities
         List<Session> dietitianSessions =
