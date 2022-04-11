@@ -198,12 +198,14 @@ public class ParticipantManagementService {
         User currentUser = userRepository.findUserByEmail(currentUserEmail);
 
         //whether the new participant object has modified the treatment program at all
-        boolean programHasChanged = ProgramProgressStatus.valueOf(participantDTO.getTreatmentProgramStatus()) !=
-                programEntity.getProgramProgressStatus() ||
+        boolean programHasChanged =
+                ProgramProgressStatus.valueOf(participantDTO.getTreatmentProgramStatus()) != programEntity.getProgramProgressStatus() ||
                 !Objects.equals(programEntity.getTrainerGym().getId(), trainerGym.getId()) ||
                 !Objects.equals(programEntity.getDietitianOffice().getId(), dietitianOffice.getId()) ||
-                !Objects.equals(programEntity.getTrainer().getId(), participantDTO.getTrainer().getId()) ||
-                !Objects.equals(programEntity.getDietitian().getId(), participantDTO.getDietitian().getId());
+                !Objects.equals((Objects.isNull(programEntity.getTrainer())) ? null : programEntity.getTrainer().getId(),
+                        (Objects.isNull(participantDTO.getTrainer())) ? null : participantDTO.getTrainer().getId()) ||
+                !Objects.equals((Objects.isNull(programEntity.getDietitian())) ? null : programEntity.getDietitian().getId(),
+                        (Objects.isNull(participantDTO.getDietitian())) ? null : participantDTO.getDietitian().getId());
 
         //Only super admins and location admins can change info about the program
         if(programHasChanged &&
