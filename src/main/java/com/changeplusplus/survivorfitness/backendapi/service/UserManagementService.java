@@ -415,16 +415,19 @@ public class UserManagementService {
      * @param userRoleType The role at @param location that has to be removed
      */
     public void removeLocationAssignmentFromUser(User user, Location location, UserRoleType userRoleType){
-        user.getLocationAssignments()
+        List<LocationAssignment> toDelete = user.getLocationAssignments()
                 .stream()
                 .filter(
                     la -> la.getLocation().getId().equals(location.getId())
                             && la.getUser().getId().equals(user.getId())
                             && la.getUserRoleType().name().equals(userRoleType.name()))
-                .forEach(la -> {
+                .collect(Collectors.toList());
+
+        toDelete.forEach(la -> {
                     user.getLocationAssignments().remove(la);
                     locationAssignmentRepository.delete(la);
-                });
+                }
+        );
     }
 
 
