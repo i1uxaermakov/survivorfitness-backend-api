@@ -479,6 +479,7 @@ public class UserManagementService {
      * @param userDtoToUpdate UserDTO of the User to be updated
      * @return UserDTO as it is now saved in the database
      */
+    @Transactional
     public UserDTO updateUser(UserDTO userDtoToUpdate, List<LocationAssignmentDTO> locationAssignmentDTOS) {
         // Find the User entity in the database. Throw an exception if the user
         // hasn't been found
@@ -487,15 +488,29 @@ public class UserManagementService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found.");
         }
 
+        // Check if the current user is allowed to update the @param userDtoToUpdate
+        User currentUser = getCurrentlyLoggedInUser();
+        if(!Objects.equals(currentUser.getId(), userEntityToUpdate.getId()) &&
+                !currentUser.hasRole(UserRoleType.SUPER_ADMIN) &&
+                !currentUser.hasRole(UserRoleType.LOCATION_ADMINISTRATOR)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Only a SUPER_ADMIN, a LOCATION_ADMINISTRATOR," +
+                    " and the user themselves can edit information about a user.");
+        }
+
         // Update primitive fields of the User
         userEntityToUpdate.setFirstName(userDtoToUpdate.getFirstName())
                 .setLastName(userDtoToUpdate.getLastName())
                 .setPhoneNumber(userDtoToUpdate.getPhoneNumber());
 
+        // A variable to keep track whether the location Assignments have been changed. Will be used to determine
+        // if the current user can change that.
+        boolean didLocationAssignmentsChange = false;
+
         // Go over all LocationAssignmentDTOs received from the request and
         // add all LocationAssignments that are missing
         for(LocationAssignmentDTO laDTO: locationAssignmentDTOS) {
             if(!userEntityToUpdate.hasLocationAssignment(laDTO.getLocationId(), laDTO.getUserRoleType())) {
+                didLocationAssignmentsChange = true;
                 // Retrieve the Location object from the database and throw
                 // an exception if it does not exist
                 Location location = locationRepository.findLocationById(laDTO.getLocationId());
@@ -518,6 +533,7 @@ public class UserManagementService {
         // in the locationAssignmentDTOS list – delete those from the user and from
         // the database.
         if(locationAssignmentDTOS.size() != userEntityToUpdate.getLocationAssignments().size()) {
+            didLocationAssignmentsChange = true;
             List<LocationAssignment> lasToDelete = new ArrayList<>();
 
             // Go over all LocationAssignments and add the ones not present
@@ -532,6 +548,13 @@ public class UserManagementService {
             // from the database
             userEntityToUpdate.getLocationAssignments().removeAll(lasToDelete);
             locationAssignmentRepository.deleteAll(lasToDelete);
+        }
+
+        // Only SUPER_ADMINS and LOCATION_ADMINISTRATORS can change location assignments of a user
+        if(didLocationAssignmentsChange && !currentUser.hasRole(UserRoleType.SUPER_ADMIN) &&
+                !currentUser.hasRole(UserRoleType.LOCATION_ADMINISTRATOR)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Only SUPER_ADMINS and LOCATION_ADMINISTRATORS can change location assignments of a user");
         }
 
         // Save the updated User to the database

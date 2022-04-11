@@ -57,7 +57,6 @@ public class UserRestController {
      * This endpoint can be used to update personal info of the user specified by @param userId.
      * Note: this endpoint does not update the password of the user – use /users/{userId}/change_password for that
      * Note: this endpoint does not update the email and userId because those values are immutable.
-     * The operation is only allowed for SuperAdmins.
      * @param userId ID of the user to be updated.
      * @param createOrEditUserRequestBody The body of the request. Contains the fields 'user' (personal
      *                                    info about the user) and 'locationAssignments' (locations
@@ -65,7 +64,6 @@ public class UserRestController {
      * @return User info as it is now saved in the database
      */
     @PutMapping("/{userId}")
-    @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
     public UserResponse updateUser(@PathVariable Integer userId, @RequestBody CreateOrEditUserRequest createOrEditUserRequestBody) {
         if(!Objects.equals(userId, createOrEditUserRequestBody.getUser().getId())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID in URL and id of the user are different.");
