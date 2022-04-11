@@ -230,7 +230,7 @@ public class ParticipantManagementService {
         // If the trainer ID is provided, retrieve that trainer from the database and check if they exist
         // If trainer is not provided, set it to null
         User trainer = null;
-        if(!Objects.isNull(participantDTO.getTrainer())) {
+        if(!Objects.isNull(participantDTO.getTrainer()) && !Objects.isNull(participantDTO.getTrainer().getId())) {
             trainer = userRepository.findUserById(participantDTO.getTrainer().getId());
             if (Objects.isNull(trainer)){
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -241,7 +241,7 @@ public class ParticipantManagementService {
         // If the dietitian ID is provided, retrieve that dietitian from the database and check if they exist
         // If dietitian is not provided, set it to null
         User dietitian = null;
-        if(!Objects.isNull(participantDTO.getDietitian())) {
+        if(!Objects.isNull(participantDTO.getDietitian()) && !Objects.isNull(participantDTO.getDietitian().getId())) {
             dietitian = userRepository.findUserById(participantDTO.getDietitian().getId());
             if (Objects.isNull(dietitian)){
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -316,7 +316,7 @@ public class ParticipantManagementService {
         // If the trainer ID is provided, retrieve that trainer from the database and check if they exist
         // If trainer is not provided, set it to null
         User trainer = null;
-        if(!Objects.isNull(newParticipantData.getTrainer())) {
+        if(!Objects.isNull(newParticipantData.getTrainer()) && !Objects.isNull(newParticipantData.getTrainer().getId())) {
             trainer = userRepository.findUserById(newParticipantData.getTrainer().getId());
             if (Objects.isNull(trainer)){
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -327,7 +327,7 @@ public class ParticipantManagementService {
         // If the dietitian ID is provided, retrieve that dietitian from the database and check if they exist
         // If dietitian is not provided, set it to null
         User dietitian = null;
-        if(!Objects.isNull(newParticipantData.getDietitian())) {
+        if(!Objects.isNull(newParticipantData.getDietitian()) && !Objects.isNull(newParticipantData.getDietitian().getId())) {
             dietitian = userRepository.findUserById(newParticipantData.getDietitian().getId());
             if (Objects.isNull(dietitian)){
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
