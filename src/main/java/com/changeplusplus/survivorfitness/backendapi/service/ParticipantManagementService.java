@@ -22,21 +22,52 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * The class that encapsulates all functionality related to the management of Participant
+ * entities (retrieval, creation, etc.) @Service annotation indicates to the Spring
+ * framework that it should create a singleton of this class and maintain its state.
+ * Users of this class can get a reference to it by creating a field of this class in
+ * another class and annotating it with @Autowired (see below for examples of
+ * autowiring other services).
+ */
 @Service
 public class ParticipantManagementService {
 
+    /**
+     * A reference to the interface that manages interaction with the database that
+     * pertains to Participant entity (all SQL operations with Participants table)
+     */
     @Autowired
     private ParticipantRepository participantRepository;
 
+    /**
+     * A reference to a class that encapsulates all functionality related to
+     * management of Session entities
+     */
     @Autowired
     private SessionManagementService sessionManagementService;
 
+    /**
+     * A reference to the interface that manages interaction with the database that
+     * pertains to Location entity (all SQL operations with Locations table)
+     */
     @Autowired
     private LocationRepository locationRepository;
 
+    /**
+     * A reference to the interface that manages interaction with the database that
+     * pertains to User entity (all SQL operations with Users table)
+     */
     @Autowired
     private UserRepository userRepository;
 
+
+    /**
+     * Retrieves a participant by their ID.
+     * @param participantId ID of the participant
+     * @return ParticipantDTO with the same fields as in the Participant
+     * entity. If no user was found, returns null
+     */
     public ParticipantDTO getParticipantInfoById(Integer participantId) {
         Participant participantEntity = participantRepository.findParticipantById(participantId);
         if(participantEntity == null) {
@@ -45,6 +76,13 @@ public class ParticipantManagementService {
         return getParticipantDtoFromParticipantEntity(participantEntity);
     }
 
+
+    /**
+     * Retrieves information about all participants in the system. Each ParticipantDTO object
+     * will have the name, id, and specialists they are assigned to set.
+     * @return A list of ParticipantDTOs with the fields equal to the ones of the corresponding
+     * Participant entity
+     */
     public List<ParticipantDTO> getGeneralInfoAboutAllParticipants() {
         //Get general info (name, id, specialists they are assigned to) about all participants
         List<Participant> participants = participantRepository.findAll();
@@ -52,8 +90,19 @@ public class ParticipantManagementService {
     }
 
 
+    /**
+     * A helper method for getParticipantDtoFromParticipantEntity(). Given a Participant entity, retrieves
+     * information about its gym, dietitian office, trainer, and dietitian and sets the fields of ParticipantDTO to it.
+     * Updates the passed @param participantDTO. For the locations, only ID, name, and type will be set. For Users,
+     * only ID and name will be set.
+     * @param participantEntity the Participant Entity in the database
+     * @param participantDTO the participantDTO whose gym, dietitian office, trainer, and dietitian fields have
+     *                       to be set to the ones in Participant entity and its associated Program
+     */
     private void assignStatusAndLocationsAndSpecialistsOfUserToDTO(Participant participantEntity,
                                                           ParticipantDTO participantDTO) {
+        // Retrieve the associated Program object (since info about specialists and
+        // locations of the participant is saved here).
         Program treatmentProgram = participantEntity.getTreatmentProgram();
 
         LocationDTO dietitianOfficeBriefInfo = LocationManagementService.getConciseLocationDTOBasedOnLocationEntity(treatmentProgram.getDietitianOffice());
@@ -72,22 +121,48 @@ public class ParticipantManagementService {
     }
 
 
+    /**
+     * Finds participants assigned to the Dietitian Office with the location ID equal to @param dietitianOfficeId.
+     * @param dietitianOfficeId The ID of the dietitian office Participants should be assigned to
+     * @return A list of Participants assigned to the Dietitian Office. Returns an empty list if such location
+     * doesn't exist or there are no participants assigned to it.
+     */
     public List<ParticipantDTO> getParticipantsAtSpecificDietitianOffice(Integer dietitianOfficeId) {
         List<Participant> participants = participantRepository.findParticipantsByTreatmentProgramDietitianOfficeId(dietitianOfficeId);
         return getListOfParticipantDtosFromListOfParticipantEntities(participants);
     }
 
 
+    /**
+     * Finds participants assigned to the Gym with the location ID equal to @param gymId.
+     * @param gymId The ID of the gym Participants should be assigned to
+     * @return A list of Participants assigned to the Gym. Returns an empty list if such location
+     * doesn't exist or there are no participants assigned to it.
+     */
     public List<ParticipantDTO> getParticipantsAtSpecificTrainerGym(Integer gymId) {
         List<Participant> participants = participantRepository.findParticipantsByTreatmentProgramTrainerGymId(gymId);
         return getListOfParticipantDtosFromListOfParticipantEntities(participants);
     }
 
+
+    /**
+     * Finds participants assigned to the Trainer with the user ID equal to @param trainerUserId.
+     * @param trainerUserId The ID of the trainer Participants should be assigned to
+     * @return A list of Participants assigned to the Trainer. Returns an empty list if such user
+     * doesn't exist or there are no participants assigned to them.
+     */
     public List<ParticipantDTO> getParticipantsAssignedToSpecificTrainer(Integer trainerUserId) {
         List<Participant> participants = participantRepository.findParticipantsByTreatmentProgramTrainerId(trainerUserId);
         return getListOfParticipantDtosFromListOfParticipantEntities(participants);
     }
 
+
+    /**
+     * Finds participants assigned to the Dietitian with the user ID equal to @param dietitianUserId.
+     * @param dietitianUserId The ID of the dietitian Participants should be assigned to
+     * @return A list of Participants assigned to the Dietitian. Returns an empty list if such user
+     * doesn't exist or there are no participants assigned to them.
+     */
     public List<ParticipantDTO> getParticipantsAssignedToSpecificDietitian(Integer dietitianUserId) {
         List<Participant> participants = participantRepository.findParticipantsByTreatmentProgramDietitianId(dietitianUserId);
         return getListOfParticipantDtosFromListOfParticipantEntities(participants);
@@ -100,9 +175,7 @@ public class ParticipantManagementService {
      * @return - updated DTO of the participant retrieved from the database
      */
     @Transactional
-    public ParticipantDTO editParticipant(
-            ParticipantDTO participantDTO
-    ){
+    public ParticipantDTO editParticipant(ParticipantDTO participantDTO) {
 
         //verifies the trainer gym and dietitian locations
         Location trainerGym =
@@ -127,21 +200,16 @@ public class ParticipantManagementService {
 
         //whether the new participant object has modified the treatment program at all
         boolean programHasChanged = ProgramProgressStatus.valueOf(participantDTO.getTreatmentProgramStatus()) !=
-                programEntity.getProgramProgressStatus()
-                ||
+                programEntity.getProgramProgressStatus() ||
                 !Objects.equals(programEntity.getTrainerGym().getId(), trainerGym.getId()) ||
                 !Objects.equals(programEntity.getDietitianOffice().getId(), dietitianOffice.getId()) ||
-                !Objects.equals(programEntity.getTrainer().getId(),
-                        participantDTO.getTrainer().getId()) ||
-                !Objects.equals(programEntity.getDietitian().getId(),
-                        participantDTO.getDietitian().getId()
-                );
+                !Objects.equals(programEntity.getTrainer().getId(), participantDTO.getTrainer().getId()) ||
+                !Objects.equals(programEntity.getDietitian().getId(), participantDTO.getDietitian().getId());
 
         //Only super admins and location admins can change info about the program
         if(programHasChanged &&
             !currentUser.hasRole(UserRoleType.SUPER_ADMIN) &&
-            !currentUser.hasRole(UserRoleType.LOCATION_ADMINISTRATOR)
-        ) {
+            !currentUser.hasRole(UserRoleType.LOCATION_ADMINISTRATOR)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "The current user is not allowed to change information about the " +
                             "program.");
@@ -190,6 +258,25 @@ public class ParticipantManagementService {
         return getParticipantDtoFromParticipantEntity(updatedParticipantEntity);
     }
 
+    /**
+     * Creates a new Participant and a Program associated with them. Crates all Sessions and Measurements for the
+     * Participant. Later, when the data is entered for measurements or sessions, the existing entities are
+     * updated – no new Sessions or Measurements are created.
+     *
+     * @param newParticipantData Personal info about the new participant and trainers and specialists
+     *                           the user is assigned to.
+     * @param numberOfTrainerSessions Number of trainer Sessions that will happen for this participant. This method
+     *                                will pre-create this many Sessions for the trainer
+     * @param whenToTakeMeasurements An array of integers that specifies the 1-based indices of sessions when
+     *                               measurements should be taken for the participant. This method will create
+     *                               measurements specified in @param measurementsToTake in each session specified here
+     * @param measurementsToTake A list of measurements that will be taken for the participant on Sessions with indices
+     *                           specified in @param whenToTakeMeasurements
+     * @param numberOfDietitianSessions Number of trainer Sessions that will happen for this participant. This method
+     *                                  will pre-create this many Sessions for the dietitian
+     * @return ParticipantDTO with the fields equal to the ones of Participant entity (that has just been saved to the
+     * database)
+     */
     @Transactional
     public ParticipantDTO createNewParticipant(
             ParticipantDTO newParticipantData, Integer numberOfTrainerSessions,
@@ -240,7 +327,15 @@ public class ParticipantManagementService {
         return getParticipantDtoFromParticipantEntity(participantEntity);
     }
 
-    // Helper method for create/edit participants: ensures that location w/ locationId exists and is of type locationType.
+
+    /**
+     * Helper method for create/edit participants: ensures that location w/ locationId exists and is of
+     * type locationType.
+     * @param locationId ID of the location to look for
+     * @param locationType the type of the location (DIETITIAN_OFFICE or GYM) we are looking for
+     * @return Location with ID=locationId and type=locationType. If no such location is present, the method throws
+     * a ResponseStatusException with HttpStatus.BAD_REQUEST response to the requester
+     */
     private Location verifyLocation(Integer locationId, LocationType locationType){
         // Check if the trainer location is indeed a trainer location
         Location location = locationRepository.findLocationById(locationId);
@@ -249,18 +344,32 @@ public class ParticipantManagementService {
         }
         else if(location.getType() != locationType) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The location specified is of type " +
-                    location.getType() +
-                    ".  It should be of type " + locationType + ".");
+                    location.getType() + ".  It should be of type " + locationType + ".");
         }
         return location;
     }
 
-    private List<ParticipantDTO> getListOfParticipantDtosFromListOfParticipantEntities(List<Participant> participantEntitiesList) {
+
+    /**
+     * Converts a list of Participant entities into a list of participant DTOs
+     * @param participantEntitiesList entities to convert
+     * @return a list of ParticipantDTOs with the same fields as in corresponding entities
+     */
+    private List<ParticipantDTO> getListOfParticipantDtosFromListOfParticipantEntities(
+            List<Participant> participantEntitiesList) {
         return participantEntitiesList.stream()
                 .map(this::getParticipantDtoFromParticipantEntity)
                 .collect(Collectors.toList());
     }
 
+
+    /**
+     * Convert a Participant entity to a ParticipantDTO. Used every time the data is sent back to the
+     * frontend because it expects the data to be in the format of ParticipantDTO. Also sets the dietitian,
+     * trainer, dietitian office, and gym of the participant.
+     * @param participantEntity entity to convert
+     * @return ParticipantDTO with the same fields as in participant Entity
+     */
     private ParticipantDTO getParticipantDtoFromParticipantEntity(Participant participantEntity) {
         ParticipantDTO participantDTO = new ParticipantDTO(participantEntity);
         assignStatusAndLocationsAndSpecialistsOfUserToDTO(participantEntity, participantDTO);
