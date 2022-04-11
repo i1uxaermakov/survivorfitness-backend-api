@@ -197,7 +197,6 @@ public class ParticipantManagementService {
         String currentUserEmail = (String) authentication.getPrincipal();
         User currentUser = userRepository.findUserByEmail(currentUserEmail);
 
-
         //whether the new participant object has modified the treatment program at all
         boolean programHasChanged = ProgramProgressStatus.valueOf(participantDTO.getTreatmentProgramStatus()) !=
                 programEntity.getProgramProgressStatus() ||
@@ -227,17 +226,27 @@ public class ParticipantManagementService {
                 .setFormsOfTreatment(participantDTO.getFormsOfTreatment())
                 .setSurgeries(participantDTO.getSurgeries())
                 .setPhysicianNotes(participantDTO.getPhysicianNotes());
-        //check trainer and dietitian both exist & retrieve assignment
-        User trainer = userRepository.findUserById(participantDTO.getTrainer().getId());
-        User dietitian = userRepository.findUserById(participantDTO.getDietitian().getId());
 
-        if (Objects.isNull(trainer)){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Trainer with specified ID not found.");
+        // If the trainer ID is provided, retrieve that trainer from the database and check if they exist
+        // If trainer is not provided, set it to null
+        User trainer = null;
+        if(!Objects.isNull(participantDTO.getTrainer())) {
+            trainer = userRepository.findUserById(participantDTO.getTrainer().getId());
+            if (Objects.isNull(trainer)){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Trainer with specified ID not found.");
+            }
         }
-        if (Objects.isNull(dietitian)){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Dietitian with specified ID not found.");
+
+        // If the dietitian ID is provided, retrieve that dietitian from the database and check if they exist
+        // If dietitian is not provided, set it to null
+        User dietitian = null;
+        if(!Objects.isNull(participantDTO.getDietitian())) {
+            dietitian = userRepository.findUserById(participantDTO.getDietitian().getId());
+            if (Objects.isNull(dietitian)){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Dietitian with specified ID not found.");
+            }
         }
 
         //create an updated program and participant entity
@@ -257,6 +266,8 @@ public class ParticipantManagementService {
 
         return getParticipantDtoFromParticipantEntity(updatedParticipantEntity);
     }
+
+
 
     /**
      * Creates a new Participant and a Program associated with them. Crates all Sessions and Measurements for the
