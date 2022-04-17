@@ -11,4 +11,5 @@ import java.util.List;
 public interface LocationRepository extends CrudRepository<Location, Integer> {
     Location findLocationById(Integer id);
     List<LocationOnlyIdNameTypeProjection> findAllProjectedBy();
+    List<Location> findAll();
 }

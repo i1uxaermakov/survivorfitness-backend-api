@@ -29,17 +29,16 @@ public class LocationRestController {
     private LocationManagementService locationManagementService;
 
     /** getGeneralInfoAboutAllLocations -
-     * Gets all general information about the locations
-     * @return a list of locationDTOs that contains basic info (id/name/type/address/administrator)
-     * about all existing locations
+     * Gets information about all locations
+     * @return a list of locationDTOs with the info about all existing locations
      */
     @GetMapping("")
-    @ApiOperation(value = "Finds general info about all locations",
+    @ApiOperation(value = "Finds info about all locations",
             notes="The endpoint is available to users with the role SUPER_ADMIN.",
             response = LocationListResponse.class)
     @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
     public LocationListResponse getGeneralInfoAboutAllLocations() {
-        List<LocationDTO> locationDTOs = locationManagementService.getGeneralInfoAboutAllLocations();
+        List<LocationDTO> locationDTOs = locationManagementService.getInfoAboutAllLocations();
         return new LocationListResponse(locationDTOs);
     }
 

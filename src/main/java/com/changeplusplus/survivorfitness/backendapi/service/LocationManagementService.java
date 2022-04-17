@@ -82,24 +82,17 @@ public class LocationManagementService {
 
 
     /**
-     * Retrieves general information (ID, name, type) about all locations. All LocationDTOs
-     * that will be returned will only have ID, name, and type set. All others will be null.
-     * This method is used whenever the list of all location has to be displayed on the
-     * user's side and no info other than id, name, and type is needed.
+     * Retrieves information about all locations.
      * @return A list of LocationDTOs that contains information about all Locations in the system
      */
-    public List<LocationDTO> getGeneralInfoAboutAllLocations() {
+    public List<LocationDTO> getInfoAboutAllLocations() {
         // Retrieve location entities from the database
-        List<LocationOnlyIdNameTypeProjection> locationsRawInfo = locationRepository.findAllProjectedBy();
+        List<Location> locationsRawInfo = locationRepository.findAll();
 
         // Convert all entities to LocationDTOs while setting only ID, name, and type
         List<LocationDTO> locationsPreparedInfo = new ArrayList<>();
-        for(LocationOnlyIdNameTypeProjection projection: locationsRawInfo) {
-            LocationDTO locationDTO = new LocationDTO();
-            locationDTO.setId(projection.getId());
-            locationDTO.setName(projection.getName());
-            locationDTO.setType(projection.getType().toString());
-
+        for(Location locationEntity: locationsRawInfo) {
+            LocationDTO locationDTO = getLocationDtoFromLocationEntity(locationEntity);
             locationsPreparedInfo.add(locationDTO);
         }
 
