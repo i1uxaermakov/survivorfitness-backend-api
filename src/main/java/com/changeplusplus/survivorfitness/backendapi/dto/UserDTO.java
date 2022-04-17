@@ -25,6 +25,8 @@ public class UserDTO {
     @JsonIgnore
     private String password;
     private String phoneNumber;
-    private List<LocationDTO> locations = new ArrayList<>();
-    private List<String> roles = new ArrayList<>();
+    private List<LocationDTO> locations;
+    private List<String> roles;
+
+    private List<LocationAssignmentDTO> locationAssignments;
 }

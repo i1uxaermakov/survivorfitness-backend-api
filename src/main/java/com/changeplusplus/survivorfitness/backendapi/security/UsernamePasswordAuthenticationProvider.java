@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class UsernamePasswordAuthenticationProvider implements AuthenticationProvider {
@@ -35,8 +36,11 @@ public class UsernamePasswordAuthenticationProvider implements AuthenticationPro
 
         if (userDTO!=null && passwordEncoder.matches(pwd, userDTO.getPassword())) {
             List<GrantedAuthority> listOfRoles = new ArrayList<GrantedAuthority>();
-            for(String userRole: userDTO.getRoles()) {
-                listOfRoles.add(new SimpleGrantedAuthority(ROLE_PREFIX + userRole));
+
+            if(Objects.nonNull(userDTO.getRoles())) {
+                for (String userRole : userDTO.getRoles()) {
+                    listOfRoles.add(new SimpleGrantedAuthority(ROLE_PREFIX + userRole));
+                }
             }
 
             UsernamePwdUserInfoAuthenticationToken authToken = new UsernamePwdUserInfoAuthenticationToken(username, pwd, listOfRoles);

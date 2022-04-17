@@ -208,6 +208,13 @@ public class UserManagementService {
         }
         userDTO.setLocations(new ArrayList<>(locationDTOs));
 
+        // Set Location Assignments of userDTO
+        List<LocationAssignmentDTO> laList = userEntity.getLocationAssignments()
+                .stream()
+                .map(LocationAssignmentDTO::new)
+                .collect(Collectors.toList());
+        userDTO.setLocationAssignments(laList);
+
         return userDTO;
     }
 
