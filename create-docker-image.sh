@@ -5,7 +5,7 @@ bold=$(tput bold)
 boldBlue=${bold}${blue}
 reset=$(tput sgr0)
 
-imageTag="v15-reset-password-via-email"
+imageTag="v16-docs-and-LA-in-userdto"
 
 echo "\n\n${boldBlue}STARTING THE SCRIPT"
 echo "${boldBlue}Building a jar of the project"
