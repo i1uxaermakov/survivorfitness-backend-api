@@ -229,6 +229,10 @@ public class UserManagementService {
      */
     @Transactional
     public UserDTO createNewUser(UserDTO newUserData, List<LocationAssignmentDTO> newUserLocationAssignments) {
+        if(userRepository.existsByEmail(newUserData.getEmail())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User with this email already exists!");
+        }
+
         // Check if the current user is allowed to add the new user and
         // get the user entity populated with the data about the new user
         User newUserEntity = getPopulatedUserEntityForCreatingUser(

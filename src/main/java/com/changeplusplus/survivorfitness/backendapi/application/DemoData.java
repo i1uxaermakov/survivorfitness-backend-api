@@ -3,6 +3,7 @@ package com.changeplusplus.survivorfitness.backendapi.application;
 import com.changeplusplus.survivorfitness.backendapi.entity.*;
 import com.changeplusplus.survivorfitness.backendapi.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -22,12 +23,19 @@ public class DemoData {
     @Autowired
     private UserRepository userRepository;
 
+    @Value("${survivorfitness-backend.database.create-demo-data}")
+    private Boolean shouldCreateDemoData;
+
     private final Random random = new Random();
 
     @EventListener
     @Transactional
     public void appReady(ApplicationReadyEvent event) {
         random.setSeed(123);
+
+        if(!shouldCreateDemoData) {
+            return;
+        }
 
         //Creating Roles within the system
 //        UserRole dietitianRole =  new UserRole(UserRoleType.DIETITIAN);

@@ -5,7 +5,7 @@ bold=$(tput bold)
 boldBlue=${bold}${blue}
 reset=$(tput sgr0)
 
-imageTag="v16-docs-and-LA-in-userdto"
+imageTag="v17-create-demo-data"
 
 echo "\n\n${boldBlue}STARTING THE SCRIPT"
 echo "${boldBlue}Building a jar of the project"

@@ -17,4 +17,5 @@ public interface UserRepository extends CrudRepository<User, Integer> {
     List<User> findAll();
     List<User> findDistinctUsersByLocationAssignmentsUserRoleType(UserRoleType roleName);
     List<User> findUsersByIsSuperAdmin(boolean isSuperAdmin);
+    Boolean existsByEmail(String email);
 }
