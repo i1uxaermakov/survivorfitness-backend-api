@@ -703,7 +703,7 @@ public class UserManagementService {
                         "new password. You can then change your password in the mobile app. Please note " +
                         "that this link will expire in " + RESET_PASSWORD_TOKEN_EXPIRY_IN_HOURS + " hours. " +
                         "If it expires, you will need to send request a password reset once again.\n\n" +
-                        "http://" + SFF_DOMAIN_NAME + "/api/v1/users/reset_password?token=" + passwordToken.getToken() + "\r\n\n" +
+                        "http://" + SFF_DOMAIN_NAME + "/api/v1/users/reset_password_page?token=" + passwordToken.getToken() + "\r\n\n" +
                         "Thanks,\n" +
                         "Survivor Fitness Team");
     }

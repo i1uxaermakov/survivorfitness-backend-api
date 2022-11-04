@@ -5,15 +5,19 @@ import com.changeplusplus.survivorfitness.backendapi.service.UserManagementServi
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Objects;
 
-@RestController
+@Controller
 @RequestMapping("/api/v1/users")
 @Api(tags = "User Controller", description = "Endpoints for retrieval of information about users in general.")
 public class UserRestController {
@@ -21,11 +25,20 @@ public class UserRestController {
     @Autowired
     private UserManagementService userManagementService;
 
+    /**
+     * Domain name of where the application is hosted. The value for this field is
+     * retrieved from /resources/application.properties file. This variable is used
+     * to create links to the backend (for example, a link to reset the password)
+     */
+    @Value("${survivorfitness-backend.domain-name}")
+    private String SFF_DOMAIN_NAME;
+
     @GetMapping("/{userId}")
     @ApiOperation(value = "Finds detailed info about a specific user.",
             notes = "The endpoint is available to all authenticated users.",
             response = UserResponse.class)
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'LOCATION_ADMINISTRATOR')")
+    @ResponseBody
     public UserResponse getDetailedInfoAboutSpecificUser(@PathVariable Integer userId) {
         UserDTO userDTO = userManagementService.getUserInfoById(userId);
         return new UserResponse(userDTO);
@@ -35,6 +48,7 @@ public class UserRestController {
     @ApiOperation(value = "Creates a new user and returns it back to the caller.",
             response = UserResponse.class)
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'LOCATION_ADMINISTRATOR')")
+    @ResponseBody
     public UserResponse createNewUser(@RequestBody CreateOrEditUserRequest createOrEditUserRequestBody) {
         UserDTO newUser = userManagementService.createNewUser(
                 createOrEditUserRequestBody.getUser(),
@@ -43,6 +57,7 @@ public class UserRestController {
     }
 
     @PostMapping("/{userId}/change_password")
+    @ResponseBody
     public ResponseEntity changePassword(@PathVariable int userId,
                                          @RequestBody ChangePasswordRequest changePasswordRequestBody) {
         userManagementService.changePassword(userId,
@@ -64,6 +79,7 @@ public class UserRestController {
      * @return User info as it is now saved in the database
      */
     @PutMapping("/{userId}")
+    @ResponseBody
     public UserResponse updateUser(@PathVariable Integer userId, @RequestBody CreateOrEditUserRequest createOrEditUserRequestBody) {
         if(!Objects.equals(userId, createOrEditUserRequestBody.getUser().getId())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID in URL and id of the user are different.");
@@ -83,6 +99,7 @@ public class UserRestController {
      */
     @GetMapping("")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
+    @ResponseBody
     public UserListResponse getAllUsers() {
         return new UserListResponse(userManagementService.getAllUsers());
     }
@@ -95,6 +112,7 @@ public class UserRestController {
      * @return A string saying that the password has been successfully reset.
      */
     @GetMapping("/reset_password")
+    @ResponseBody
     public ResponseEntity<String> resetPassword(@RequestParam String token) {
         userManagementService.resetUserPassword(token);
         return ResponseEntity.ok("The password for user with token " + token +
@@ -110,9 +128,17 @@ public class UserRestController {
      * their password
      */
     @GetMapping("/request_password_reset")
+    @ResponseBody
     public ResponseEntity<String> requestPasswordReset(@RequestParam String email) {
         userManagementService.requestPasswordReset(email);
         return ResponseEntity.ok("The password reset has been requested for user " + email +
                 ". The user will receive an email with a link that will actually reset the password.");
+    }
+
+
+    @GetMapping("/reset_password_page")
+    public String showResetPasswordPage(@RequestParam String token, Model model) {
+        model.addAttribute("reset_password_link", "http://" + SFF_DOMAIN_NAME + "/api/v1/users/reset_password?token=" + token);
+        return "reset_password_template";
     }
 }

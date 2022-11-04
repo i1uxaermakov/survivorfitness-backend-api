@@ -2,6 +2,8 @@ package com.changeplusplus.survivorfitness.backendapi.application;
 
 import com.changeplusplus.survivorfitness.backendapi.entity.*;
 import com.changeplusplus.survivorfitness.backendapi.repository.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -26,6 +28,8 @@ public class DemoData {
     @Value("${survivorfitness-backend.database.create-demo-data}")
     private Boolean shouldCreateDemoData;
 
+    private Logger logger = LoggerFactory.getLogger(DemoData.class);
+
     private final Random random = new Random();
 
     @EventListener
@@ -34,8 +38,10 @@ public class DemoData {
         random.setSeed(123);
 
         if(!shouldCreateDemoData) {
+            logger.info("NOT creating any DEMO data.");
             return;
         }
+        logger.info("Creating DEMO data.");
 
         //Creating Roles within the system
 //        UserRole dietitianRole =  new UserRole(UserRoleType.DIETITIAN);
@@ -288,6 +294,8 @@ public class DemoData {
 
         participantRepository.saveAll(participantList);
         // --------------------- END PARTICIPANT CREATION ---------------------
+
+        logger.info("Finished creating DEMO data.");
     }
 
     private Participant getSampleParticipant(String firstName, String lastName, Integer age, Location dietitianOffice, User dietitian, Location gym, User trainer) {

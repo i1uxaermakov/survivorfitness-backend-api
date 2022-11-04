@@ -15,7 +15,7 @@ services:
       - mysql-data:/var/lib/mysql
 
   backend-api:
-    image: ilyaermakov/survivor-fitness-backend:v17-create-demo-data
+    image: ilyaermakov/survivor-fitness-backend:v18-reset-password-page
     networks:
       - surfvivor-fitness-backend
     container_name: backend-api-survivorfitness
@@ -38,7 +38,7 @@ services:
       SFF_EMAIL_PASSWORD: ${SFF_EMAIL_PASSWORD}
       SFF_PASSWORD_RESET_EMAIL_EXPIRATION_HOURS: 24
       SFF_DOMAIN_NAME: ${SFF_DOMAIN_NAME}
-      SFF_CREATE_DEMO_DATA: "true"
+      SFF_CREATE_DEMO_DATA: "false"
     depends_on:
       - mysql-database
 
