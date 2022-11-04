@@ -13,14 +13,18 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -64,7 +68,13 @@ public class AuthenticationRestController {
             authentication = (UsernamePwdUserInfoAuthenticationToken) authenticationManager.authenticate(authentication);
         }
         catch (BadCredentialsException e) {
-            throw new Exception("Incorrect username or password", e);
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Incorrect username or password");
+        }
+        catch (UsernameNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Username not found!");
+        }
+        catch (DisabledException e) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Account disabled, cannot log in!");
         }
 
         SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));

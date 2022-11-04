@@ -93,15 +93,16 @@ public class UserRestController {
   
   
     /**
-     * Find all users in the database. This operation is only allowed
+     * Find all enabled users in the database. This operation is only allowed
      * for Super Admins.
+     * @param includeDisabledAccounts if true, the response will include the archived users
      * @return A UserListResponse with the list of all users inside
      */
     @GetMapping("")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
     @ResponseBody
-    public UserListResponse getAllUsers() {
-        return new UserListResponse(userManagementService.getAllUsers());
+    public UserListResponse getAllUsers(@RequestParam(required = false, defaultValue="false") boolean includeDisabledAccounts) {
+        return new UserListResponse(userManagementService.getAllUsers(includeDisabledAccounts));
     }
 
 
@@ -136,9 +137,36 @@ public class UserRestController {
     }
 
 
+    /**
+     * An endpoint to receive the page that has a button to reset the password. A link to this page is sent to the
+     * user in an email when they request a password reset. Page has been implemented because some mail applications
+     * visit the link to scan for viruses, thereby resetting the password before the user themselves visit the link.
+     * @param token The token that identifies the user whose password should be changed
+     * @param model Model object that allows to pass arguments to Views
+     * @return A page based on the /resources/templates/reset_password_template.html template
+     */
     @GetMapping("/reset_password_page")
     public String showResetPasswordPage(@RequestParam String token, Model model) {
         model.addAttribute("reset_password_link", "http://" + SFF_DOMAIN_NAME + "/api/v1/users/reset_password?token=" + token);
         return "reset_password_template";
+    }
+
+
+    /**
+     * An endpoint to "delete" an account of the user. We cannot actually delete it from the database because the
+     * user might have a lot of data associated with them via foreign keys. Before deleting the user we would have
+     * to delete/change all the data associated with them. Instead of deleting the user, we mark their account as
+     * disabled. Users will not be able to log into the disabled account. The account also will not show up in the
+     * results of queries like getAllUsers unless the requester specifies that they want the disabled accounts to
+     * be included in the results. Only SUPER ADMINS and LOCATION_ADMINISTRATORs are allowed to disable users'
+     * accounts.
+     * @param userId ID of the user to disable
+     * @return User DTO with information about the disabled user account.
+     */
+    @DeleteMapping("/{userId}")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'LOCATION_ADMINISTRATOR')")
+    @ResponseBody
+    public UserDTO deleteUser(@PathVariable Integer userId) {
+        return userManagementService.disableUserAccount(userId);
     }
 }

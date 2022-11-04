@@ -110,14 +110,28 @@ public class UserManagementService {
      * @param type Type of the Users needed (TRAINER, DIETITIAN, LOCATION_ADMINISTRATOR, or SUPER_ADMIN)
      * @return a list of users of the specified type
      */
-    public List<UserDTO> getGeneralInfoAboutAllSpecialistsOfSpecificType(UserRoleType type) {
+    public List<UserDTO> getGeneralInfoAboutAllSpecialistsOfSpecificType(UserRoleType type, boolean includeDisabledAccounts) {
         if(Objects.equals(UserRoleType.SUPER_ADMIN, type)) {
-            List<User> superAdmins = userRepository.findUsersByIsSuperAdmin(true);
-            return getUserDTOsBasedOnUserEntities(superAdmins);
+            return userRepository.findUsersByIsSuperAdmin(true).stream()
+                    // Get the enabled accounts. Include disabled accounts if includeDisabledAccounts=true
+                    .filter(user -> user.isEnabled() || (!user.isEnabled() && includeDisabledAccounts))
+
+                    // Convert each User object into a UserDTO object
+                    .map(this::getUserDtoBasedOnUserEntity)
+
+                    // Collect all UserDTOs into a list and return it
+                    .collect(Collectors.toList());
         }
 
-        List<User> specialistEntities = userRepository.findDistinctUsersByLocationAssignmentsUserRoleType(type);
-        return getUserDTOsBasedOnUserEntities(specialistEntities);
+        return userRepository.findDistinctUsersByLocationAssignmentsUserRoleType(type).stream()
+                // Get the enabled accounts. Include disabled accounts if includeDisabledAccounts=true
+                .filter(user -> user.isEnabled() || (!user.isEnabled() && includeDisabledAccounts))
+
+                // Convert each User object into a UserDTO object
+                .map(this::getUserDtoBasedOnUserEntity)
+
+                // Collect all UserDTOs into a list and return it
+                .collect(Collectors.toList());
     }
 
 
@@ -127,7 +141,7 @@ public class UserManagementService {
      * @param locationId The location the users have to be assigned to
      * @return a list of users with the specified role in the specified location
      */
-    public List<UserDTO> getGeneralInfoAboutSpecialistsOfSpecificTypeInSpecificLocation(UserRoleType role, Integer locationId) {
+    public List<UserDTO> getGeneralInfoAboutSpecialistsOfSpecificTypeInSpecificLocation(UserRoleType role, Integer locationId, boolean includeDisabledAccounts) {
         List<User> userList = userRepository.findUsersByLocationAssignmentsUserRoleTypeAndLocationAssignmentsLocationId(role, locationId);
         return getUserDTOsBasedOnUserEntities(userList);
     }
@@ -177,6 +191,7 @@ public class UserManagementService {
         userDTO.setPassword(userEntity.getPassword());
         userDTO.setIsSuperAdmin(userEntity.isSuperAdmin());
         userDTO.setPhoneNumber(userEntity.getPhoneNumber());
+        userDTO.setIsEnabled(userEntity.isEnabled());
 
         // Assign the roles of the userDTO based on Location Assignments
         List<LocationAssignment> locationAssignments = userEntity.getLocationAssignments();
@@ -614,12 +629,15 @@ public class UserManagementService {
      * Get all users that exist in the database;
      * @return A list of UserDTOs (all users)
      */
-    public List<UserDTO> getAllUsers() {
+    public List<UserDTO> getAllUsers(boolean includeDisabledAccounts) {
         // Retrieve all user entities from the database
         return userRepository.findAll()
 
                 // Convert the list into a stream of User objects
                 .stream()
+
+                // Get the enabled accounts. Include disabled accounts if includeDisabledAccounts=true
+                .filter(user -> user.isEnabled() || (!user.isEnabled() && includeDisabledAccounts))
 
                 // Convert each User object into a UserDTO object
                 .map(this::getUserDtoBasedOnUserEntity)
@@ -718,5 +736,23 @@ public class UserManagementService {
         String stringToken = UUID.randomUUID().toString();
         ResetPasswordToken resetPasswordToken = new ResetPasswordToken(user, stringToken, RESET_PASSWORD_TOKEN_EXPIRY_IN_HOURS);
         return resetPasswordTokenRepository.save(resetPasswordToken);
+    }
+
+
+    /**
+     * Disables the account of the user with id equal to @param userId. The user will not be able to log into the
+     * disabled account.
+     * @param userId ID of the user to disable
+     * @return An object with information about the deleted user
+     */
+    public UserDTO disableUserAccount(Integer userId) {
+        User userEntityToUpdate = userRepository.findUserById(userId);
+        if(Objects.isNull(userEntityToUpdate)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found.");
+        }
+
+        userEntityToUpdate.setEnabled(false);
+        userRepository.save(userEntityToUpdate);
+        return getUserDtoBasedOnUserEntity(userEntityToUpdate);
     }
 }

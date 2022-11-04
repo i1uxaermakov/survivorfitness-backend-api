@@ -39,13 +39,15 @@ public class TrainerRestController {
                     "The endpoint is available to users with roles SUPER_ADMIN and LOCATION_ADMINISTRATOR.",
             response = UserListResponse.class)
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'LOCATION_ADMINISTRATOR')")
-    public UserListResponse getInfoAboutTrainers(@RequestParam(name="locationId", required = false) Integer locationId) {
+    public UserListResponse getInfoAboutTrainers(@RequestParam(name="locationId", required = false) Integer locationId,
+                                                 @RequestParam(required = false, defaultValue="false") boolean includeDisabledAccounts) {
         if(locationId != null) {
-            List<UserDTO> trainersAtLocation = userManagementService.getGeneralInfoAboutSpecialistsOfSpecificTypeInSpecificLocation(UserRoleType.TRAINER, locationId);
+            List<UserDTO> trainersAtLocation = userManagementService.getGeneralInfoAboutSpecialistsOfSpecificTypeInSpecificLocation(
+                    UserRoleType.TRAINER, locationId, includeDisabledAccounts);
             return new UserListResponse(trainersAtLocation);
         }
         else {
-            List<UserDTO> trainersList = userManagementService.getGeneralInfoAboutAllSpecialistsOfSpecificType(UserRoleType.TRAINER);
+            List<UserDTO> trainersList = userManagementService.getGeneralInfoAboutAllSpecialistsOfSpecificType(UserRoleType.TRAINER, includeDisabledAccounts);
             return new UserListResponse(trainersList);
         }
     }

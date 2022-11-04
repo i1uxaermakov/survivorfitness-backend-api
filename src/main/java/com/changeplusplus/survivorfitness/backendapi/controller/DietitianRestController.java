@@ -38,13 +38,14 @@ public class DietitianRestController {
                     "The endpoint is available to users with roles SUPER_ADMIN and LOCATION_ADMINISTRATOR.",
             response = UserListResponse.class)
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'LOCATION_ADMINISTRATOR')")
-    public UserListResponse getInfoAboutDietitians(@RequestParam(name="locationId", required = false) Integer locationId) {
+    public UserListResponse getInfoAboutDietitians(@RequestParam(name="locationId", required = false) Integer locationId,
+                                                   @RequestParam(required = false, defaultValue="false") boolean includeDisabledAccounts) {
         if(locationId != null) {
-            List<UserDTO> dietitiansAtLocationList = userManagementService.getGeneralInfoAboutSpecialistsOfSpecificTypeInSpecificLocation(UserRoleType.DIETITIAN, locationId);
+            List<UserDTO> dietitiansAtLocationList = userManagementService.getGeneralInfoAboutSpecialistsOfSpecificTypeInSpecificLocation(UserRoleType.DIETITIAN, locationId, includeDisabledAccounts);
             return new UserListResponse(dietitiansAtLocationList);
         }
         else {
-            List<UserDTO> dietitiansList = userManagementService.getGeneralInfoAboutAllSpecialistsOfSpecificType(UserRoleType.DIETITIAN);
+            List<UserDTO> dietitiansList = userManagementService.getGeneralInfoAboutAllSpecialistsOfSpecificType(UserRoleType.DIETITIAN, includeDisabledAccounts);
             return new UserListResponse(dietitiansList);
         }
     }

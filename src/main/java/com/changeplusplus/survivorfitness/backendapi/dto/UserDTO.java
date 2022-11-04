@@ -27,6 +27,7 @@ public class UserDTO {
     private String phoneNumber;
     private List<LocationDTO> locations;
     private List<String> roles;
+    private Boolean isEnabled;
 
     private List<LocationAssignmentDTO> locationAssignments;
 }
