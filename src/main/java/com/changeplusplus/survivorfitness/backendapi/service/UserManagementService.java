@@ -531,6 +531,11 @@ public class UserManagementService {
                 .setLastName(userDtoToUpdate.getLastName())
                 .setPhoneNumber(userDtoToUpdate.getPhoneNumber());
 
+        // Set whether the user is enabled or not if the parameter was passed in the request
+        if(Objects.nonNull(userDtoToUpdate.getIsEnabled())) {
+            userEntityToUpdate.setEnabled(userDtoToUpdate.getIsEnabled());
+        }
+
         // A variable to keep track whether the location Assignments have been changed. Will be used to determine
         // if the current user can change that.
         boolean didLocationAssignmentsChange = false;
