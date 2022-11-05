@@ -15,7 +15,7 @@ services:
       - mysql-data:/var/lib/mysql
 
   backend-api:
-    image: ilyaermakov/survivor-fitness-backend:v18-reset-password-page
+    image: ilyaermakov/survivor-fitness-backend:v19-disable-account
     networks:
       - surfvivor-fitness-backend
     container_name: backend-api-survivorfitness
@@ -28,7 +28,7 @@ services:
       SFF_DB_PASSWORD: Password2020!
       SFF_DB_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
       SFF_DB_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL8Dialect
-      SFF_DB_DDL_AUTO: create
+      SFF_DB_DDL_AUTO: none
       SFF_JWT_SECRET_KEY: ${SFF_JWT_SECRET_KEY}
       SFF_JWT_ISSUER: SurvivorFitness-Backend
       SFF_JWT_SUBJECT: JWT-Token
@@ -41,6 +41,26 @@ services:
       SFF_CREATE_DEMO_DATA: "false"
     depends_on:
       - mysql-database
+
+  mysql-backup:
+   image: databack/mysql-backup:latest
+   networks:
+     - surfvivor-fitness-backend
+   environment:
+     - DB_SERVER=mysql-database
+     - DB_USER=root
+     - DB_PASS=Password2020!
+     - DB_NAMES=survivorfitnessdb
+     - DB_DUMP_TARGET=s3://sffbackupbucket/backups
+     - DB_DUMP_BEGIN=+1
+     - DB_DUMP_FREQ=1
+     - AWS_ACCESS_KEY_ID=${SFF_AWS_ACCESS_KEY_ID}
+     - AWS_SECRET_ACCESS_KEY=${SFF_AWS_SECRET_ACCESS_KEY}
+     - AWS_DEFAULT_REGION=us-east-1
+   volumes:
+     - /etc/localtime:/etc/localtime:ro
+   depends_on:
+     - mysql-database
 
 networks:
   surfvivor-fitness-backend:
